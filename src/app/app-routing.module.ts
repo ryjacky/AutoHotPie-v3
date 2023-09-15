@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './shared/components';
 
 import { HomeRoutingModule } from './home/home-routing.module';
-import { DetailRoutingModule } from './detail/detail-routing.module';
 
 // Please keep the following line. It is not certain where this is being used
 // but the program will crash without this import
@@ -40,7 +39,6 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, {useHash: true}),
     HomeRoutingModule,
-    DetailRoutingModule,
     PieMenuEditorRoutingModule,
     PieMenuUIRoutingModule,
     SettingsModule,

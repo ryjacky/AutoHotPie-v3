@@ -1,0 +1,33 @@
+site_name: AutoHotPie V3 Dev Docs
+theme:
+  name: material
+  palette:
+    primary: black
+  features:
+    - navigation.expand
+    - navigation.path
+
+repo_url: https://github.com/dumbeau/autohotpie
+repo_name: dumbeau/autohotpie
+
+nav:
+  - Home: index.md
+  - Building AutoHotPie V3:
+      - All Platforms: buildAHP/allPlatforms.md
+  - Develop:
+      - Getting Started:
+          - Overview: develop/gettingStarted/overview.md
+          - Advice: develop/gettingStarted/advice.md
+          - Environment: develop/gettingStarted/environment.md
+          - Terminologies: develop/gettingStarted/terminologies.md
+          - Making changes: develop/gettingStarted/makingChanges.md
+          - Issues: develop/gettingStarted/issues.md
+      - Editor & Pie Menu:
+          - Code Directories: develop/editorAndPieMenu/codeDirectories.md
+      - Core Library:
+          - Software architecture: develop/coreLibrary/softwareArchitecture.md
+          - Code Directories: develop/coreLibrary/codeDirectories.md
+          - Usage for plugin developers: develop/coreLibrary/usageForPluginDevelopers.md
+      - Plugins:
+          - Overview: develop/plugins/overview.md
+          - Code Directories: develop/plugins/codeDirectories.md
