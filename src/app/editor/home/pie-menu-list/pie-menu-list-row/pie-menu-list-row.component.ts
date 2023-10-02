@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {NbDialogService, NbPosition} from '@nebular/theme';
-import {db} from '../../../../../app/src/userData/AHPDatabase';
-import {PieMenu} from '../../../../../app/src/userData/PieMenu';
+import {db} from '../../../../../../app/src/userData/AHPDatabase';
+import {PieMenu} from '../../../../../../app/src/userData/PieMenu';
 
 @Component({
   selector: 'app-pie-menu-list-row',

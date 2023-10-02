@@ -1,0 +1,46 @@
+<div
+  #pieMenuContainer
+  style="position: relative; width: 100%; height: 100%; overflow: hidden"
+  (pointermove)="onPointerMove($event)">
+  <canvas
+    #pieCenter
+    [style.position]="'absolute'"
+    [style.left.px]="centerX - ringWidth/2 - ringRadius"
+    [style.top.px]="centerY - ringWidth/2 - ringRadius"
+    [width]="ringRadius * 2 + ringWidth"
+    [height]="ringRadius * 2 + ringWidth"></canvas>
+  <canvas
+    #pieCenterSector
+    [style.rotate]="centerRotation + 'rad'"
+    [style.position]="'absolute'"
+    [style.left.px]="centerX - ringWidth/2 - ringRadius"
+    [style.top.px]="centerY - ringWidth/2 - ringRadius"
+    [width]="ringRadius * 2 + ringWidth"
+    [height]="ringRadius * 2 + ringWidth"></canvas>
+
+  <div
+    *ngFor="let pieItem of pieItems; let i = index"
+    [style.left.px]="centerX"
+    [style.top.px]="centerY"
+    [style.width.px]="outerRadius"
+    [style.height.px]="0"
+    [style.rotate]="-90 + i * 360 / pieItems.length + 'deg'"
+    [style.display]="'flex'"
+    [style.align-items]="'center'"
+    [style.transform-origin]="'center left'"
+    [style.justify-content]="'flex-end'"
+    [style.position]="'absolute'">
+    <button
+      [style.rotate]="+90 - i * 360 / pieItems.length + 'deg'"
+      [style.background]="hoveredButtonIndex === i ? hoveredColor : '#333333'"
+      [style.border-radius.px]="7"
+      [style.width.px]="70"
+      [style.height.px]="buttonHeight"
+      [style.border-width.px]="0"
+      [style.color]="'white'">
+      {{pieItem?.name ?? 'Error'}}
+    </button>
+  </div>
+
+
+</div>

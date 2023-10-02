@@ -7,6 +7,7 @@ import {Router} from '@angular/router';
 import {NbPosition} from '@nebular/theme';
 import {PieMenu, PieMenuActivationMode} from '../../app/src/userData/PieMenu';
 import {Profile} from '../../app/src/userData/Profile';
+import {PieItem} from "../../app/src/userData/PieItem";
 
 @Component({
   selector: 'app-root',
@@ -58,6 +59,13 @@ export class AppComponent {
     if ((await db.profile.count()) === 0) {
       window.log.info('No profile found, creating default profile');
 
+      await db.pieItem.bulkPut([
+        new PieItem('', 'PieItem 1'),
+        new PieItem('', 'PieItem 2'),
+        new PieItem('', 'PieItem 3'),
+        new PieItem('', 'PieItem 4'),
+        new PieItem('', 'PieItem 5'),
+      ]);
       const pieMenuId = await db.pieMenu.put(new PieMenu(
         'Default Pie Menu',
         true,
@@ -66,7 +74,7 @@ export class AppComponent {
         0,
         false,
         '',
-        [],
+        [1,2,3,4,5],
         1
         ));
       await db.profile.put(new Profile(

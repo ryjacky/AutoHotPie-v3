@@ -1,9 +1,9 @@
-import {app, BrowserWindow, Menu, Tray} from 'electron';
+import {app, BrowserWindow, Menu, screen, Tray} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
 import {EditorConstants} from "./src/constants/EditorConstants";
-import {getGHotkeyServiceInstance, KeyEvent} from "mousekeyhook.js";
+import {getGHotkeyServiceInstance, KeyEvent, RespondType} from "mousekeyhook.js";
 import {AHPEnv} from "autohotpie-core/lib/AHPEnv";
 import {Log} from "autohotpie-core";
 import {AHPPluginManager} from "./src/plugin/AHPPluginManager";
@@ -13,6 +13,9 @@ let pieMenuWindow: BrowserWindow | undefined;
 let editorWindow: BrowserWindow | undefined;
 app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
 
+let primaryScreenWidth = 0;
+let primaryScreenHeight = 0;
+let pieMenuHidden = true;
 let tray = null;
 
 // Initialization
@@ -28,9 +31,31 @@ AHPPluginManager.loadPlugins();
 function initGlobalHotkeyService() {
   Log.main.info('Initializing global hotkey service');
 
+  // Get listened hotkeys
+
   getGHotkeyServiceInstance().onHotkeyEvent.push(
     (event: KeyEvent) => {
-      Log.main.debug('onKeyEvent - ' + event.type + ' ' + event.value);
+      Log.main.debug('onKeyEvent - ' + event.type + ' ' + event.value)
+
+      if (event.type !== RespondType.KEY_DOWN) return;
+
+      if (!pieMenuWindow) { createPieMenuWindow(); }
+
+      if (pieMenuHidden) {
+        pieMenuHidden = false;
+
+        const { screen } = require('electron')
+
+        pieMenuWindow?.setBounds({
+          width: primaryScreenWidth,
+          height: primaryScreenHeight,
+          x: screen.getCursorScreenPoint().x - primaryScreenWidth / 2,
+          y: screen.getCursorScreenPoint().y - primaryScreenHeight / 2
+        })
+        pieMenuWindow?.show();
+
+        Log.main.debug(screen.getCursorScreenPoint());
+      }
     });
   getGHotkeyServiceInstance().onProcessExit = (() => {
     Log.main.debug('Global hotkey service exited.');
@@ -95,13 +120,22 @@ function createWindow(): BrowserWindow {
   const editorWindowURL = new URL(path.join('file:', __dirname, editorWindowPath));
   editorWindow.loadURL(editorWindowURL.href);
 
+  editorWindow.on('close', (event) => {
+    event.preventDefault();
+    editorWindow?.hide();
+  });
+
+  return editorWindow;
+}
+
+function createPieMenuWindow(): void {
   // ------------ Create Editor Window End ------------
 
   pieMenuWindow = new BrowserWindow({
-    // transparent: true,
-    // frame: false,
-    // fullscreen: true,
-    // resizable: false,
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
+    resizable: false,
     webPreferences: {
       nodeIntegration: false,
       preload: path.join(__dirname, 'preload.js'),
@@ -119,19 +153,22 @@ function createWindow(): BrowserWindow {
 
   const pieMenuURL = new URL(path.join('file:', __dirname, pieMenuPath));
 
-  // TODO: Remove the following line for production build
   pieMenuWindow.loadURL(pieMenuURL.href);
 
-  editorWindow.on('close', (event) => {
+  pieMenuWindow.on('close', (event) => {
     event.preventDefault();
-    editorWindow?.hide();
+    pieMenuWindow?.hide();
+    pieMenuHidden = true;
   });
-
-  return editorWindow;
 }
 
 function initSystemTray() {
   app.whenReady().then(() => {
+    // Get screen size
+    const { screen } = require('electron')
+    primaryScreenWidth = screen.getPrimaryDisplay().bounds.width;
+    primaryScreenHeight = screen.getPrimaryDisplay().bounds.height;
+
     tray = new Tray(__dirname + '/assets/favicon.ico')
     const contextMenu = Menu.buildFromTemplate([
       {label: 'AutoHotPie', type: "normal", enabled: false},

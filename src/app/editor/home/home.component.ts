@@ -1,8 +1,8 @@
 import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {NbPopoverDirective, NbPosition} from '@nebular/theme';
-import {db} from '../../../app/src/userData/AHPDatabase';
-import {Profile} from '../../../app/src/userData/Profile';
-import {ReadonlyWindowDetails} from '../../../app/src/appWindow/WindowDetails';
+import {db} from '../../../../app/src/userData/AHPDatabase';
+import {Profile} from '../../../../app/src/userData/Profile';
+import {ReadonlyWindowDetails} from '../../../../app/src/appWindow/WindowDetails';
 
 @Component({
   selector: 'app-home',

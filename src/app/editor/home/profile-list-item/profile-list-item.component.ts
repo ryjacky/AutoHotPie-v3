@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {db} from '../../../../app/src/userData/AHPDatabase';
-import {Profile} from '../../../../app/src/userData/Profile';
+import {db} from '../../../../../app/src/userData/AHPDatabase';
+import {Profile} from '../../../../../app/src/userData/Profile';
 
 @Component({
   selector: 'app-profile-list-item',

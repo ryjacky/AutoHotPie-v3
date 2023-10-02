@@ -83,3 +83,10 @@ Thumbs.db
 /info.log
 /plugin_packages/
 /app/src/plugin/AHPPluginManager.js
+/app/src/actions/Action.js
+/app/src/actions/ActionType.js
+/app/src/data/settings/AHPSettings.js
+/app/src/userData/PieItem.js
+/app/src/userData/PieMenu.js
+/app/src/userData/Profile.js
+/app/src/data/appWindow/WindowDetails.js
