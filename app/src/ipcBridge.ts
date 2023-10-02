@@ -1,9 +1,9 @@
 import {app, ipcMain, dialog} from "electron";
 import * as child_process from "child_process";
-import {ahpSettings} from "./settings/AHPSettings";
+import {ahpSettings} from "./data/settings/AHPSettings";
 import * as activeWindow from "active-win";
 import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
-import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
+import {ReadonlyWindowDetails} from "./data/appWindow/WindowDetails";
 import {Log} from "autohotpie-core";
 import {AHPPluginManager} from "./plugin/AHPPluginManager";
 

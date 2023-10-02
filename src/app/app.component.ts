@@ -2,12 +2,12 @@ import {Component, ViewChild} from '@angular/core';
 import {ElectronService} from './core/services';
 import {TranslateService} from '@ngx-translate/core';
 import {APP_CONFIG} from '../environments/environment';
-import {db} from '../../app/src/userData/AHPDatabase';
+import {db} from '../../app/src/data/userData/AHPDatabase';
 import {Router} from '@angular/router';
 import {NbPosition} from '@nebular/theme';
-import {PieMenu, PieMenuActivationMode} from '../../app/src/userData/PieMenu';
-import {Profile} from '../../app/src/userData/Profile';
-import {PieItem} from "../../app/src/userData/PieItem";
+import {PieMenu, PieMenuActivationMode} from '../../app/src/data/userData/PieMenu';
+import {Profile} from '../../app/src/data/userData/Profile';
+import {PieItem} from "../../app/src/data/userData/PieItem";
 
 @Component({
   selector: 'app-root',

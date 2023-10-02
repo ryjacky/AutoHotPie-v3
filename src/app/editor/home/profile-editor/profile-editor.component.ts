@@ -1,9 +1,9 @@
 import {Component, Input, TemplateRef} from '@angular/core';
-import {db} from '../../../../../app/src/userData/AHPDatabase';
+import {db} from '../../../../../app/src/data/userData/AHPDatabase';
 import {NbDialogService, NbPosition} from '@nebular/theme';
-import {Profile} from '../../../../../app/src/userData/Profile';
-import {PieMenu} from '../../../../../app/src/userData/PieMenu';
-import {PieItem} from '../../../../../app/src/userData/PieItem';
+import {Profile} from '../../../../../app/src/data/userData/Profile';
+import {PieMenu} from '../../../../../app/src/data/userData/PieMenu';
+import {PieItem} from '../../../../../app/src/data/userData/PieItem';
 
 @Component({
   selector: 'app-profile-editor',

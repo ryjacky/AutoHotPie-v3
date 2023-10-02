@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {PieItem} from '../../../../../app/src/userData/PieItem';
-import {db} from '../../../../../app/src/userData/AHPDatabase';
+import {PieItem} from '../../../../../app/src/data/userData/PieItem';
+import {db} from '../../../../../app/src/data/userData/AHPDatabase';
 
 @Component({
   selector: 'app-pie-buttons',

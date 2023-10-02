@@ -1,6 +1,6 @@
 import {ActionPlugin, Log, PluginProperties, PluginType} from "autohotpie-core";
 import {PluginManager} from "live-plugin-manager";
-import {ahpSettings} from "../settings/AHPSettings";
+import {ahpSettings} from "../data/settings/AHPSettings";
 
 export class AHPPluginManager {
   private static readonly pluginManager = new PluginManager();

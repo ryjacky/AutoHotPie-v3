@@ -2,7 +2,7 @@ import {app, BrowserWindow, Menu, screen, Tray} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
-import {EditorConstants} from "./src/constants/EditorConstants";
+import {EditorConstants} from "./src/data/constants/EditorConstants";
 import {getGHotkeyServiceInstance, KeyEvent, RespondType} from "mousekeyhook.js";
 import {AHPEnv} from "autohotpie-core/lib/AHPEnv";
 import {Log} from "autohotpie-core";

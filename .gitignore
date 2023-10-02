@@ -74,11 +74,11 @@ Thumbs.db
 /app/src/preferences/Settings.js
 /app/src/preferences/UserDataObject.js
 /app/src/nativeAPI/ForegroundWindowService.js
-/app/src/settings/AHPSettings.js
+/app/src/data/settings/AHPSettings.js
 /app/src/ipcBridge.js
 
-/app/src/appWindow/WindowDetails.js
-/app/src/appWindow/WindowDetails.js.map
+/app/src/data/appWindow/WindowDetails.js
+/app/src/data/appWindow/WindowDetails.js.map
 /debug.log
 /info.log
 /plugin_packages/
@@ -86,7 +86,7 @@ Thumbs.db
 /app/src/actions/Action.js
 /app/src/actions/ActionType.js
 /app/src/data/settings/AHPSettings.js
-/app/src/userData/PieItem.js
-/app/src/userData/PieMenu.js
-/app/src/userData/Profile.js
+/app/src/data/userData/PieItem.js
+/app/src/data/userData/PieMenu.js
+/app/src/data/userData/Profile.js
 /app/src/data/appWindow/WindowDetails.js
