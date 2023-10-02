@@ -51,7 +51,7 @@ export class PieMenuListRowComponent implements OnInit {
         hotkey: this.pieMenu.hotkey,
         name: this.pieMenu.name + ' (copy)',
         openInScreenCenter: this.pieMenu.openInScreenCenter,
-        pieItems: this.pieMenu.pieItems,
+        pieItemIds: this.pieMenu.pieItemIds,
         selectionColor: this.pieMenu.selectionColor
       }).then((id) => {
         this.pieMenuChange.emit({remove: this.pieMenu.id, add: id as number});

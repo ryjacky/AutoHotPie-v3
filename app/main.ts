@@ -3,10 +3,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
 import {EditorConstants} from "./src/data/constants/EditorConstants";
-import {getGHotkeyServiceInstance, KeyEvent, RespondType} from "mousekeyhook.js";
-import {AHPEnv} from "autohotpie-core/lib/AHPEnv";
-import {Log} from "autohotpie-core";
-import {AHPPluginManager} from "./src/plugin/AHPPluginManager";
+import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
+import {AHPEnv} from "pielette-core/lib/AHPEnv";
+import {Log} from "pielette-core";
+import {AHPAddonManager} from "./src/plugin/AHPAddonManager";
 
 // Variables
 let pieMenuWindow: BrowserWindow | undefined;
@@ -25,36 +25,27 @@ initElectronWindows();
 initElectronAPI();
 initLoggerForRenderer();
 initSystemTray();
-AHPPluginManager.loadPlugins();
+AHPAddonManager.loadPlugins();
 
 // Functions
-function initGlobalHotkeyService() {
-  Log.main.info('Initializing global hotkey service');
+export function initGlobalHotkeyService() {
+  if (isGHotkeyServiceRunning()) return;
 
-  // Get listened hotkeys
+  Log.main.info('Initializing global hotkey service');
 
   getGHotkeyServiceInstance().onHotkeyEvent.push(
     (event: KeyEvent) => {
       Log.main.debug('onKeyEvent - ' + event.type + ' ' + event.value)
 
-      if (event.type !== RespondType.KEY_DOWN) return;
-
-      if (!pieMenuWindow) { createPieMenuWindow(); }
-
-      if (pieMenuHidden) {
-        pieMenuHidden = false;
-
-        const { screen } = require('electron')
-
-        pieMenuWindow?.setBounds({
-          width: primaryScreenWidth,
-          height: primaryScreenHeight,
-          x: screen.getCursorScreenPoint().x - primaryScreenWidth / 2,
-          y: screen.getCursorScreenPoint().y - primaryScreenHeight / 2
-        })
-        pieMenuWindow?.show();
-
-        Log.main.debug(screen.getCursorScreenPoint());
+      switch (event.type) {
+        case RespondType.KEY_DOWN:
+          //TODO: Get listened hotkeys
+          showPieMenuAtCursor();
+          break;
+        case RespondType.KEY_UP:
+          Log.main.debug('Key up event received, closing pie menu');
+          pieMenuWindow?.webContents.send('closePieMenuRequested');
+          break;
       }
     });
   getGHotkeyServiceInstance().onProcessExit = (() => {
@@ -199,4 +190,31 @@ function initSystemTray() {
     tray.setToolTip('Pie menyuuus!')
     tray.setContextMenu(contextMenu)
   })
+}
+
+function showPieMenuAtCursor() {
+  if (!pieMenuWindow) {createPieMenuWindow();}
+
+  if (pieMenuHidden) {
+    pieMenuHidden = false;
+
+    const {screen} = require('electron')
+
+    pieMenuWindow?.setBounds({
+      width: primaryScreenWidth,
+      height: primaryScreenHeight,
+      x: screen.getCursorScreenPoint().x - primaryScreenWidth / 2,
+      y: screen.getCursorScreenPoint().y - primaryScreenHeight / 2
+    })
+    pieMenuWindow?.show();
+
+    Log.main.debug(screen.getCursorScreenPoint());
+  }
+}
+
+export function hidePieMenu() {
+  if (!pieMenuHidden) {
+    pieMenuHidden = true;
+    pieMenuWindow?.hide();
+  }
 }

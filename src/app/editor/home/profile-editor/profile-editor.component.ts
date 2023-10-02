@@ -28,7 +28,7 @@ export class ProfileEditorComponent {
     const pieItemId = await db.pieItem.add(new PieItem(''));
 
     const newPieMenu = new PieMenu();
-    newPieMenu.pieItems.push(pieItemId as number);
+    newPieMenu.pieItemIds.push(pieItemId as number);
 
     const pieMenuId = await db.pieMenu.add(newPieMenu);
 

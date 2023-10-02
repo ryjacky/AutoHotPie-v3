@@ -4,8 +4,10 @@ import {ahpSettings} from "./data/settings/AHPSettings";
 import * as activeWindow from "active-win";
 import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
 import {ReadonlyWindowDetails} from "./data/appWindow/WindowDetails";
-import {Log} from "autohotpie-core";
-import {AHPPluginManager} from "./plugin/AHPPluginManager";
+import {Log} from "pielette-core";
+import {AHPAddonManager} from "./plugin/AHPAddonManager";
+import {ActionDelegate} from "./data/actions/ActionDelegate";
+import {hidePieMenu, initGlobalHotkeyService} from "../main";
 
 /**
  * Sets up IPC listeners for the main process,
@@ -52,8 +54,19 @@ export function initElectronAPI() {
       getGHotkeyServiceInstance().exitProcess();
       return false;
     } else {
-      getGHotkeyServiceInstance();
+      initGlobalHotkeyService();
       return true;
+    }
+  });
+  ipcMain.handle('runActions', (event, args) => {
+    hidePieMenu();
+
+    // args[0] = actionListJson
+    let actionDelegates = JSON.parse(args[0]) as ActionDelegate[];
+    for (let actionDelegate of actionDelegates) {
+      Log.main.debug(`Running action ${actionDelegate.pluginId} with parameters ${actionDelegate.parameters}`)
+
+      AHPAddonManager.runAction(actionDelegate);
     }
   });
   ipcMain.handle('getVersion', () => {
@@ -79,7 +92,7 @@ export function initElectronAPI() {
   ipcMain.handle('getActionList', () => {
 
     const actionList: string[] = [];
-    for (const actionPlugin of AHPPluginManager.getActionPlugins()) {
+    for (const actionPlugin of AHPAddonManager.getActionPlugins()) {
       actionList.push(actionPlugin.properties.name);
     }
 
@@ -88,7 +101,7 @@ export function initElectronAPI() {
   ipcMain.handle('getDetailedActionList', () => {
 
     const detailedActionList: string[] = [];
-    for (const actionPlugin of AHPPluginManager.getActionPlugins()) {
+    for (const actionPlugin of AHPAddonManager.getActionPlugins()) {
       detailedActionList.push(JSON.stringify(actionPlugin.properties));
     }
 
@@ -96,6 +109,7 @@ export function initElectronAPI() {
   });
   ipcMain.handle('listenKeyForResult', (event, args) => {
     // args[0] = ignoredKeys
+    if (!isGHotkeyServiceRunning()) { return; }
 
     return new Promise(resolve => {
       Log.main.info("Listening for valid hotkey once");

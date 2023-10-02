@@ -90,3 +90,5 @@ Thumbs.db
 /app/src/data/userData/PieMenu.js
 /app/src/data/userData/Profile.js
 /app/src/data/appWindow/WindowDetails.js
+/app/src/data/actions/ActionDelegate.js
+/app/src/plugin/AHPAddonManager.js

@@ -50,7 +50,7 @@
     "@nebular/eva-icons": "11.0.0",
     "@nebular/theme": "11.0.0",
     "active-win": "8.1.0",
-    "autohotpie-core": "0.0.18",
+    "pielette-core": "0.0.22",
     "angular-ui-tree": "2.22.6",
     "dexie": "3.2.4",
     "electron-store": "8.1.0",

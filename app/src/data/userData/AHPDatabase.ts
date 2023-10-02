@@ -14,7 +14,7 @@ export class AHPDatabase extends Dexie {
     // If a data column is array, you have to add * in front of it.
     this.version(1).stores({
       pieItem: "++id, name, enabled, *actions, iconBase64, useIconColor",
-      pieMenu: "++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, selectionColor, *pieItems",
+      pieMenu: "++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, selectionColor, *pieItemIds",
       profile: "++id, name, enabled, *pieMenus, *exes, iconBase64",
     });
   }

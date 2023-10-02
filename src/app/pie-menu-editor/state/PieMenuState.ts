@@ -1,6 +1,8 @@
 import {PieMenu} from '../../../../app/src/data/userData/PieMenu';
 import {PieItem} from '../../../../app/src/data/userData/PieItem';
 import {Action} from '../../../../app/src/actions/Action';
+import {db} from '../../../../app/src/data/userData/AHPDatabase';
+import {ActionDelegate} from "../../../../app/src/data/actions/ActionDelegate";
 // singleton
 export class PieMenuStateManager {
   private static manager: PieMenuStateManager;
@@ -54,11 +56,11 @@ export class PieMenuState {
   ) {
   }
 
-  public getPieItemActions(id: number): Action[] {
+  public getPieItemActions(id: number): ActionDelegate[] {
     return this.pieItems.get(id)?.actions ?? [];
   }
 
-  public setPieItemActions(id: number, actions: Action[]) {
+  public setPieItemActions(id: number, actions: ActionDelegate[]) {
     if (this.pieItems.get(id) === undefined) {
       return;
     }
@@ -66,5 +68,14 @@ export class PieMenuState {
     // this.pieItems.get(id)?.actions must not be undefined
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     this.pieItems.get(id)!.actions = actions;
+  }
+
+  public save() {
+    window.log.debug('Saving pie menu state: ' + JSON.stringify(this));
+    db.pieMenu.update(this.pieMenu.id ?? -1, {pieItems: this.pieMenu.pieItemIds});
+
+    for (const pieItem of this.pieItems.values()) {
+      db.pieItem.put(pieItem, pieItem.id);
+    }
   }
 }

@@ -14,7 +14,7 @@ export class PieMenu {
     public escapeRadius = 0,
     public openInScreenCenter = false,
     public selectionColor = '',
-    public pieItems: number[] = [],
+    public pieItemIds: number[] = [],
     public id?: number
   ) {}
 }

@@ -2,7 +2,7 @@ import {Schema} from "electron-store";
 import {app} from "electron";
 import * as Store from "electron-store";
 import {KeyEvent, RespondType} from "mousekeyhook.js";
-import {AHPEnv} from "autohotpie-core/lib/AHPEnv";
+import {AHPEnv} from "pielette-core/lib/AHPEnv";
 
 interface AHPSettingsSchema {
   pieMenuCancelKey: string;

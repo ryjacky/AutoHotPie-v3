@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {PieItem} from '../../../../../app/src/data/userData/PieItem';
 import {db} from '../../../../../app/src/data/userData/AHPDatabase';
 
@@ -18,16 +28,27 @@ export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
   @ViewChild('pieCenterSector') pieCenterSector: any;
   @ViewChild('pieMenuContainer') pieMenuContainer: any;
 
+  @Output() activePieItemId = new EventEmitter<number | undefined>();
+
   centerX = document.body.clientWidth / 2;
   centerY = document.body.clientHeight / 2;
   hoveredColor = '#159a95';
-  hoveredButtonIndex = -1;
+  activeBtnIndex = -1;
   buttonHeight = 32;
   centerRotation = 0;
   pieItems: (PieItem | undefined)[] = [];
 
   ngOnInit() {
-    this.updatePieItem().then(() => this.drawCenterSector());
+    this.updatePieItem().then(() => {
+      this.drawCenterSector();
+      this.activeBtnIndex = 0;
+      this.activePieItemId.emit(this.pieItems[0]?.id);
+    });
+
+    window.electronAPI.closePieMenuRequested(() => {
+      window.log.debug('Received closePieMenuRequested event');
+      this.runActions();
+    });
   }
 
   ngAfterViewInit() {
@@ -43,15 +64,31 @@ export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
     }
   }
 
+  onButtonClicked(index: number) {
+    if (!this.editorMode) {
+      this.runActions();
+    } else {
+      this.activeBtnIndex = index;
+      this.activePieItemId.emit(this.pieItems[index]?.id);
+    }
+  }
+
+  runActions() {
+    window.log.debug(`Calling runActions() with ${JSON.stringify(this.pieItems[this.activeBtnIndex]?.actions)}`);
+    window.electronAPI.runActions(JSON.stringify(this.pieItems[this.activeBtnIndex]?.actions ?? []));
+  }
+
   onPointerMove(event: PointerEvent) {
-    if (this.editorMode) {return;}
+    if (this.editorMode) {
+      return;
+    }
 
     // Note: You NEED basic trigonometry and knowledge of math notations for the following code to make sense
     const containerPtrX = event.clientX - this.pieMenuContainer.nativeElement.offsetLeft;
     const containerPtrY = event.clientY - this.pieMenuContainer.nativeElement.offsetTop;
     this.centerRotation = Math.atan2(containerPtrY - this.centerY, containerPtrX - this.centerX);
 
-    this.hoveredButtonIndex =
+    this.activeBtnIndex =
       ((Math.floor((
             // Set 0 degree to the top and offset by half of a sector
             ((Math.PI / 2 + this.centerRotation) + Math.PI / this.pieItems.length)
@@ -69,11 +106,11 @@ export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
       ) + this.pieItems.length) % this.pieItems.length;     // Map to [0, pieItems.length)
   }
 
-  private async updatePieItem() {
+  async updatePieItem() {
     const pieMenu = await db.pieMenu.get(this.pieMenuId);
 
     if (pieMenu) {
-      this.pieItems = await db.pieItem.bulkGet(pieMenu.pieItems);
+      this.pieItems = await db.pieItem.bulkGet(pieMenu.pieItemIds);
       window.log.debug(`${this.pieItems.length} pie items is loaded for Pie Menu [${pieMenu.name}]`);
     } else {
       window.log.warn(`Pie Menu [${this.pieMenuId}] is not found.`);
@@ -106,5 +143,4 @@ export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
     ctx.stroke();
     ctx.closePath();
   }
-
 }

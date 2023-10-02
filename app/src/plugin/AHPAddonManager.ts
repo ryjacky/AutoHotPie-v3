@@ -1,13 +1,21 @@
-import {ActionPlugin, Log, PluginProperties, PluginType} from "autohotpie-core";
+import {ActionPlugin, Log, PluginProperties, PluginType} from "pielette-core";
 import {PluginManager} from "live-plugin-manager";
 import {ahpSettings} from "../data/settings/AHPSettings";
+import {deprecate} from "util";
+import {ActionDelegate} from "../data/actions/ActionDelegate";
 
-export class AHPPluginManager {
+export class AHPAddonManager {
   private static readonly pluginManager = new PluginManager();
-  private static readonly actionPlugins: {plugin: ActionPlugin, properties: PluginProperties}[] = [];
+
+  private static readonly action: {plugin: ActionPlugin, properties: PluginProperties}[] = [];
+  private static readonly actionMap: Map<string, ActionPlugin> = new Map<string, ActionPlugin>();
 
   public static getActionPlugins(): ReadonlyArray<{plugin: ActionPlugin, properties: PluginProperties}> {
-    return this.actionPlugins;
+    return this.action;
+  }
+
+  public static runAction(actionDelegate: ActionDelegate) {
+    AHPAddonManager.actionMap.get(actionDelegate.pluginId)?.onExecuted(actionDelegate.parameters);
   }
 
   static async loadPlugins(): Promise<void> {
@@ -23,10 +31,13 @@ export class AHPPluginManager {
         const plugin = this.pluginManager.require(pluginId);
 
         const properties = (new plugin.Properties()) as PluginProperties;
+        properties.id = pluginId;
 
         switch (properties.type) {
           case PluginType.ACTION_PLUGIN:
-            this.actionPlugins.push({plugin: new plugin.Main() as ActionPlugin, properties: properties});
+            const actionAddon = new plugin.Main() as ActionPlugin;
+            this.action.push({plugin: actionAddon, properties: properties});
+            this.actionMap.set(pluginId, actionAddon);
             break;
         }
 

@@ -16,7 +16,7 @@
     "mousekeyhook.js": "0.1.6-development",
     "active-win": "8.1.0",
     "electron-store": "8.1.0",
-    "autohotpie-core": "0.0.18"
+    "pielette-core": "0.0.22"
   }
 
 }

@@ -1,8 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SendKeyAction} from '../../../../app/src/actions/SendKeyAction';
-import {Action} from '../../../../app/src/actions/Action';
 import {ActionType} from '../../../../app/src/actions/ActionType';
-import {PluginProperties} from 'autohotpie-core';
+import {PluginProperties} from 'pielette-core';
+import {ActionDelegate} from '../../../../app/src/data/actions/ActionDelegate';
 
 @Component({
   selector: 'app-action-card',
@@ -10,7 +9,7 @@ import {PluginProperties} from 'autohotpie-core';
   styleUrls: ['./action-card.component.scss']
 })
 export class ActionCardComponent implements OnInit {
-  @Input() action: Action = new SendKeyAction('a');
+  @Input() actionDelegate: ActionDelegate = new ActionDelegate('ahp-send-key', {});
   pluginPropertyList: PluginProperties[] = [];
   selectedPluginPropertyIndex = -1;
 
