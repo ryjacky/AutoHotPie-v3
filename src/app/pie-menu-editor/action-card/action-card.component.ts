@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PluginProperties} from 'pielette-core';
-import {ActionDelegate} from '../../../../app/src/data/actions/ActionDelegate';
+import {ActionDelegate} from '../../../../app/src/actions/ActionDelegate';
 
 @Component({
   selector: 'app-action-card',

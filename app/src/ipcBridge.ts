@@ -1,12 +1,12 @@
 import {app, ipcMain, dialog} from "electron";
 import * as child_process from "child_process";
-import {PieletteSettings} from "./data/settings/PieletteSettings";
+import {PieletteSettings} from "./settings/PieletteSettings";
 import * as activeWindow from "active-win";
 import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
-import {ReadonlyWindowDetails} from "./data/appWindow/WindowDetails";
+import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
 import {Log} from "pielette-core";
 import {AHPAddonManager} from "./plugin/AHPAddonManager";
-import {ActionDelegate} from "./data/actions/ActionDelegate";
+import {ActionDelegate} from "./actions/ActionDelegate";
 import {disablePieMenu, enablePieMenu, hidePieMenu, initGlobalHotkeyService} from "../main";
 
 /**

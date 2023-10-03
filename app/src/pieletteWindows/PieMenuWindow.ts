@@ -5,7 +5,7 @@ import * as fs from 'fs';
 export class PieMenuWindow extends BrowserWindow {
   private hidden: boolean = false;
   private disabled: boolean = false;
-  private readonly prefix = '../../../';
+  private readonly prefix = '../../';
   constructor() {
     super({
       transparent: false,
@@ -15,7 +15,7 @@ export class PieMenuWindow extends BrowserWindow {
       webPreferences: {
         nodeIntegration: false,
         // Maker sure the second argument contains the prefix at the beginning
-        preload: path.join(__dirname,  '../../../preload.js'),
+        preload: path.join(__dirname,  '../../preload.js'),
         contextIsolation: true,  // false if you want to run e2e test with Spectron
       },
     });

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB';
-import {Profile} from '../../../../../app/src/data/userData/Profile';
+import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
+import {Profile} from '../../../../../app/src/db/data/Profile';
 
 @Component({
   selector: 'app-profile-list-item',

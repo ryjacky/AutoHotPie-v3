@@ -1,8 +1,8 @@
 import {Component, Input} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {PieMenuState, PieMenuStateManager} from './state/PieMenuState';
-import {PieletteDBHelper} from '../../../app/src/data/userData/PieletteDB';
-import {PieItem} from '../../../app/src/data/userData/PieItem';
+import {PieletteDBHelper} from '../../../app/src/db/PieletteDB';
+import {PieItem} from '../../../app/src/db/data/PieItem';
 
 @Component({
   selector: 'app-pie-menu-editor',

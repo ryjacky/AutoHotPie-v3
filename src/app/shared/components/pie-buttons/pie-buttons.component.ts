@@ -8,8 +8,8 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {PieItem} from '../../../../../app/src/data/userData/PieItem';
-import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB';
+import {PieItem} from '../../../../../app/src/db/data/PieItem';
+import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 
 @Component({
   selector: 'app-pie-buttons',

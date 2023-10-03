@@ -1,4 +1,4 @@
-import {ActionDelegate} from "../actions/ActionDelegate";
+import {ActionDelegate} from "../../actions/ActionDelegate";
 
 export class PieItem {
   constructor(

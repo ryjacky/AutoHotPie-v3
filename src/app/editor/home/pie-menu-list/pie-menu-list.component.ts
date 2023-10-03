@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB';
-import {PieMenu} from '../../../../../app/src/data/userData/PieMenu';
+import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
+import {PieMenu} from '../../../../../app/src/db/data/PieMenu';
 
 @Component({
   selector: 'app-pie-menu-list',

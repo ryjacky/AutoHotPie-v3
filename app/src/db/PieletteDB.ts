@@ -1,7 +1,7 @@
 import Dexie, {Table} from "dexie";
-import {PieItem} from "./PieItem";
-import {PieMenu} from "./PieMenu";
-import {Profile} from "./Profile";
+import {PieItem} from "./data/PieItem";
+import {PieMenu} from "./data/PieMenu";
+import {Profile} from "./data/Profile";
 
 export class PieletteDB extends Dexie {
   pieItem!: Table<PieItem>;

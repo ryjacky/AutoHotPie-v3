@@ -2,16 +2,17 @@ import {app, BrowserWindow, Menu, screen, Tray} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
-import {EditorConstants} from "./src/data/constants/EditorConstants";
+import {EditorConstants} from "./src/constants/EditorConstants";
 import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
 import {AHPEnv} from "pielette-core/lib/AHPEnv";
 import {Log} from "pielette-core";
 import {AHPAddonManager} from "./src/plugin/AHPAddonManager";
-import {PieMenuWindow} from "./src/controller/pieletteWindows/PieMenuWindow";
+import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
+import {EditorWindow} from "./src/pieletteWindows/EditorWindow";
 
 // Variables
 let pieMenuWindow: PieMenuWindow | undefined;
-let editorWindow: BrowserWindow | undefined;
+let editorWindow: EditorWindow | undefined;
 app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
 
 export let pieMenuDisabled = false;
@@ -87,42 +88,8 @@ function initElectronWindows() {
 
 function createWindow(): BrowserWindow {
   pieMenuWindow = new PieMenuWindow();
-  editorWindow = new BrowserWindow({
-    minWidth: EditorConstants.WINDOW_WIDTH,
-    minHeight: EditorConstants.WINDOW_HEIGHT,
-    width: EditorConstants.WINDOW_WIDTH,
-    height: EditorConstants.WINDOW_HEIGHT,
-    // TODO: Uncomment the following line for release build
-    // titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#2f3241',
-      symbolColor: '#74b1be',
+  editorWindow = new EditorWindow();
 
-      // !!! IMPORTANT !!!
-      // --title-bar-height should also be updated in styles.scss when you change the height
-      height: 42
-    },
-    webPreferences: {
-      nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,  // false if you want to run e2e test with Spectron
-    },
-  });
-  // Path when running electron executable
-  let editorWindowPath = './index.html';
-
-  if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-    // Path when running electron in local folder
-    editorWindowPath = '../dist/index.html';
-  }
-
-  const editorWindowURL = new URL(path.join('file:', __dirname, editorWindowPath));
-  editorWindow.loadURL(editorWindowURL.href);
-
-  editorWindow.on('close', (event) => {
-    event.preventDefault();
-    editorWindow?.hide();
-  });
 
   return editorWindow;
 }

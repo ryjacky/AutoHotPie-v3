@@ -1,8 +1,8 @@
 import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {NbPopoverDirective, NbPosition} from '@nebular/theme';
-import {PieletteDBHelper} from '../../../../app/src/data/userData/PieletteDB';
-import {Profile} from '../../../../app/src/data/userData/Profile';
-import {ReadonlyWindowDetails} from '../../../../app/src/data/appWindow/WindowDetails';
+import {PieletteDBHelper} from '../../../../app/src/db/PieletteDB';
+import {Profile} from '../../../../app/src/db/data/Profile';
+import {ReadonlyWindowDetails} from '../../../../app/src/appWindow/WindowDetails';
 
 @Component({
   selector: 'app-home',

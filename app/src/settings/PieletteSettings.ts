@@ -36,7 +36,7 @@ const PieletteSettingSchema: Schema<IPieletteSettingSchema> = {
   }
 };
 
-// Set the path of the settings file to be in the userData folder of AHPv3
+// Set the path of the settings file to be in the db folder of AHPv3
 // This is to ensure the path is correct no matter when ahpSettings is initialized
 app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
 

@@ -1,9 +1,9 @@
 import {Component, Input, TemplateRef} from '@angular/core';
-import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB';
+import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {NbDialogService, NbPosition} from '@nebular/theme';
-import {Profile} from '../../../../../app/src/data/userData/Profile';
-import {PieMenu} from '../../../../../app/src/data/userData/PieMenu';
-import {PieItem} from '../../../../../app/src/data/userData/PieItem';
+import {Profile} from '../../../../../app/src/db/data/Profile';
+import {PieMenu} from '../../../../../app/src/db/data/PieMenu';
+import {PieItem} from '../../../../../app/src/db/data/PieItem';
 
 @Component({
   selector: 'app-profile-editor',

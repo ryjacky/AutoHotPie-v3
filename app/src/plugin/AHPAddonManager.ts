@@ -1,7 +1,7 @@
 import {ActionPlugin, Log, PluginProperties, PluginType} from "pielette-core";
 import {PluginManager} from "live-plugin-manager";
-import {PieletteSettings} from "../data/settings/PieletteSettings";
-import {ActionDelegate} from "../data/actions/ActionDelegate";
+import {PieletteSettings} from "../settings/PieletteSettings";
+import {ActionDelegate} from "../actions/ActionDelegate";
 
 export class AHPAddonManager {
   private static readonly pluginManager = new PluginManager();

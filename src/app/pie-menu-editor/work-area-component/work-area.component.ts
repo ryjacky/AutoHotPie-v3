@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {PieMenuState, PieMenuStateManager} from '../state/PieMenuState';
-import {ActionDelegate} from '../../../../app/src/data/actions/ActionDelegate';
+import {ActionDelegate} from '../../../../app/src/actions/ActionDelegate';
 
 @Component({
   selector: 'app-work-area-component',
