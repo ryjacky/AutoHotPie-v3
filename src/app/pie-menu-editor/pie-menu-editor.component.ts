@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {PieMenuState, PieMenuStateManager} from './state/PieMenuState';
-import {db} from '../../../app/src/data/userData/AHPDatabase';
+import {PieletteDBHelper} from '../../../app/src/data/userData/PieletteDB';
 import {PieItem} from '../../../app/src/data/userData/PieItem';
 
 @Component({
@@ -28,12 +28,12 @@ export class PieMenuEditorComponent {
   }
 
   async loadWorkArea(pieMenuId: number) {
-    const pieMenu = await db.pieMenu.get(pieMenuId);
+    const pieMenu = await PieletteDBHelper.pieMenu.get(pieMenuId);
 
     if (!pieMenu) {
       throw new Error('Pie Menu not found');
     }
-    const rawPieItems = await db.pieItem.bulkGet(pieMenu.pieItemIds);
+    const rawPieItems = await PieletteDBHelper.pieItem.bulkGet(pieMenu.pieItemIds);
     const pieItems = new Map<number, PieItem>();
 
     window.log.debug('Finding pie items: ' + JSON.stringify(pieMenu.pieItemIds));

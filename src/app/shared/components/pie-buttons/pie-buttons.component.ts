@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {PieItem} from '../../../../../app/src/data/userData/PieItem';
-import {db} from '../../../../../app/src/data/userData/AHPDatabase';
+import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB';
 
 @Component({
   selector: 'app-pie-buttons',
@@ -107,10 +107,10 @@ export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
   }
 
   async updatePieItem() {
-    const pieMenu = await db.pieMenu.get(this.pieMenuId);
+    const pieMenu = await PieletteDBHelper.pieMenu.get(this.pieMenuId);
 
     if (pieMenu) {
-      this.pieItems = await db.pieItem.bulkGet(pieMenu.pieItemIds);
+      this.pieItems = await PieletteDBHelper.pieItem.bulkGet(pieMenu.pieItemIds);
       window.log.debug(`${this.pieItems.length} pie items is loaded for Pie Menu [${pieMenu.name}]`);
     } else {
       window.log.warn(`Pie Menu [${this.pieMenuId}] is not found.`);

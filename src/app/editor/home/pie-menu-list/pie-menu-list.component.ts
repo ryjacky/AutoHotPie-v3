@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
-import {db} from '../../../../../app/src/data/userData/AHPDatabase';
+import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB';
 import {PieMenu} from '../../../../../app/src/data/userData/PieMenu';
 
 @Component({
@@ -14,7 +14,7 @@ export class PieMenuListComponent implements OnChanges {
   pieMenus: Array<PieMenu> = [];
 
   refreshPieMenuList() {
-    db.pieMenu.bulkGet(this.pieMenuIds).then((pieMenus) => {
+    PieletteDBHelper.pieMenu.bulkGet(this.pieMenuIds).then((pieMenus) => {
       this.pieMenus = [];
 
       for (const pieMenu of pieMenus) {

@@ -3,7 +3,7 @@ import {PieItem} from "./PieItem";
 import {PieMenu} from "./PieMenu";
 import {Profile} from "./Profile";
 
-export class AHPDatabase extends Dexie {
+export class PieletteDB extends Dexie {
   pieItem!: Table<PieItem>;
   pieMenu!: Table<PieMenu>;
   profile!: Table<Profile>;
@@ -20,4 +20,4 @@ export class AHPDatabase extends Dexie {
   }
 }
 
-export const db = new AHPDatabase();
+export const PieletteDBHelper = new PieletteDB();

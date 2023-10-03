@@ -2,7 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {ElectronService} from './core/services';
 import {TranslateService} from '@ngx-translate/core';
 import {APP_CONFIG} from '../environments/environment';
-import {db} from '../../app/src/data/userData/AHPDatabase';
+import {PieletteDBHelper} from '../../app/src/data/userData/PieletteDB';
 import {Router} from '@angular/router';
 import {NbPosition} from '@nebular/theme';
 import {PieMenu, PieMenuActivationMode} from '../../app/src/data/userData/PieMenu';
@@ -56,17 +56,17 @@ export class AppComponent {
   async initAppdata() {
     window.log.info('Initializing/Loading app data');
 
-    if ((await db.profile.count()) === 0) {
+    if ((await PieletteDBHelper.profile.count()) === 0) {
       window.log.info('No profile found, creating default profile');
 
-      await db.pieItem.bulkPut([
+      await PieletteDBHelper.pieItem.bulkPut([
         new PieItem('', 'PieItem 1'),
         new PieItem('', 'PieItem 2'),
         new PieItem('', 'PieItem 3'),
         new PieItem('', 'PieItem 4'),
         new PieItem('', 'PieItem 5'),
       ]);
-      const pieMenuId = await db.pieMenu.put(new PieMenu(
+      const pieMenuId = await PieletteDBHelper.pieMenu.put(new PieMenu(
         'Default Pie Menu',
         true,
         PieMenuActivationMode.HOVER_OVER_THEN_RELEASE,
@@ -77,7 +77,7 @@ export class AppComponent {
         [1,2,3,4,5],
         1
         ));
-      await db.profile.put(new Profile(
+      await PieletteDBHelper.profile.put(new Profile(
         'Default Profile',
         [pieMenuId as number],
         [],

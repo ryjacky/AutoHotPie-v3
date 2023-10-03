@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {NbDialogService, NbPosition} from '@nebular/theme';
-import {db} from '../../../../../../app/src/data/userData/AHPDatabase';
+import {PieletteDBHelper} from '../../../../../../app/src/data/userData/PieletteDB';
 import {PieMenu} from '../../../../../../app/src/data/userData/PieMenu';
 
 @Component({
@@ -31,11 +31,11 @@ export class PieMenuListRowComponent implements OnInit {
     // this.pieMenu.selectionColor is auto updated in the color picker
 
     this.pieMenu.name = this.nameInput.nativeElement.value;
-    db.pieMenu.put(this.pieMenu);
+    PieletteDBHelper.pieMenu.put(this.pieMenu);
   }
 
   ngOnInit(): void {
-    db.profile.where('pieMenus').equals(this.pieMenu.id ?? 0).count().then((count) => {
+    PieletteDBHelper.profile.where('pieMenus').equals(this.pieMenu.id ?? 0).count().then((count) => {
       this.nProfilesConnected = count;
     });
   }
@@ -44,7 +44,7 @@ export class PieMenuListRowComponent implements OnInit {
     if (this.nProfilesConnected > 1) {
       window.log.info('Duplicating pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ')');
 
-      db.pieMenu.add({
+      PieletteDBHelper.pieMenu.add({
         activationMode: this.pieMenu.activationMode,
         enabled: this.pieMenu.enabled,
         escapeRadius: this.pieMenu.escapeRadius,
@@ -65,10 +65,10 @@ export class PieMenuListRowComponent implements OnInit {
       window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') not changed per user request');
       return;
     }
-    db.pieMenu.where('hotkey').equals(this.newHotkey)
+    PieletteDBHelper.pieMenu.where('hotkey').equals(this.newHotkey)
       .modify((pieMenu: PieMenu) => pieMenu.hotkey = '')
       .then(() => {
-        db.pieMenu.put(this.pieMenu);
+        PieletteDBHelper.pieMenu.put(this.pieMenu);
         this.pieMenuChange.emit();
         window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') changed to ' + this.newHotkey);
         window.log.info('All other pie menus with hotkey ' + this.newHotkey + ' had their hotkey removed');
@@ -82,12 +82,12 @@ export class PieMenuListRowComponent implements OnInit {
 
     this.pieMenu.hotkey = newHotkey;
 
-    if ((await db.pieMenu.where('hotkey').equals(newHotkey).count()) > 0) {
+    if ((await PieletteDBHelper.pieMenu.where('hotkey').equals(newHotkey).count()) > 0) {
       this.dialogService.open(this.confirmReplaceDialog);
       window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') already in use, ' +
         'prompting user to replace it');
     } else {
-      db.pieMenu.put(this.pieMenu);
+      PieletteDBHelper.pieMenu.put(this.pieMenu);
       window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') changed to ' + newHotkey);
     }
   }

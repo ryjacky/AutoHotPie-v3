@@ -1,8 +1,7 @@
 import {PieMenu} from '../../../../app/src/data/userData/PieMenu';
 import {PieItem} from '../../../../app/src/data/userData/PieItem';
-import {Action} from '../../../../app/src/actions/Action';
-import {db} from '../../../../app/src/data/userData/AHPDatabase';
-import {ActionDelegate} from "../../../../app/src/data/actions/ActionDelegate";
+import {PieletteDBHelper} from '../../../../app/src/data/userData/PieletteDB';
+import {ActionDelegate} from '../../../../app/src/data/actions/ActionDelegate';
 // singleton
 export class PieMenuStateManager {
   private static manager: PieMenuStateManager;
@@ -72,10 +71,10 @@ export class PieMenuState {
 
   public save() {
     window.log.debug('Saving pie menu state: ' + JSON.stringify(this));
-    db.pieMenu.update(this.pieMenu.id ?? -1, {pieItems: this.pieMenu.pieItemIds});
+    PieletteDBHelper.pieMenu.update(this.pieMenu.id ?? -1, {pieItems: this.pieMenu.pieItemIds});
 
     for (const pieItem of this.pieItems.values()) {
-      db.pieItem.put(pieItem, pieItem.id);
+      PieletteDBHelper.pieItem.put(pieItem, pieItem.id);
     }
   }
 }

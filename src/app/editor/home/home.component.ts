@@ -1,6 +1,6 @@
 import {Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {NbPopoverDirective, NbPosition} from '@nebular/theme';
-import {db} from '../../../../app/src/data/userData/AHPDatabase';
+import {PieletteDBHelper} from '../../../../app/src/data/userData/PieletteDB';
 import {Profile} from '../../../../app/src/data/userData/Profile';
 import {ReadonlyWindowDetails} from '../../../../app/src/data/appWindow/WindowDetails';
 
@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     // Not using db.profile.toArray() as it doesn't trigger the UI update
-    db.profile.each((prof) => {
+    PieletteDBHelper.profile.each((prof) => {
       this.profiles.push(prof);
     }).then(() => {
       this.selectedProfId = this.profiles[0].id ?? 0;
@@ -89,7 +89,7 @@ export class HomeComponent implements OnInit, OnChanges {
       this.activeWindow.base64Icon
     );
 
-    db.profile.add(newProf).then(() => {
+    PieletteDBHelper.profile.add(newProf).then(() => {
       this.profiles.push(newProf);
       window.log.info('Profile of id ' + newProf.id + ' created with name ' + newProf.name);
     });

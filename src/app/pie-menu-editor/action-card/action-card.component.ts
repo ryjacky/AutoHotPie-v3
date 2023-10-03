@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ActionType} from '../../../../app/src/actions/ActionType';
 import {PluginProperties} from 'pielette-core';
 import {ActionDelegate} from '../../../../app/src/data/actions/ActionDelegate';
 
@@ -12,8 +11,6 @@ export class ActionCardComponent implements OnInit {
   @Input() actionDelegate: ActionDelegate = new ActionDelegate('ahp-send-key', {});
   pluginPropertyList: PluginProperties[] = [];
   selectedPluginPropertyIndex = -1;
-
-  protected readonly actionType = ActionType;
 
   ngOnInit(): void {
     window.electronAPI.getDetailedActionList().then((pluginPropertyList: string[]) => {

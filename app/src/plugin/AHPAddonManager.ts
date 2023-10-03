@@ -1,6 +1,6 @@
 import {ActionPlugin, Log, PluginProperties, PluginType} from "pielette-core";
 import {PluginManager} from "live-plugin-manager";
-import {ahpSettings} from "../data/settings/AHPSettings";
+import {PieletteSettings} from "../data/settings/PieletteSettings";
 import {deprecate} from "util";
 import {ActionDelegate} from "../data/actions/ActionDelegate";
 
@@ -19,7 +19,7 @@ export class AHPAddonManager {
   }
 
   static async loadPlugins(): Promise<void> {
-    const pluginIds = ahpSettings.get('plugins');
+    const pluginIds = PieletteSettings.get('plugins');
     Log.main.info("Loading plugins: " + pluginIds.join(', '));
 
     const failedIds: string[] = [];

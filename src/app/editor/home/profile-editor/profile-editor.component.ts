@@ -1,5 +1,5 @@
 import {Component, Input, TemplateRef} from '@angular/core';
-import {db} from '../../../../../app/src/data/userData/AHPDatabase';
+import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB';
 import {NbDialogService, NbPosition} from '@nebular/theme';
 import {Profile} from '../../../../../app/src/data/userData/Profile';
 import {PieMenu} from '../../../../../app/src/data/userData/PieMenu';
@@ -25,12 +25,12 @@ export class ProfileEditorComponent {
   async newPieMenu() {
     this.profSettingsRevealed = false;
 
-    const pieItemId = await db.pieItem.add(new PieItem(''));
+    const pieItemId = await PieletteDBHelper.pieItem.add(new PieItem(''));
 
     const newPieMenu = new PieMenu();
     newPieMenu.pieItemIds.push(pieItemId as number);
 
-    const pieMenuId = await db.pieMenu.add(newPieMenu);
+    const pieMenuId = await PieletteDBHelper.pieMenu.add(newPieMenu);
 
     this.addPieMenu(pieMenuId as number);
     window.log.info('Created new pie menu, the id is ' + pieMenuId);
@@ -59,7 +59,7 @@ export class ProfileEditorComponent {
     }
 
     if (event.remove !== undefined || event.add !== undefined) {
-      db.profile.update(
+      PieletteDBHelper.profile.update(
         this.profile.id ?? 0,
         {pieMenus: newPieMenuList})
         .then(() => {
@@ -69,14 +69,14 @@ export class ProfileEditorComponent {
   }
 
   updateProfile() {
-    db.profile.update(this.profile.id ?? 0, this.profile);
+    PieletteDBHelper.profile.update(this.profile.id ?? 0, this.profile);
 
     window.log.info('Updated profile ' + this.profile.id + ' (name: ' + this.profile.name + ')');
   }
 
   openPieMenuSelector(pieMenuSelectorDialog: TemplateRef<any>) {
     this.dialogService.open(pieMenuSelectorDialog, {
-      context: db.pieMenu.where('id').noneOf(this.profile.pieMenus).toArray(),
+      context: PieletteDBHelper.pieMenu.where('id').noneOf(this.profile.pieMenus).toArray(),
     });
   }
 
@@ -84,7 +84,7 @@ export class ProfileEditorComponent {
     if (this.profile.pieMenus.includes(id)) {
       return;
     }
-    db.profile.update(this.profile, {pieMenus: [...this.profile.pieMenus, id]});
+    PieletteDBHelper.profile.update(this.profile, {pieMenus: [...this.profile.pieMenus, id]});
   }
 
   async addMissingExeClicked() {
@@ -93,12 +93,12 @@ export class ProfileEditorComponent {
 
     window.log.info('User selected exe ' + path);
 
-    db.profile.update(this.profile, {exes: [...this.profile.exes, path]});
+    PieletteDBHelper.profile.update(this.profile, {exes: [...this.profile.exes, path]});
 
   }
 
   removeExecutableVersion($event: string) {
-    db.profile.update(this.profile, {exes: this.profile.exes.filter((exe) => exe !== $event)});
+    PieletteDBHelper.profile.update(this.profile, {exes: this.profile.exes.filter((exe) => exe !== $event)});
   }
 }
 

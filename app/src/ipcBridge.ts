@@ -1,6 +1,6 @@
 import {app, ipcMain, dialog} from "electron";
 import * as child_process from "child_process";
-import {ahpSettings} from "./data/settings/AHPSettings";
+import {PieletteSettings} from "./data/settings/PieletteSettings";
 import * as activeWindow from "active-win";
 import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
 import {ReadonlyWindowDetails} from "./data/appWindow/WindowDetails";
@@ -75,7 +75,7 @@ export function initElectronAPI() {
   });
   ipcMain.handle('getSetting', (event, args) => {
     // args[0] = settingKey
-    const value = ahpSettings.get(args[0]);
+    const value = PieletteSettings.get(args[0]);
 
     Log.main.info("Retrieving setting " + args[0] + ", value is " + value + "");
 
@@ -83,7 +83,7 @@ export function initElectronAPI() {
   });
   ipcMain.handle('setSetting', (event, args) => {
     Log.main.info("Setting " + args[0] + " to " + args[1] + "");
-    return ahpSettings.set(args[0], args[1]);
+    return PieletteSettings.set(args[0], args[1]);
   });
   ipcMain.handle('openDialogForResult', (event, args) => {
     // args[0] = default path

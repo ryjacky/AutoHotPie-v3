@@ -4,14 +4,14 @@ import * as Store from "electron-store";
 import {KeyEvent, RespondType} from "mousekeyhook.js";
 import {AHPEnv} from "pielette-core/lib/AHPEnv";
 
-interface AHPSettingsSchema {
+interface IPieletteSettingSchema {
   pieMenuCancelKey: string;
   runOnStartup: boolean;
   runOnAppQuit: boolean;
   plugins: string[];
 }
 
-const schema: Schema<AHPSettingsSchema> = {
+const PieletteSettingSchema: Schema<IPieletteSettingSchema> = {
   pieMenuCancelKey: {
     type: 'string',
     default: JSON.stringify(new KeyEvent(RespondType.MOUSE_DOWN, 'Escape'))
@@ -45,8 +45,8 @@ app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
  * ahpSettings.set('', [value]) will set the value of the key
  * Details could be found here: https://github.com/sindresorhus/electron-store#readme
  */
-export const ahpSettings = new Store<AHPSettingsSchema>({
-  schema, migrations: {
+export const PieletteSettings = new Store<IPieletteSettingSchema>({
+  schema: PieletteSettingSchema, migrations: {
     '3.0.2': (store) => {
       store.set('pieMenuCancelKey', JSON.stringify(new KeyEvent(RespondType.KEY_DOWN, 'Escape')));
     }
