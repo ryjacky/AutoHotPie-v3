@@ -1,8 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SendKeyAction} from '../../../../app/src/actions/SendKeyAction';
-import {Action} from '../../../../app/src/actions/Action';
-import {ActionType} from '../../../../app/src/actions/ActionType';
-import {PluginProperties} from 'autohotpie-core';
+import {PluginProperties} from 'pielette-core';
+import {ActionDelegate} from '../../../../app/src/actions/ActionDelegate';
 
 @Component({
   selector: 'app-action-card',
@@ -10,17 +8,15 @@ import {PluginProperties} from 'autohotpie-core';
   styleUrls: ['./action-card.component.scss']
 })
 export class ActionCardComponent implements OnInit {
-  @Input() action: Action = new SendKeyAction('a');
+  @Input() actionDelegate: ActionDelegate = new ActionDelegate('ahp-send-key', {});
   pluginPropertyList: PluginProperties[] = [];
   selectedPluginPropertyIndex = -1;
-
-  protected readonly actionType = ActionType;
 
   ngOnInit(): void {
     window.electronAPI.getDetailedActionList().then((pluginPropertyList: string[]) => {
       this.pluginPropertyList = pluginPropertyList.map((pluginProperty: string) => JSON.parse(pluginProperty) as PluginProperties);
 
-      window.log.info(JSON.stringify(this.pluginPropertyList[0].parameters));
+      window.log.info(`List of parameters: ${JSON.stringify(this.pluginPropertyList[0].parameters)}`);
     });
   }
 }

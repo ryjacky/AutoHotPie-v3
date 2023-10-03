@@ -1,6 +1,7 @@
-import {PieMenu} from '../../../../app/src/userData/PieMenu';
-import {PieItem} from '../../../../app/src/userData/PieItem';
-import {Action} from '../../../../app/src/actions/Action';
+import {PieMenu} from '../../../../app/src/db/data/PieMenu';
+import {PieItem} from '../../../../app/src/db/data/PieItem';
+import {PieletteDBHelper} from '../../../../app/src/db/PieletteDB';
+import {ActionDelegate} from '../../../../app/src/actions/ActionDelegate';
 // singleton
 export class PieMenuStateManager {
   private static manager: PieMenuStateManager;
@@ -54,11 +55,11 @@ export class PieMenuState {
   ) {
   }
 
-  public getPieItemActions(id: number): Action[] {
+  public getPieItemActions(id: number): ActionDelegate[] {
     return this.pieItems.get(id)?.actions ?? [];
   }
 
-  public setPieItemActions(id: number, actions: Action[]) {
+  public setPieItemActions(id: number, actions: ActionDelegate[]) {
     if (this.pieItems.get(id) === undefined) {
       return;
     }
@@ -66,5 +67,14 @@ export class PieMenuState {
     // this.pieItems.get(id)?.actions must not be undefined
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     this.pieItems.get(id)!.actions = actions;
+  }
+
+  public save() {
+    window.log.debug('Saving pie menu state: ' + JSON.stringify(this));
+    PieletteDBHelper.pieMenu.update(this.pieMenu.id ?? -1, {pieItems: this.pieMenu.pieItemIds});
+
+    for (const pieItem of this.pieItems.values()) {
+      PieletteDBHelper.pieItem.put(pieItem, pieItem.id);
+    }
   }
 }

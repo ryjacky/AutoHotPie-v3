@@ -1,18 +1,24 @@
-import {app, BrowserWindow, Menu, Tray} from 'electron';
+import {app, BrowserWindow, Menu, screen, Tray} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
 import {EditorConstants} from "./src/constants/EditorConstants";
-import {getGHotkeyServiceInstance, KeyEvent} from "mousekeyhook.js";
-import {AHPEnv} from "autohotpie-core/lib/AHPEnv";
-import {Log} from "autohotpie-core";
-import {AHPPluginManager} from "./src/plugin/AHPPluginManager";
+import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
+import {AHPEnv} from "pielette-core/lib/AHPEnv";
+import {Log} from "pielette-core";
+import {AHPAddonManager} from "./src/plugin/AHPAddonManager";
+import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
+import {EditorWindow} from "./src/pieletteWindows/EditorWindow";
 
 // Variables
-let pieMenuWindow: BrowserWindow | undefined;
-let editorWindow: BrowserWindow | undefined;
+let pieMenuWindow: PieMenuWindow | undefined;
+let editorWindow: EditorWindow | undefined;
 app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
 
+export let pieMenuDisabled = false;
+let primaryScreenWidth = 0;
+let primaryScreenHeight = 0;
+let pieMenuHidden = true;
 let tray = null;
 
 // Initialization
@@ -22,15 +28,33 @@ initElectronWindows();
 initElectronAPI();
 initLoggerForRenderer();
 initSystemTray();
-AHPPluginManager.loadPlugins();
+AHPAddonManager.loadPlugins();
 
 // Functions
-function initGlobalHotkeyService() {
+export function initGlobalHotkeyService() {
+  if (isGHotkeyServiceRunning()) return;
+
   Log.main.info('Initializing global hotkey service');
 
   getGHotkeyServiceInstance().onHotkeyEvent.push(
     (event: KeyEvent) => {
-      Log.main.debug('onKeyEvent - ' + event.type + ' ' + event.value);
+      Log.main.debug('onKeyEvent - ' + event.type + ' ' + event.value)
+
+      switch (event.type) {
+        case RespondType.KEY_DOWN:
+          //TODO: Get listened hotkeys
+          if (event.value.trim() === 'None+A') {
+            Log.main.debug('Key down event received, showing pie menu');
+            pieMenuWindow?.show();
+          }
+          break;
+        case RespondType.KEY_UP:
+          Log.main.debug('Key up event received, closing pie menu');
+          if (!pieMenuHidden) {
+            pieMenuWindow?.webContents.send('closePieMenuRequested');
+          }
+          break;
+      }
     });
   getGHotkeyServiceInstance().onProcessExit = (() => {
     Log.main.debug('Global hotkey service exited.');
@@ -63,75 +87,20 @@ function initElectronWindows() {
 }
 
 function createWindow(): BrowserWindow {
-  editorWindow = new BrowserWindow({
-    minWidth: EditorConstants.WINDOW_WIDTH,
-    minHeight: EditorConstants.WINDOW_HEIGHT,
-    width: EditorConstants.WINDOW_WIDTH,
-    height: EditorConstants.WINDOW_HEIGHT,
-    // TODO: Uncomment the following line for release build
-    // titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#2f3241',
-      symbolColor: '#74b1be',
+  pieMenuWindow = new PieMenuWindow();
+  editorWindow = new EditorWindow();
 
-      // !!! IMPORTANT !!!
-      // --title-bar-height should also be updated in styles.scss when you change the height
-      height: 42
-    },
-    webPreferences: {
-      nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,  // false if you want to run e2e test with Spectron
-    },
-  });
-  // Path when running electron executable
-  let editorWindowPath = './index.html';
-
-  if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-    // Path when running electron in local folder
-    editorWindowPath = '../dist/index.html';
-  }
-
-  const editorWindowURL = new URL(path.join('file:', __dirname, editorWindowPath));
-  editorWindow.loadURL(editorWindowURL.href);
-
-  // ------------ Create Editor Window End ------------
-
-  pieMenuWindow = new BrowserWindow({
-    // transparent: true,
-    // frame: false,
-    // fullscreen: true,
-    // resizable: false,
-    webPreferences: {
-      nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,  // false if you want to run e2e test with Spectron
-    },
-  });
-
-  // Path when running electron executable
-  let pieMenuPath = './index.html#pieMenuUI';
-
-  if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-    // Path when running electron in local folder
-    pieMenuPath = '../dist/index.html#pieMenuUI';
-  }
-
-  const pieMenuURL = new URL(path.join('file:', __dirname, pieMenuPath));
-
-  // TODO: Remove the following line for production build
-  pieMenuWindow.loadURL(pieMenuURL.href);
-
-  editorWindow.on('close', (event) => {
-    event.preventDefault();
-    editorWindow?.hide();
-  });
 
   return editorWindow;
 }
 
 function initSystemTray() {
   app.whenReady().then(() => {
+    // Get screen size
+    const { screen } = require('electron')
+    primaryScreenWidth = screen.getPrimaryDisplay().bounds.width;
+    primaryScreenHeight = screen.getPrimaryDisplay().bounds.height;
+
     tray = new Tray(__dirname + '/assets/favicon.ico')
     const contextMenu = Menu.buildFromTemplate([
       {label: 'AutoHotPie', type: "normal", enabled: false},
@@ -162,4 +131,16 @@ function initSystemTray() {
     tray.setToolTip('Pie menyuuus!')
     tray.setContextMenu(contextMenu)
   })
+}
+
+
+export function disablePieMenu() {
+  pieMenuWindow?.disable();
+}
+export function enablePieMenu() {
+  pieMenuWindow?.enable();
+}
+
+export function hidePieMenu() {
+  pieMenuWindow?.hide();
 }

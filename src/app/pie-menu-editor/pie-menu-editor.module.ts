@@ -17,6 +17,7 @@ import { ActionCardComponent } from './action-card/action-card.component';
 import {SharedModule} from '../shared/shared.module';
 import {CdkDrag, CdkDropList} from '@angular/cdk/drag-drop';
 import { WorkAreaComponent } from './work-area-component/work-area.component';
+import {PieMenuUIModule} from '../pie-menu-ui/pie-menu-ui.module';
 
 @NgModule({
   declarations: [
@@ -25,26 +26,27 @@ import { WorkAreaComponent } from './work-area-component/work-area.component';
     ActionCardComponent,
     WorkAreaComponent
   ],
-  imports: [
-    CommonModule,
-    TranslateModule,
-    NbListModule,
-    NbToggleModule,
-    NbButtonModule,
-    NbIconModule,
-    RouterLink,
-    NbSelectModule,
-    NbFormFieldModule,
-    NbInputModule,
-    SharedModule,
-    NbButtonGroupModule,
-    NbRadioModule,
-    NbCheckboxModule,
-    NbCardModule,
-    NbTabsetModule,
-    CdkDropList,
-    CdkDrag,
-    NbTagModule
-  ]
+    imports: [
+        CommonModule,
+        TranslateModule,
+        NbListModule,
+        NbToggleModule,
+        NbButtonModule,
+        NbIconModule,
+        RouterLink,
+        NbSelectModule,
+        NbFormFieldModule,
+        NbInputModule,
+        SharedModule,
+        NbButtonGroupModule,
+        NbRadioModule,
+        NbCheckboxModule,
+        NbCardModule,
+        NbTabsetModule,
+        CdkDropList,
+        CdkDrag,
+        NbTagModule,
+        PieMenuUIModule
+    ]
 })
 export class PieMenuEditorModule { }

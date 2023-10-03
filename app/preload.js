@@ -5,6 +5,8 @@ console.log("preload.js is loaded")
 // !!! IMPORTANT !!!
 // Also declare the API you want to expose in typings.d.ts
 contextBridge.exposeInMainWorld('electronAPI', {
+  disablePieMenu: () => ipcRenderer.invoke('disablePieMenu'),
+  enablePieMenu: () => ipcRenderer.invoke('enablePieMenu'),
   openInBrowser: (url) => ipcRenderer.invoke('openInBrowser', [url]),
   isUpdateAvailable: () => ipcRenderer.invoke('isUpdateAvailable'),
   getForegroundApplication: () => ipcRenderer.invoke('getForegroundApplication'),
@@ -12,12 +14,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   listenKeyForResult: (ignoredKeys) => ipcRenderer.invoke('listenKeyForResult', [ignoredKeys]),
   getVersion: () => ipcRenderer.invoke('getVersion'),
   globalHotkeyServiceExited: (callback) => ipcRenderer.on('globalHotkeyServiceExited', callback),
+  closePieMenuRequested: (callback) => ipcRenderer.on('closePieMenuRequested', callback),
   getSetting: (settingName) => ipcRenderer.invoke('getSetting', [settingName]),
   setSetting: (settingName, value) => ipcRenderer.invoke('setSetting', [settingName, value]),
   openDialogForResult: (defaultPath) => ipcRenderer.invoke('openDialogForResult', [defaultPath]),
   getActionList: () => ipcRenderer.invoke('getActionList'),
   getDetailedActionList: () => ipcRenderer.invoke('getDetailedActionList'),
   getFileIcon: (path) => ipcRenderer.sendSync('getFileIcon', [path]),
+  runActions: (actionListJson) => ipcRenderer.invoke('runActions', [actionListJson]),
 })
 
 contextBridge.exposeInMainWorld('log', {

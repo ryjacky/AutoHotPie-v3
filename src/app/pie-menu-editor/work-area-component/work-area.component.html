@@ -3,6 +3,7 @@
        style=" background: var(--accordion-header-disabled-text-color); border-radius: 1em; padding: 0.5em 1em;">
     <label
       style="margin: 0; color: var(--button-ghost-basic-text-color);">{{"PAGES.EDITOR.PREVIEW" | translate}}</label>
+    <app-pie-buttons [editorMode]="true" (activePieItemId)="activePieItemId = $event"></app-pie-buttons>
   </div>
 
   <div class="growM">
@@ -14,10 +15,10 @@
       <nb-tab tabTitle="Actions" style="margin-top: 1em;">
         <div style="padding-right: 5px; display: flex; flex-direction: column; align-items: center;">
 
-          <div *ngFor="let action of pieMenuState.pieItems.get(this.selectedPieItemId ?? -1)?.actions; let i = index"
+          <div *ngFor="let action of pieMenuState.pieItems.get(this.activePieItemId ?? -1)?.actions; let i = index"
                style="display: flex; flex-direction: column; flex-wrap: nowrap; align-content: flex-start; justify-content: flex-start; align-items: center; ">
             <div style="display: flex">
-              <app-action-card [action]="action" style="height: fit-content"></app-action-card>
+              <app-action-card [actionDelegate]="action" style="height: fit-content"></app-action-card>
               <div style="display: flex; flex-direction: column; margin-left: 0.5em;">
                 <button
                   (click)="moveUp(i)"
@@ -26,7 +27,7 @@
                 </button>
                 <button
                   (click)="moveDown(i)"
-                  *ngIf="i !== pieMenuState.getPieItemActions(this.selectedPieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
+                  *ngIf="i !== pieMenuState.getPieItemActions(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
                   style="margin-bottom: 2px;">
                   <nb-icon icon="arrow-downward-outline"/>
                 </button>

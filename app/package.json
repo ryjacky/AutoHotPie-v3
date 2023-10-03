@@ -1,10 +1,10 @@
 {
-  "name": "autohotpie",
+  "name": "pielette",
   "version": "3.0.0",
   "description": "",
-  "homepage": "https://github.com/dumbeau/AutoHotPie",
+  "homepage": "https://github.com/ryjacky/Pielette",
   "author": {
-    "name": "dumbeau"
+    "name": "ryjacky"
   },
   "license": "MIT",
   "keywords": [
@@ -16,7 +16,7 @@
     "mousekeyhook.js": "0.1.6-development",
     "active-win": "8.1.0",
     "electron-store": "8.1.0",
-    "autohotpie-core": "0.0.18"
+    "pielette-core": "0.0.22"
   }
 
 }

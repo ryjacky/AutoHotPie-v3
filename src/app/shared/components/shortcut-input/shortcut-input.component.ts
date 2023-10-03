@@ -20,7 +20,7 @@ export class ShortcutInputComponent {
   }
 
   listenSingleKeyShortcut() {
-    window.electronAPI.listenKeyForResult([]).then((key: string) => {
+    window.electronAPI.listenKeyForResult([])?.then((key: string) => {
       this.hotkey = key;
       window.log.info('Updating hotkey to ' + this.hotkey);
       this.hotkeyChange.emit(this.hotkey);
@@ -45,7 +45,7 @@ export class ShortcutInputComponent {
       'RShiftKey',
       'LControlKey',
       'RControlKey',
-      'ControlKey']).then((key: string) => {
+      'ControlKey'])?.then((key: string) => {
 
       if (key.trim() === 'None+Back' || key.trim() === 'None+Delete') {
         this.hotkey = '';

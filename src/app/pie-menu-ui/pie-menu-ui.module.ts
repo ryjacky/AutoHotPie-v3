@@ -4,22 +4,24 @@ import {PieMenuUIComponent} from './pie-menu-ui.component';
 import {NbButtonModule, NbLayoutModule} from '@nebular/theme';
 import {RouterOutlet} from '@angular/router';
 import {PieMenuUIRoutingModule} from './pie-menu-ui-routing-module';
-// import {PieCenterButtonComponent} from './pie-center-button/pie-center-button.component';
-// import { PieGuidingLineComponent } from './pie-guiding-line/pie-guiding-line.component';
-
+import { PieGuidingLineComponent } from './pie-guiding-line/pie-guiding-line.component';
+import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
   declarations: [
     PieMenuUIComponent,
-    // PieCenterButtonComponent,
-    // PieGuidingLineComponent
+    PieGuidingLineComponent,
+  ],
+  exports: [
+    PieMenuUIComponent,
   ],
   imports: [
     CommonModule,
     NbLayoutModule,
     PieMenuUIRoutingModule,
     NbButtonModule,
-    RouterOutlet
+    RouterOutlet,
+    SharedModule
   ]
 })
 export class PieMenuUIModule { }

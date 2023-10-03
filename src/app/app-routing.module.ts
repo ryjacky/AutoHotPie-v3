@@ -2,16 +2,16 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PageNotFoundComponent } from './shared/components';
 
-import { HomeRoutingModule } from './home/home-routing.module';
+import { HomeRoutingModule } from './editor/home/home-routing.module';
 import { DetailRoutingModule } from './detail/detail-routing.module';
 
 // Please keep the following line. It is not certain where this is being used
 // but the program will crash without this import
 import {PieMenuEditorModule} from './pie-menu-editor/pie-menu-editor.module';
-import {SettingsComponent} from './settings/settings.component';
-import {SettingsModule} from './settings/settings.module';
-import {HelpAndAboutComponent} from './help-and-about/help-and-about.component';
-import {HelpAndAboutModule} from './help-and-about/help-and-about.module';
+import {SettingsComponent} from './editor/settings/settings.component';
+import {SettingsModule} from './editor/settings/settings.module';
+import {HelpAndAboutComponent} from './editor/help-and-about/help-and-about.component';
+import {HelpAndAboutModule} from './editor/help-and-about/help-and-about.module';
 import {PieMenuEditorRoutingModule} from './pie-menu-editor/pie-menu-editor-routing.module';
 import {PieMenuUIRoutingModule} from './pie-menu-ui/pie-menu-ui-routing-module';
 

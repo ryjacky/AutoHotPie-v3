@@ -19,8 +19,10 @@ interface Window {
   };
   electronAPI: {
     getActionList: () => Promise<number[]>;
+    runActions: (actionListJson: string) => void;
     getDetailedActionList: () => Promise<string[]>;
     openInBrowser: (url: string) => void;
+    closePieMenuRequested: (callback: () => void) => void;
     isUpdateAvailable: () => Promise<boolean>;
     openDialogForResult: (defaultPath: string) => Promise<string>;
     getFileIcon: (path: string) => Promise<string>;
@@ -39,7 +41,7 @@ interface Window {
      */
     toggleService: (serviceActive: boolean) => Promise<boolean>;
 
-    listenKeyForResult: (ignoredKeys: string[]) => Promise<string>;
+    listenKeyForResult: (ignoredKeys: string[]) => Promise<string> | undefined;
 
     globalHotkeyServiceExited: (callback: () => void) => void;
 
@@ -47,5 +49,7 @@ interface Window {
 
     getSetting: (settingName: string) => Promise<any>;
     setSetting: (settingName: string, value: any) => any;
+    disablePieMenu: () => void;
+    enablePieMenu: () => void;
   };
 }

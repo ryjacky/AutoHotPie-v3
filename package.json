@@ -1,10 +1,10 @@
 {
-  "name": "autohotpie",
+  "name": "pielette",
   "version": "3.0.1",
   "description": "",
-  "homepage": "https://github.com/dumbeau/AutoHotPie",
+  "homepage": "https://github.com/ryjacky/Pielette",
   "author": {
-    "name": "dumbeau"
+    "name": "ryjacky"
   },
   "license": "MIT",
   "keywords": [
@@ -50,16 +50,14 @@
     "@nebular/eva-icons": "11.0.0",
     "@nebular/theme": "11.0.0",
     "active-win": "8.1.0",
-    "autohotpie-core": "0.0.18",
+    "pielette-core": "0.0.22",
     "angular-ui-tree": "2.22.6",
     "dexie": "3.2.4",
     "electron-store": "8.1.0",
     "eva-icons": "^1.1.3",
     "hotkeys-js": "^3.10.2",
-    "konva": "9.2.0",
     "live-plugin-manager": "0.18.1",
     "mousekeyhook.js": "0.1.6-development",
-    "ng2-konva": "6.0.0",
     "ngx-colors": "3.5.2",
     "rxjs": "7.8.1",
     "tslib": "^2.5.0",

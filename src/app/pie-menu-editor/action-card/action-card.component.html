@@ -2,11 +2,11 @@
   class="action-card">
 
   <div class="setting-row">
-    <nb-select placeholder="Action" [(selected)]="action.type" size="small">
+    <nb-select placeholder="Action" [(selected)]="actionDelegate.pluginId" size="small">
       <nb-option
         *ngFor="let pluginProperty of pluginPropertyList; let i = index"
         (selectionChange)="selectedPluginPropertyIndex = i"
-        [value]="pluginProperty.name">{{pluginProperty.name}}</nb-option>
+        [value]="pluginProperty.id">{{pluginProperty.name}}</nb-option>
 
     </nb-select>
     <nb-form-field>
@@ -31,91 +31,14 @@
         nbInput
         fullWidth
         placeholder="{{ 'PAGES.EDITOR.TEXT_PLACEHOLDER' | translate }}"
-        style="resize: vertical; margin-left: 1em; max-height: 10em;"></textarea>
+        style="resize: vertical; margin-left: 1em; max-height: 10em;"
+        [value]="actionDelegate.parameters[(param.name)]"
+        (change)="actionDelegate.parameters[param.name] = $event"></textarea>
       <app-shortcut-input
-        *ngIf="param.type === 'hotkeys'"></app-shortcut-input>
+        *ngIf="param.type === 'hotkeys'"
+        [hotkey]="actionDelegate.parameters[(param.name)]"
+        (hotkeyChange)="actionDelegate.parameters[(param.name)] = $event"></app-shortcut-input>
     </div>
   </div>
-
-  <div *ngIf="action.type === actionType.sendkey" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <app-shortcut-input></app-shortcut-input>
-    </div>
-  </div>
-  <div *ngIf="action.type === actionType.sendtext" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <textarea nbInput fullWidth placeholder="{{ 'PAGES.EDITOR.TEXT_PLACEHOLDER' | translate }}"
-                style="resize: vertical; margin-left: 1em; max-height: 10em;"></textarea>
-    </div>
-  </div>
-  <div *ngIf="action.type === actionType.mouseclick" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <nb-radio-group style="width: 70%">
-        <nb-radio value="Left">{{ "PAGES.EDITOR.LEFT" | translate }}</nb-radio>
-        <nb-radio value="Middle">{{ "PAGES.EDITOR.MIDDLE" | translate }}</nb-radio>
-        <nb-radio value="Right">{{ "PAGES.EDITOR.RIGHT" | translate }}</nb-radio>
-      </nb-radio-group>
-
-    </div>
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <nb-checkbox>Ctrl</nb-checkbox>
-      <nb-checkbox>Alt</nb-checkbox>
-      <nb-checkbox>Shift</nb-checkbox>
-
-    </div>
-  </div>
-  <div *ngIf="action.type === actionType.command" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <input nbInput fullWidth placeholder="{{ 'PAGES.EDITOR.COMMAND_PLACEHOLDER' | translate }}"
-             style="resize: vertical; margin-left: 1em">
-    </div>
-  </div>
-  <div *ngIf="action.type === actionType.openfolder" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <input nbInput fullWidth placeholder="{{ 'PAGES.EDITOR.FILE_PATH_PLACEHOLDER' | translate }}"
-             style="resize: vertical; margin-left: 1em">
-    </div>
-    <button nbButton fullWidth="true" status="primary"
-            style="margin-top: 1em">{{ 'PAGES.EDITOR.SELECT' | translate }}</button>
-  </div>
-  <div *ngIf="action.type === actionType.submenu" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.DROP_PIE_MENU' | translate }}
-    </div>
-    <nb-card style="width: 100%; height: 80%; margin-top: 1em;">
-      <nb-card-body style="width: 100%; height: 100%">
-      </nb-card-body>
-    </nb-card>
-  </div>
-  <div *ngIf="action.type === actionType.resizewindow" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      This action has no options
-    </div>
-  </div>
-  <div *ngIf="action.type === actionType.movewindow" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      This action has no options
-    </div>
-  </div>
-  <div *ngIf="action.type === actionType.openurl" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <input nbInput fullWidth placeholder="{{ 'PAGES.EDITOR.OPENURL_PLACEHOLDER' | translate }}"
-             style="resize: vertical; margin-left: 1em">
-    </div>
-  </div>
-  <div *ngIf="action.type === actionType.switchapp" style="width: 100%">
-    <div class="setting-row" style="margin-top: 1em">
-      {{ 'PAGES.EDITOR.SHORTCUTS' | translate }}
-      <app-shortcut-input></app-shortcut-input>
-    </div>
-  </div>
-
 </div>
 
