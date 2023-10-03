@@ -92,3 +92,5 @@ Thumbs.db
 /app/src/data/appWindow/WindowDetails.js
 /app/src/data/actions/ActionDelegate.js
 /app/src/plugin/AHPAddonManager.js
+/app/src/data/settings/PieletteSettings.js
+/app/src/controller/pieletteWindows/PieMenuWindow.js
