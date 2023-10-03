@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -17,7 +16,7 @@ import {PieletteDBHelper} from '../../../../../app/src/data/userData/PieletteDB'
   templateUrl: './pie-buttons.component.html',
   styleUrls: ['./pie-buttons.component.scss']
 })
-export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
+export class PieButtonsComponent implements OnInit, OnChanges {
   @Input() pieMenuId = 1;
   @Input() ringRadius = 20;
   @Input() ringWidth = 10;
@@ -41,21 +40,23 @@ export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
   ngOnInit() {
     this.updatePieItem().then(() => {
       this.drawCenterSector();
+      this.drawCenter();
+
       this.activeBtnIndex = 0;
       this.activePieItemId.emit(this.pieItems[0]?.id);
     });
+
+    window.onresize = () => {
+      this.centerX = this.pieMenuContainer.nativeElement.offsetWidth / 2;
+      this.centerY = this.pieMenuContainer.nativeElement.offsetHeight / 2;
+
+      window.log.debug(`Pie menu window resized, updating center position`);
+    };
 
     window.electronAPI.closePieMenuRequested(() => {
       window.log.debug('Received closePieMenuRequested event');
       this.runActions();
     });
-  }
-
-  ngAfterViewInit() {
-    this.drawCenter();
-
-    this.centerX = this.pieMenuContainer.nativeElement.offsetWidth / 2;
-    this.centerY = this.pieMenuContainer.nativeElement.offsetHeight / 2;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -84,9 +85,7 @@ export class PieButtonsComponent implements AfterViewInit, OnInit, OnChanges {
     }
 
     // Note: You NEED basic trigonometry and knowledge of math notations for the following code to make sense
-    const containerPtrX = event.clientX - this.pieMenuContainer.nativeElement.offsetLeft;
-    const containerPtrY = event.clientY - this.pieMenuContainer.nativeElement.offsetTop;
-    this.centerRotation = Math.atan2(containerPtrY - this.centerY, containerPtrX - this.centerX);
+    this.centerRotation = Math.atan2(event.clientY - this.centerY, event.clientX - this.centerX);
 
     this.activeBtnIndex =
       ((Math.floor((

@@ -7,9 +7,10 @@ import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondTyp
 import {AHPEnv} from "pielette-core/lib/AHPEnv";
 import {Log} from "pielette-core";
 import {AHPAddonManager} from "./src/plugin/AHPAddonManager";
+import {PieMenuWindow} from "./src/controller/pieletteWindows/PieMenuWindow";
 
 // Variables
-let pieMenuWindow: BrowserWindow | undefined;
+let pieMenuWindow: PieMenuWindow | undefined;
 let editorWindow: BrowserWindow | undefined;
 app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
 
@@ -43,7 +44,7 @@ export function initGlobalHotkeyService() {
           //TODO: Get listened hotkeys
           if (event.value.trim() === 'None+A') {
             Log.main.debug('Key down event received, showing pie menu');
-            showPieMenuAtCursor();
+            pieMenuWindow?.show();
           }
           break;
         case RespondType.KEY_UP:
@@ -85,6 +86,7 @@ function initElectronWindows() {
 }
 
 function createWindow(): BrowserWindow {
+  pieMenuWindow = new PieMenuWindow();
   editorWindow = new BrowserWindow({
     minWidth: EditorConstants.WINDOW_WIDTH,
     minHeight: EditorConstants.WINDOW_HEIGHT,
@@ -123,39 +125,6 @@ function createWindow(): BrowserWindow {
   });
 
   return editorWindow;
-}
-
-function createPieMenuWindow(): void {
-  // ------------ Create Editor Window End ------------
-
-  pieMenuWindow = new BrowserWindow({
-    transparent: true,
-    frame: false,
-    alwaysOnTop: true,
-    resizable: false,
-    webPreferences: {
-      nodeIntegration: false,
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,  // false if you want to run e2e test with Spectron
-    },
-  });
-
-  // Path when running electron executable
-  let pieMenuPath = './index.html#pieMenuUI';
-
-  if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
-    // Path when running electron in local folder
-    pieMenuPath = '../dist/index.html#pieMenuUI';
-  }
-
-  const pieMenuURL = new URL(path.join('file:', __dirname, pieMenuPath));
-
-  pieMenuWindow.loadURL(pieMenuURL.href);
-
-  pieMenuWindow.on('close', (event) => {
-    event.preventDefault();
-    hidePieMenu();
-  });
 }
 
 function initSystemTray() {
@@ -197,37 +166,14 @@ function initSystemTray() {
   })
 }
 
-function showPieMenuAtCursor() {
-  if (pieMenuDisabled) {return;}
-  if (!pieMenuWindow) {createPieMenuWindow();}
 
-  if (pieMenuHidden) {
-    pieMenuHidden = false;
-
-    const {screen} = require('electron')
-
-    pieMenuWindow?.setBounds({
-      width: primaryScreenWidth,
-      height: primaryScreenHeight,
-      x: screen.getCursorScreenPoint().x - primaryScreenWidth / 2,
-      y: screen.getCursorScreenPoint().y - primaryScreenHeight / 2
-    })
-    pieMenuWindow?.show();
-
-    Log.main.debug(screen.getCursorScreenPoint());
-  }
+export function disablePieMenu() {
+  pieMenuWindow?.disable();
+}
+export function enablePieMenu() {
+  pieMenuWindow?.enable();
 }
 
 export function hidePieMenu() {
-  if (!pieMenuHidden) {
-    pieMenuHidden = true;
-    pieMenuWindow?.hide();
-  }
-}
-
-export function disablePieMenu() {
-  pieMenuDisabled = true;
-}
-export function enablePieMenu() {
-  pieMenuDisabled = false;
+  pieMenuWindow?.hide();
 }

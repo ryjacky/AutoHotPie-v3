@@ -1,7 +1,6 @@
 import {ActionPlugin, Log, PluginProperties, PluginType} from "pielette-core";
 import {PluginManager} from "live-plugin-manager";
 import {PieletteSettings} from "../data/settings/PieletteSettings";
-import {deprecate} from "util";
 import {ActionDelegate} from "../data/actions/ActionDelegate";
 
 export class AHPAddonManager {
