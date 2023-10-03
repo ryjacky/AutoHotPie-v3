@@ -49,5 +49,7 @@ interface Window {
 
     getSetting: (settingName: string) => Promise<any>;
     setSetting: (settingName: string, value: any) => any;
+    disablePieMenu: () => void;
+    enablePieMenu: () => void;
   };
 }

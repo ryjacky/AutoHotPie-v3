@@ -1,10 +1,10 @@
 {
-  "name": "autohotpie",
+  "name": "pielette",
   "version": "3.0.1",
   "description": "",
-  "homepage": "https://github.com/dumbeau/AutoHotPie",
+  "homepage": "https://github.com/ryjacky/Pielette",
   "author": {
-    "name": "dumbeau"
+    "name": "ryjacky"
   },
   "license": "MIT",
   "keywords": [

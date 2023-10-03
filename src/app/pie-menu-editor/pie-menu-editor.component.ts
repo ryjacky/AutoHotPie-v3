@@ -23,6 +23,7 @@ export class PieMenuEditorComponent {
 
     window.log.debug('Pie Menu Editor is opening pie menu of id: ' + this.pieMenuId);
 
+    window.electronAPI.disablePieMenu();
     this.loadWorkArea(this.pieMenuId);
   }
 
@@ -56,6 +57,7 @@ export class PieMenuEditorComponent {
 
   clearState() {
     PieMenuStateManager.instance.clearPieMenuStates();
+    window.electronAPI.enablePieMenu();
   }
 
   savePieMenuState() {

@@ -7,7 +7,7 @@ import {ReadonlyWindowDetails} from "./data/appWindow/WindowDetails";
 import {Log} from "pielette-core";
 import {AHPAddonManager} from "./plugin/AHPAddonManager";
 import {ActionDelegate} from "./data/actions/ActionDelegate";
-import {hidePieMenu, initGlobalHotkeyService} from "../main";
+import {disablePieMenu, enablePieMenu, hidePieMenu, initGlobalHotkeyService} from "../main";
 
 /**
  * Sets up IPC listeners for the main process,
@@ -98,6 +98,8 @@ export function initElectronAPI() {
 
     return actionList;
   });
+  ipcMain.handle('disablePieMenu', () => disablePieMenu());
+  ipcMain.handle('enablePieMenu', () => enablePieMenu());
   ipcMain.handle('getDetailedActionList', () => {
 
     const detailedActionList: string[] = [];

@@ -19,7 +19,7 @@ export class ActionCardComponent implements OnInit {
     window.electronAPI.getDetailedActionList().then((pluginPropertyList: string[]) => {
       this.pluginPropertyList = pluginPropertyList.map((pluginProperty: string) => JSON.parse(pluginProperty) as PluginProperties);
 
-      window.log.info(JSON.stringify(this.pluginPropertyList[0].parameters));
+      window.log.info(`List of parameters: ${JSON.stringify(this.pluginPropertyList[0].parameters)}`);
     });
   }
 }

@@ -5,6 +5,8 @@ console.log("preload.js is loaded")
 // !!! IMPORTANT !!!
 // Also declare the API you want to expose in typings.d.ts
 contextBridge.exposeInMainWorld('electronAPI', {
+  disablePieMenu: () => ipcRenderer.invoke('disablePieMenu'),
+  enablePieMenu: () => ipcRenderer.invoke('enablePieMenu'),
   openInBrowser: (url) => ipcRenderer.invoke('openInBrowser', [url]),
   isUpdateAvailable: () => ipcRenderer.invoke('isUpdateAvailable'),
   getForegroundApplication: () => ipcRenderer.invoke('getForegroundApplication'),

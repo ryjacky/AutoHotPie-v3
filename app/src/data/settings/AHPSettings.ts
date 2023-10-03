@@ -31,7 +31,7 @@ const schema: Schema<AHPSettingsSchema> = {
     },
     default: [
       'ahp-action-send-text',
-      'ahp-action-send-keys'
+      'ahp-action-send-keys',
     ]
   }
 };

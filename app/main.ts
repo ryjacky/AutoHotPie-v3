@@ -13,6 +13,7 @@ let pieMenuWindow: BrowserWindow | undefined;
 let editorWindow: BrowserWindow | undefined;
 app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
 
+export let pieMenuDisabled = false;
 let primaryScreenWidth = 0;
 let primaryScreenHeight = 0;
 let pieMenuHidden = true;
@@ -40,11 +41,16 @@ export function initGlobalHotkeyService() {
       switch (event.type) {
         case RespondType.KEY_DOWN:
           //TODO: Get listened hotkeys
-          showPieMenuAtCursor();
+          if (event.value.trim() === 'None+A') {
+            Log.main.debug('Key down event received, showing pie menu');
+            showPieMenuAtCursor();
+          }
           break;
         case RespondType.KEY_UP:
           Log.main.debug('Key up event received, closing pie menu');
-          pieMenuWindow?.webContents.send('closePieMenuRequested');
+          if (!pieMenuHidden) {
+            pieMenuWindow?.webContents.send('closePieMenuRequested');
+          }
           break;
       }
     });
@@ -148,8 +154,7 @@ function createPieMenuWindow(): void {
 
   pieMenuWindow.on('close', (event) => {
     event.preventDefault();
-    pieMenuWindow?.hide();
-    pieMenuHidden = true;
+    hidePieMenu();
   });
 }
 
@@ -193,6 +198,7 @@ function initSystemTray() {
 }
 
 function showPieMenuAtCursor() {
+  if (pieMenuDisabled) {return;}
   if (!pieMenuWindow) {createPieMenuWindow();}
 
   if (pieMenuHidden) {
@@ -217,4 +223,11 @@ export function hidePieMenu() {
     pieMenuHidden = true;
     pieMenuWindow?.hide();
   }
+}
+
+export function disablePieMenu() {
+  pieMenuDisabled = true;
+}
+export function enablePieMenu() {
+  pieMenuDisabled = false;
 }
