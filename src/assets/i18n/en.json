@@ -36,6 +36,7 @@
       "PREVIEW": "Preview",
       "PROP": "Properties",
       "SAVE": "Save",
+      "CURRENTLY_EDITING": "Currently editing: ",
       "ESCAPE_RADIUS": "Escape radius",
       "SHORTCUTS": "Shortcuts"
     },

@@ -19,8 +19,6 @@ export class AppComponent {
 
   version = '0.0.0';
 
-  protected readonly nbPosition = NbPosition;
-
   constructor(
     private router: Router,
     private electronService: ElectronService,
@@ -44,6 +42,10 @@ export class AppComponent {
     } else {
       window.log.info('Run in browser');
     }
+  }
+
+  get editingPieMenuId(): number {
+    return Number(new URLSearchParams(this.router.url.substring(this.router.url.indexOf('?'))).get('pieMenuId') ?? '0');
   }
 
   async initAppdata() {
@@ -88,5 +90,7 @@ export class AppComponent {
     return this.router.url === '/pieMenuUI';
   }
 
-
+  isPieMenuEditor() {
+    return this.router.url.includes('/pie-menu-editor');
+  }
 }

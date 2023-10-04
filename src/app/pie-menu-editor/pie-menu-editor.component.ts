@@ -4,6 +4,7 @@ import {PieletteDBHelper} from '../../../app/src/db/PieletteDB';
 import {PieItem} from '../../../app/src/db/data/PieItem';
 import {PieTaskContext} from '../../../app/src/actions/PieTaskContext';
 import {PieMenu} from '../../../app/src/db/data/PieMenu';
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-pie-menu-editor',
@@ -18,16 +19,10 @@ export class PieMenuEditorComponent {
   pieMenuState: PieMenuState = new PieMenuState(new PieMenu(), new Map<number, PieItem>());
   activePieItemId: number | undefined;
 
-  constructor() {
+  constructor(private toastr: ToastrService) {
     this.pieMenuId = parseInt(new URL(window.location.href.replace('#/', '')).searchParams.get('pieMenuId') ?? '0', 10);
 
     window.log.debug('Pie Menu Editor is opening pie menu of id: ' + this.pieMenuId);
-
-    // TODO: Get back the save button
-    window.onclick = () => {
-      this.pieMenuState.save();
-      window.log.debug('Pie menu state saved');
-    };
 
     this.loadWorkArea(this.pieMenuId);
   }
@@ -115,5 +110,12 @@ export class PieMenuEditorComponent {
     }
 
     return true;
+  }
+
+  save() {
+    if (!this.isStateOperable()) { return; }
+
+    this.pieMenuState.save();
+    this.toastr.success('', 'Saved!', {timeOut: 1000, positionClass: 'toast-bottom-right'});
   }
 }

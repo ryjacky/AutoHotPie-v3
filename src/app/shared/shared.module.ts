@@ -11,9 +11,10 @@ import {NbButtonModule, NbIconModule, NbInputModule, NbPopoverModule} from '@neb
 import {PieButtonsComponent} from './components/pie-buttons/pie-buttons.component';
 import {TitlebarComponent} from './components/titlebar/titlebar.component';
 import {RouterLink} from '@angular/router';
+import { EditorTitlebarComponent } from './components/editor-titlebar/editor-titlebar.component';
 
 @NgModule({
-  declarations: [PageNotFoundComponent, WebviewDirective, ShortcutInputComponent, PieButtonsComponent, TitlebarComponent],
+  declarations: [PageNotFoundComponent, WebviewDirective, ShortcutInputComponent, PieButtonsComponent, TitlebarComponent, EditorTitlebarComponent],
   imports: [
     CommonModule,
     TranslateModule,
@@ -24,7 +25,7 @@ import {RouterLink} from '@angular/router';
     NbButtonModule,
     NbIconModule,
     NgOptimizedImage],
-  exports: [TranslateModule, WebviewDirective, FormsModule, ShortcutInputComponent, PieButtonsComponent, TitlebarComponent]
+  exports: [TranslateModule, WebviewDirective, FormsModule, ShortcutInputComponent, PieButtonsComponent, TitlebarComponent, EditorTitlebarComponent]
 })
 export class SharedModule {
 }
