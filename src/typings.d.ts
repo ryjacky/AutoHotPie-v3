@@ -18,9 +18,9 @@ interface Window {
     fatal: (message: string) => void;
   };
   electronAPI: {
-    getActionList: () => Promise<number[]>;
-    runActions: (actionListJson: string) => void;
-    getDetailedActionList: () => Promise<string[]>;
+    openPieMenuEditor: (pieMenuId: number) => void;
+    runPieTasks: (pieTasksJSON: string) => void;
+    getPieTaskAddonHeaders: () => Promise<string[]>;
     openInBrowser: (url: string) => void;
     closePieMenuRequested: (callback: () => void) => void;
     isUpdateAvailable: () => Promise<boolean>;

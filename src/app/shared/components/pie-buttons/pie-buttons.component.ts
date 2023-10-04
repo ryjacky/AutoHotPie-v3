@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -16,7 +17,7 @@ import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
   templateUrl: './pie-buttons.component.html',
   styleUrls: ['./pie-buttons.component.scss']
 })
-export class PieButtonsComponent implements OnInit, OnChanges {
+export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() pieMenuId = 1;
   @Input() ringRadius = 20;
   @Input() ringWidth = 10;
@@ -55,8 +56,13 @@ export class PieButtonsComponent implements OnInit, OnChanges {
 
     window.electronAPI.closePieMenuRequested(() => {
       window.log.debug('Received closePieMenuRequested event');
-      this.runActions();
+      this.runPieTasks();
     });
+  }
+
+  ngAfterViewInit() {
+    this.centerX = this.pieMenuContainer.nativeElement.offsetWidth / 2;
+    this.centerY = this.pieMenuContainer.nativeElement.offsetHeight / 2;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -67,16 +73,16 @@ export class PieButtonsComponent implements OnInit, OnChanges {
 
   onButtonClicked(index: number) {
     if (!this.editorMode) {
-      this.runActions();
+      this.runPieTasks();
     } else {
       this.activeBtnIndex = index;
       this.activePieItemId.emit(this.pieItems[index]?.id);
     }
   }
 
-  runActions() {
-    window.log.debug(`Calling runActions() with ${JSON.stringify(this.pieItems[this.activeBtnIndex]?.actions)}`);
-    window.electronAPI.runActions(JSON.stringify(this.pieItems[this.activeBtnIndex]?.actions ?? []));
+  runPieTasks() {
+    window.log.debug(`Calling runPieTasks() with ${JSON.stringify(this.pieItems[this.activeBtnIndex]?.pieTaskContexts)}`);
+    window.electronAPI.runPieTasks(JSON.stringify(this.pieItems[this.activeBtnIndex]?.pieTaskContexts ?? []));
   }
 
   onPointerMove(event: PointerEvent) {

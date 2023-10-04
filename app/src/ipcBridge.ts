@@ -5,15 +5,21 @@ import * as activeWindow from "active-win";
 import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
 import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
 import {Log} from "pielette-core";
-import {AHPAddonManager} from "./plugin/AHPAddonManager";
-import {ActionDelegate} from "./actions/ActionDelegate";
+import {PieletteAddonManager} from "./plugin/PieletteAddonManager";
+import {PieTaskContext} from "./actions/PieTaskContext";
 import {disablePieMenu, enablePieMenu, hidePieMenu, initGlobalHotkeyService} from "../main";
+import {PieEditorWindow} from "./pieletteWindows/PieEditorWindow";
 
 /**
  * Sets up IPC listeners for the main process,
  * see typings.d.ts for the list of available listeners and its documentation
  * */
 export function initElectronAPI() {
+  ipcMain.handle('openPieMenuEditor', (event, args) => {
+    // args[0] = pieMenuId
+    Log.main.info("Opening pie menu editor for pie menu " + args[0] + "");
+    new PieEditorWindow(args[0]);
+  });
   ipcMain.handle('openInBrowser', (event, args) => {
     Log.main.info("Opening " + args[0] + " in (default) browser");
     child_process.execSync('start ' + args[0]);
@@ -58,15 +64,15 @@ export function initElectronAPI() {
       return true;
     }
   });
-  ipcMain.handle('runActions', (event, args) => {
+  ipcMain.handle('runPieTasks', (event, args) => {
     hidePieMenu();
 
     // args[0] = actionListJson
-    let actionDelegates = JSON.parse(args[0]) as ActionDelegate[];
-    for (let actionDelegate of actionDelegates) {
-      Log.main.debug(`Running action ${actionDelegate.pluginId} with parameters ${actionDelegate.parameters}`)
+    let contexts = JSON.parse(args[0]) as PieTaskContext[];
+    for (let context of contexts) {
+      Log.main.debug(`Running action ${context.addonId} with parameters ${JSON.stringify(context.args)}`)
 
-      AHPAddonManager.runAction(actionDelegate);
+      PieletteAddonManager.runPieTasks(context);
     }
   });
   ipcMain.handle('getVersion', () => {
@@ -87,34 +93,32 @@ export function initElectronAPI() {
   });
   ipcMain.handle('openDialogForResult', (event, args) => {
     // args[0] = default path
-    return dialog.showOpenDialogSync({defaultPath: args[0], filters: [{name: "Executables", extensions: ["exe"]}], properties: ['openFile'] })
-  });
-  ipcMain.handle('getActionList', () => {
-
-    const actionList: string[] = [];
-    for (const actionPlugin of AHPAddonManager.getActionPlugins()) {
-      actionList.push(actionPlugin.properties.name);
-    }
-
-    return actionList;
+    return dialog.showOpenDialogSync({
+      defaultPath: args[0],
+      filters: [{name: "Executables", extensions: ["exe"]}],
+      properties: ['openFile']
+    })
   });
   ipcMain.handle('disablePieMenu', () => disablePieMenu());
   ipcMain.handle('enablePieMenu', () => enablePieMenu());
-  ipcMain.handle('getDetailedActionList', () => {
+  ipcMain.handle('getPieTaskAddonHeaders', () => {
 
-    const detailedActionList: string[] = [];
-    for (const actionPlugin of AHPAddonManager.getActionPlugins()) {
-      detailedActionList.push(JSON.stringify(actionPlugin.properties));
+    const pieTaskAddonHeaderJSONArr: string[] = [];
+    for (const pieTaskAddonHeader of PieletteAddonManager.headerObject) {
+      pieTaskAddonHeaderJSONArr.push(JSON.stringify(pieTaskAddonHeader));
     }
 
-    return detailedActionList;
+    return pieTaskAddonHeaderJSONArr;
   });
   ipcMain.handle('listenKeyForResult', (event, args) => {
     // args[0] = ignoredKeys
-    if (!isGHotkeyServiceRunning()) { return; }
+    if (!isGHotkeyServiceRunning()) {
+      return;
+    }
 
     return new Promise(resolve => {
       Log.main.info("Listening for valid hotkey once");
+      disablePieMenu();
 
       const listener = (event: KeyEvent) => {
         if (event.type === RespondType.KEY_DOWN
@@ -122,6 +126,7 @@ export function initElectronAPI() {
 
           getGHotkeyServiceInstance().removeTempKeyListener();
           Log.main.info("Hotkey " + event.value + " is pressed");
+          enablePieMenu();
           resolve(event.value);
         }
       }

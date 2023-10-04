@@ -2,7 +2,7 @@ import {Schema} from "electron-store";
 import {app} from "electron";
 import * as Store from "electron-store";
 import {KeyEvent, RespondType} from "mousekeyhook.js";
-import {AHPEnv} from "pielette-core/lib/AHPEnv";
+import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 
 interface IPieletteSettingSchema {
   pieMenuCancelKey: string;
@@ -30,15 +30,14 @@ const PieletteSettingSchema: Schema<IPieletteSettingSchema> = {
       type: 'string'
     },
     default: [
-      'ahp-action-send-text',
-      'ahp-action-send-keys',
+      'pielette-addon-sendkeys',
     ]
   }
 };
 
 // Set the path of the settings file to be in the db folder of AHPv3
 // This is to ensure the path is correct no matter when ahpSettings is initialized
-app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
+app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);
 
 /**
  * ahpSettings.get('') will return the value of the key

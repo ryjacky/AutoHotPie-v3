@@ -8,8 +8,8 @@ export class PieMenuWindow extends BrowserWindow {
   private readonly prefix = '../../';
   constructor() {
     super({
-      transparent: false,
-      frame: true,
+      transparent: true,
+      frame: false,
       alwaysOnTop: true,
       resizable: false,
       webPreferences: {
@@ -44,6 +44,10 @@ export class PieMenuWindow extends BrowserWindow {
       event.preventDefault();
       this.hide();
     });
+  }
+
+  isHidden() {
+    return this.hidden;
   }
 
   hide() {

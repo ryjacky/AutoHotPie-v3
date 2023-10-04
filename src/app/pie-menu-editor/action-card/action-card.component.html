@@ -2,11 +2,11 @@
   class="action-card">
 
   <div class="setting-row">
-    <nb-select placeholder="Action" [(selected)]="actionDelegate.pluginId" size="small">
+    <nb-select placeholder="Action" [(selected)]="pieTaskContext.addonId" size="small">
       <nb-option
-        *ngFor="let pluginProperty of pluginPropertyList; let i = index"
+        *ngFor="let augmentedAddonHeader of augmentedAddonHeaders; let i = index"
         (selectionChange)="selectedPluginPropertyIndex = i"
-        [value]="pluginProperty.id">{{pluginProperty.name}}</nb-option>
+        [value]="augmentedAddonHeader.id">{{augmentedAddonHeader.header.displayName}}</nb-option>
 
     </nb-select>
     <nb-form-field>
@@ -21,23 +21,38 @@
     [style.width]="'100%'"
   >
     <div
-      *ngFor="let param of pluginPropertyList[selectedPluginPropertyIndex].parameters"
+      *ngFor="let param of augmentedAddonHeaders[selectedPluginPropertyIndex].header.receiveArgs"
       class="setting-row"
       style="margin-top: 1em"
     >
-      {{ param.name }}
+      {{ param.argName }}
       <textarea
-        *ngIf="param.type === 'string'"
+        *ngIf="param.fieldType === 'text'"
         nbInput
         fullWidth
         placeholder="{{ 'PAGES.EDITOR.TEXT_PLACEHOLDER' | translate }}"
         style="resize: vertical; margin-left: 1em; max-height: 10em;"
-        [value]="actionDelegate.parameters[(param.name)]"
-        (change)="actionDelegate.parameters[param.name] = $event"></textarea>
+        [value]="pieTaskContext.args[(param.argName)]"
+        (change)="updateArgs(param.argName, $event)"></textarea>
+
+      <nb-form-field *ngIf="param.fieldType === 'number'">
+        <nb-icon nbPrefix icon="repeat-outline" pack="eva"></nb-icon>
+        <input
+          type="number"
+          value="1"
+          fullWidth
+          nbInput
+          fieldSize="small"
+          style="padding-right: 0.5em"
+          [value]="pieTaskContext.args[(param.argName)]"
+          (change)="updateArgs(param.argName, $event)"
+        >
+      </nb-form-field>
+
       <app-shortcut-input
-        *ngIf="param.type === 'hotkeys'"
-        [hotkey]="actionDelegate.parameters[(param.name)]"
-        (hotkeyChange)="actionDelegate.parameters[(param.name)] = $event"></app-shortcut-input>
+        *ngIf="param.fieldType === 'hotkeys'"
+        [hotkey]="pieTaskContext.args[(param.argName)]"
+        (hotkeyChange)="pieTaskContext.args[(param.argName)] = $event"></app-shortcut-input>
     </div>
   </div>
 </div>

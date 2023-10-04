@@ -91,4 +91,9 @@ export class PieMenuListRowComponent implements OnInit {
       window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') changed to ' + newHotkey);
     }
   }
+
+  openPieMenuEditor(pieMenuId?: number) {
+    if (pieMenuId === undefined) { return; }
+    window.electronAPI.openPieMenuEditor(pieMenuId);
+  }
 }
