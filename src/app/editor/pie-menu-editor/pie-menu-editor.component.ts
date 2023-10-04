@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PieMenuState} from './state/PieMenuState';
-import {PieletteDBHelper} from '../../../app/src/db/PieletteDB';
-import {PieItem} from '../../../app/src/db/data/PieItem';
-import {PieTaskContext} from '../../../app/src/actions/PieTaskContext';
-import {PieMenu} from '../../../app/src/db/data/PieMenu';
+import {PieletteDBHelper} from '../../../../app/src/db/PieletteDB';
+import {PieItem} from '../../../../app/src/db/data/PieItem';
+import {PieTaskContext} from '../../../../app/src/actions/PieTaskContext';
+import {PieMenu} from '../../../../app/src/db/data/PieMenu';
 import {ToastrService} from "ngx-toastr";
 
 @Component({

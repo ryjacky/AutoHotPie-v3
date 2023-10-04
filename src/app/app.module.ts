@@ -12,7 +12,6 @@ import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 import {HomeModule} from './editor/home/home.module';
-import {DetailModule} from './detail/detail.module';
 
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -41,7 +40,6 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     SharedModule,
     HomeModule,
     PieMenuUIModule,
-    DetailModule,
     AppRoutingModule,
     TranslateModule.forRoot({
       loader: {

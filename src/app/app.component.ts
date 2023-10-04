@@ -86,11 +86,11 @@ export class AppComponent {
     window.log.info('App data loaded');
   }
 
-  isPieMenu() {
-    return this.router.url === '/pieMenuUI';
-  }
-
   isPieMenuEditor() {
     return this.router.url.includes('/pie-menu-editor');
+  }
+
+  showHeader() {
+    return this.router.url !== '/pieMenuUI' && this.router.url !== '/splash-screen';
   }
 }

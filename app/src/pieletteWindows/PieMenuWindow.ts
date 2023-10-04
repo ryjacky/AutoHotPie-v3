@@ -8,7 +8,7 @@ export class PieMenuWindow extends BrowserWindow {
   private readonly prefix = '../../';
   constructor() {
     super({
-      transparent: true,
+      transparent: false,
       frame: false,
       alwaysOnTop: true,
       resizable: false,
@@ -70,6 +70,7 @@ export class PieMenuWindow extends BrowserWindow {
       this.setBounds({
         width: primaryScreenWidth,
         height: primaryScreenHeight,
+        // TODO: Does not work with digital pen when the cursor is on top of any chromium window
         x: screen.getCursorScreenPoint().x - primaryScreenWidth / 2,
         y: screen.getCursorScreenPoint().y - primaryScreenHeight / 2
       })

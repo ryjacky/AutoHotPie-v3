@@ -1,13 +1,13 @@
 <!-- The Following element is the header bar -->
 
 <nb-layout>
-  <nb-layout-header *ngIf="!isPieMenu()">
+  <nb-layout-header *ngIf="showHeader()">
     <app-titlebar *ngIf="!isPieMenuEditor()"></app-titlebar>
     <app-editor-titlebar *ngIf="isPieMenuEditor()" [pieMenuId]="editingPieMenuId"></app-editor-titlebar>
   </nb-layout-header>
   <nb-layout-column
     style="padding: 0 0 0 0;"
-    [style.background]="isPieMenu() ? 'transparent' : 'var(--layout-background-color)'" >
+    [style.background]="!showHeader() ? 'transparent' : 'var(--layout-background-color)'" >
     <router-outlet ></router-outlet>
 
   </nb-layout-column>

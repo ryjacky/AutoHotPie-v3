@@ -1,19 +1,17 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { PageNotFoundComponent } from './shared/components';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {PageNotFoundComponent} from './shared/components';
 
-import { HomeRoutingModule } from './editor/home/home-routing.module';
-import { DetailRoutingModule } from './detail/detail-routing.module';
+import {HomeRoutingModule} from './editor/home/home-routing.module';
 
-// Please keep the following line. It is not certain where this is being used
-// but the program will crash without this import
-import {PieMenuEditorModule} from './pie-menu-editor/pie-menu-editor.module';
+import {PieMenuEditorModule} from './editor/pie-menu-editor/pie-menu-editor.module';
 import {SettingsComponent} from './editor/settings/settings.component';
 import {SettingsModule} from './editor/settings/settings.module';
 import {HelpAndAboutComponent} from './editor/help-and-about/help-and-about.component';
 import {HelpAndAboutModule} from './editor/help-and-about/help-and-about.module';
-import {PieMenuEditorRoutingModule} from './pie-menu-editor/pie-menu-editor-routing.module';
+import {PieMenuEditorRoutingModule} from './editor/pie-menu-editor/pie-menu-editor-routing.module';
 import {PieMenuUIRoutingModule} from './pie-menu-ui/pie-menu-ui-routing-module';
+import {SplashScreenRoutingModule} from './splash-screen/splash-screen-routing.module';
 
 const routes: Routes = [
   {
@@ -40,14 +38,12 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, {useHash: true}),
     HomeRoutingModule,
-    DetailRoutingModule,
     PieMenuEditorRoutingModule,
     PieMenuUIRoutingModule,
     SettingsModule,
     HelpAndAboutModule,
-
-    // This import is not really used but to keep the IDE acknowledge
-    // to not remove this import
+    SplashScreenRoutingModule,
+    // The following must be kept, otherwise the app will not work (I have no idea why)
     PieMenuEditorModule
   ],
   exports: [RouterModule]

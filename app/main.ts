@@ -7,6 +7,7 @@ import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
 import {EditorWindow} from "./src/pieletteWindows/EditorWindow";
 import {PieEditorWindow} from "./src/pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
+import {SplashScreenWindow} from "./src/pieletteWindows/SplashScreenWindow";
 
 // Variables
 let pieMenuWindow: PieMenuWindow | undefined;
@@ -83,6 +84,7 @@ function initElectronWindows() {
 function createWindow(): BrowserWindow {
   pieMenuWindow = new PieMenuWindow();
   editorWindow = new EditorWindow();
+  new SplashScreenWindow();
 
   new PieEditorWindow(1);
 

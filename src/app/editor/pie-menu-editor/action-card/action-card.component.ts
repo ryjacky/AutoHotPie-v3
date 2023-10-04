@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PieTaskContext} from '../../../../app/src/actions/PieTaskContext';
-import {AugmentedAddonHeader} from '../../../../app/src/plugin/AugmentedAddonHeader';
+import {PieTaskContext} from '../../../../../app/src/actions/PieTaskContext';
+import {AugmentedAddonHeader} from '../../../../../app/src/plugin/AugmentedAddonHeader';
 
 @Component({
   selector: 'app-action-card',
