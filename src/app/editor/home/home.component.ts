@@ -106,10 +106,11 @@ export class HomeComponent implements OnInit, OnChanges {
 
   clearPopover() {
     if (this.profInput !== undefined) {
-      return;
+      return '';
     }
 
     this.activeWindow = undefined;
+    return '';
   }
 
 }

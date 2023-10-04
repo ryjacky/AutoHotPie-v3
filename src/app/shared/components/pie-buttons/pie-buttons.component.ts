@@ -47,6 +47,7 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
       this.activePieItemId.emit(this.pieItems[0]?.id);
     });
 
+    // Reset the pie menu center position when the window is resized
     window.onresize = () => {
       this.centerX = this.pieMenuContainer.nativeElement.offsetWidth / 2;
       this.centerY = this.pieMenuContainer.nativeElement.offsetHeight / 2;
@@ -143,7 +144,7 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
     ctx.beginPath();
     ctx.arc(center, center, this.ringRadius, -Math.PI / this.pieItems.length, Math.PI / this.pieItems.length);
-    ctx.lineWidth = this.ringWidth;
+    ctx.lineWidth = this.ringWidth - 2;
     ctx.strokeStyle = 'green';
     ctx.stroke();
     ctx.closePath();

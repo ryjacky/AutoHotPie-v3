@@ -7,7 +7,7 @@ import {Router} from '@angular/router';
 import {NbPosition} from '@nebular/theme';
 import {PieMenu, PieMenuActivationMode} from '../../app/src/db/data/PieMenu';
 import {Profile} from '../../app/src/db/data/Profile';
-import {PieItem} from "../../app/src/db/data/PieItem";
+import {PieItem} from '../../app/src/db/data/PieItem';
 
 @Component({
   selector: 'app-root',
@@ -18,9 +18,6 @@ export class AppComponent {
   @ViewChild('icon') icon: any;
 
   version = '0.0.0';
-  activePage = 'none';
-  serviceActive = true;
-  loaded = false;
 
   protected readonly nbPosition = NbPosition;
 
@@ -47,10 +44,6 @@ export class AppComponent {
     } else {
       window.log.info('Run in browser');
     }
-
-    window.electronAPI.globalHotkeyServiceExited(() => {
-      window.log.info('Global hotkey service exited as notified by the main process');
-    });
   }
 
   async initAppdata() {
@@ -89,40 +82,10 @@ export class AppComponent {
     }
 
     window.log.info('App data loaded');
-    this.loaded = true;
-  }
-
-  setActive(emitter: string) {
-    this.activePage = this.activePage === emitter ? 'none' : emitter;
-
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-  }
-
-  toggleService() {
-    window.electronAPI.toggleService(this.serviceActive).then((serviceActive) => {
-      this.serviceActive = serviceActive;
-    });
   }
 
   isPieMenu() {
     return this.router.url === '/pieMenuUI';
-  }
-
-  openInBrowser(emitter: string) {
-    switch (emitter) {
-      case 'github':
-        window.electronAPI.openInBrowser('https://github.com/dumbeau/AutoHotPie');
-        break;
-      case 'paypal':
-        window.electronAPI.openInBrowser(
-          'https://www.paypal.com/donate?business=RBTDTCUBK4Z8S&no_recurring=1&item_name=Support+Pie+Menus+Development&currency_code=USD');
-        break;
-      case 'bug':
-        window.electronAPI.openInBrowser('https://github.com/dumbeau/AutoHotPie/issues/new');
-        break;
-    }
   }
 
 

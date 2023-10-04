@@ -1,9 +1,9 @@
-<section class="layout" [style.background-color]="'var(--background-color-solid)'" [style.height.%]="100">
+<section class="layout" style="height: calc(100% - var(--title-bar-height))">
   <div class="growL"
        style=" background: var(--accordion-header-disabled-text-color); border-radius: 1em; padding: 0.5em 1em;">
     <label
       style="margin: 0; color: var(--button-ghost-basic-text-color);">{{"PAGES.EDITOR.PREVIEW" | translate}}</label>
-    <app-pie-buttons [editorMode]="true" (activePieItemId)="activePieItemId = $event"></app-pie-buttons>
+    <app-pie-buttons [editorMode]="true" (activePieItemId)="activePieItemId = $event" [pieMenuId]="pieMenuId"></app-pie-buttons>
   </div>
 
   <div class="growM">

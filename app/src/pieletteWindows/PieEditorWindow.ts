@@ -11,15 +11,15 @@ export class PieEditorWindow extends BrowserWindow {
       minHeight: EditorConstants.WINDOW_HEIGHT,
       width: EditorConstants.WINDOW_WIDTH,
       height: EditorConstants.WINDOW_HEIGHT,
-      // TODO: Uncomment the following line for release build
-      // titleBarStyle: 'hidden',
+      titleBarStyle: 'hidden',
       titleBarOverlay: {
-        color: '#2f3241',
+        color: '#1f2122',
         symbolColor: '#74b1be',
 
         // !!! IMPORTANT !!!
         // --title-bar-height should also be updated in styles.scss when you change the height
-        height: 42
+        // 2px is subtracted from the height because of the border
+        height: 42 - 2
       },
       webPreferences: {
         nodeIntegration: false,
