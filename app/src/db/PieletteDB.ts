@@ -3,7 +3,13 @@ import {PieItem} from "./data/PieItem";
 import {PieMenu} from "./data/PieMenu";
 import {Profile} from "./data/Profile";
 
-export class PieletteDB extends Dexie {
+export interface IPieletteDB {
+  pieItem: Table<PieItem>;
+  pieMenu: Table<PieMenu>;
+  profile: Table<Profile>;
+}
+
+export class PieletteDB extends Dexie implements IPieletteDB {
   pieItem!: Table<PieItem>;
   pieMenu!: Table<PieMenu>;
   profile!: Table<Profile>;

@@ -1,6 +1,6 @@
 import {PluginManager} from "live-plugin-manager";
 import {PieletteSettings} from "../settings/PieletteSettings";
-import {PieTaskContext} from "../actions/PieTaskContext";
+import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
 import {IAddonHeader, Log, PieTaskAddon} from "pielette-core";
 import {AugmentedAddonHeader} from "./AugmentedAddonHeader";
 
@@ -11,7 +11,7 @@ export class PieletteAddonManager {
   private static readonly pieTask: Map<string, PieTaskAddon> = new Map<string, PieTaskAddon>();
   private static readonly header: Map<string, IAddonHeader> = new Map<string, IAddonHeader>();
 
-  static runPieTasks(context: PieTaskContext): void {
+  static runPieTasks(context: PieSingleTaskContext): void {
     // So somehow if you put a breakpoint here, the get result is empty, but it actually contains the object.
     PieletteAddonManager.pieTask.get(context.addonId)?.onExecuted(context.args);
   }

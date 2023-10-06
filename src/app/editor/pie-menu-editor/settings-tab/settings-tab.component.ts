@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {PieMenuService} from '../../../core/services/pieMenu/pie-menu.service';
 
 @Component({
   selector: 'app-settings-tab',
@@ -7,8 +8,13 @@ import { Component } from '@angular/core';
 })
 export class SettingsTabComponent {
   selectionColor: any;
+  pieMenuService: PieMenuService;
 
+  constructor(pieMenuService: PieMenuService) {
+    this.pieMenuService = pieMenuService;
+    this.selectionColor = pieMenuService.selectionColor;
+  }
   updatePieMenu() {
-    // TODO: UPDATE the state
+    // TODO: UPDATE the state}
   }
 }

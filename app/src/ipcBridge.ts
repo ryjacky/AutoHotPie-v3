@@ -6,7 +6,7 @@ import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondTyp
 import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "./plugin/PieletteAddonManager";
-import {PieTaskContext} from "./actions/PieTaskContext";
+import {PieSingleTaskContext} from "./actions/PieSingleTaskContext";
 import {disablePieMenu, enablePieMenu, hidePieMenu, initGlobalHotkeyService} from "../main";
 import {PieEditorWindow} from "./pieletteWindows/PieEditorWindow";
 
@@ -68,7 +68,7 @@ export function initElectronAPI() {
     hidePieMenu();
 
     // args[0] = actionListJson
-    let contexts = JSON.parse(args[0]) as PieTaskContext[];
+    let contexts = JSON.parse(args[0]) as PieSingleTaskContext[];
     for (let context of contexts) {
       Log.main.debug(`Running action ${context.addonId} with parameters ${JSON.stringify(context.args)}`)
 

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PieTaskContext} from '../../../../../app/src/actions/PieTaskContext';
+import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
 import {AugmentedAddonHeader} from '../../../../../app/src/plugin/AugmentedAddonHeader';
 
 @Component({
@@ -8,7 +8,7 @@ import {AugmentedAddonHeader} from '../../../../../app/src/plugin/AugmentedAddon
   styleUrls: ['./action-card.component.scss']
 })
 export class ActionCardComponent implements OnInit {
-  @Input() pieTaskContext: PieTaskContext = new PieTaskContext('ahp-send-key', {});
+  @Input() pieTaskContext: PieSingleTaskContext = new PieSingleTaskContext('ahp-send-key', {});
 
   augmentedAddonHeaders: AugmentedAddonHeader[] = [];
   selectedPluginPropertyIndex = -1;

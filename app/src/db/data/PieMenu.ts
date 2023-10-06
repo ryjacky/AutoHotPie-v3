@@ -5,7 +5,19 @@ export enum PieMenuActivationMode {
   CLICK = "click"
 }
 
-export class PieMenu {
+export interface IPieMenu {
+  name: string;
+  enabled: boolean;
+  activationMode: PieMenuActivationMode;
+  hotkey: string;
+  escapeRadius: number;
+  openInScreenCenter: boolean;
+  selectionColor: string;
+  pieItemIds: number[];
+  id?: number;
+}
+
+export class PieMenu implements IPieMenu {
   constructor(
     public name = "New Pie Menu",
     public enabled = true,
