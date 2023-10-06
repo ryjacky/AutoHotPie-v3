@@ -1,0 +1,14 @@
+<nb-form-field>
+  <nb-icon *ngIf="icon !== ''" nbPrefix [icon]="icon" pack="eva"></nb-icon>
+  <input
+    #inputField
+    type="number"
+    [min]="min"
+    [max]="max"
+    [value]="value"
+    [fieldSize]="fieldSize"
+    (pointerdown)="onPointerDown($event)"
+    (change)="onChange($event)"
+    nbInput
+    style="width: 5.5em; padding-right: 0.5em">
+</nb-form-field>

@@ -17,6 +17,7 @@ import { ActionCardComponent } from './action-card/action-card.component';
 import {SharedModule} from '../../shared/shared.module';
 import {CdkDrag, CdkDropList} from '@angular/cdk/drag-drop';
 import {PieMenuUIModule} from '../../pie-menu-ui/pie-menu-ui.module';
+import {NgxColorsModule} from "ngx-colors";
 
 @NgModule({
   declarations: [
@@ -24,27 +25,28 @@ import {PieMenuUIModule} from '../../pie-menu-ui/pie-menu-ui.module';
     SettingsTabComponent,
     ActionCardComponent,
   ],
-    imports: [
-        CommonModule,
-        TranslateModule,
-        NbListModule,
-        NbToggleModule,
-        NbButtonModule,
-        NbIconModule,
-        RouterLink,
-        NbSelectModule,
-        NbFormFieldModule,
-        NbInputModule,
-        SharedModule,
-        NbButtonGroupModule,
-        NbRadioModule,
-        NbCheckboxModule,
-        NbCardModule,
-        NbTabsetModule,
-        CdkDropList,
-        CdkDrag,
-        NbTagModule,
-        PieMenuUIModule
-    ]
+  imports: [
+    CommonModule,
+    TranslateModule,
+    NbListModule,
+    NbToggleModule,
+    NbButtonModule,
+    NbIconModule,
+    RouterLink,
+    NbSelectModule,
+    NbFormFieldModule,
+    NbInputModule,
+    SharedModule,
+    NbButtonGroupModule,
+    NbRadioModule,
+    NbCheckboxModule,
+    NbCardModule,
+    NbTabsetModule,
+    CdkDropList,
+    CdkDrag,
+    NbTagModule,
+    PieMenuUIModule,
+    NgxColorsModule
+  ]
 })
 export class PieMenuEditorModule { }

@@ -21,6 +21,13 @@
       "CANCEL": "Cancel"
     },
     "EDITOR": {
+      "ICON_SIZE": "Icon size",
+      "CENTER_RADIUS": "Center radius",
+      "CENTER_THICKNESS": "Center thickness",
+      "PIE_ITEM_SPREAD": "Pie item spread",
+      "PIE_ITEM_ROUNDNESS": "Pie item roundness",
+      "MAIN_COLOR": "Main color",
+      "SECONDARY_COLOR": "Secondary color",
       "ACTIONS": "Actions",
       "OPENURL_PLACEHOLDER": "URL",
       "DROP_PIE_MENU": "Drag a pie menu from the top right panel and drop it here",

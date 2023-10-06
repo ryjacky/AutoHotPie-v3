@@ -9,11 +9,8 @@
         [value]="augmentedAddonHeader.id">{{augmentedAddonHeader.header.displayName}}</nb-option>
 
     </nb-select>
-    <nb-form-field>
-      <nb-icon nbPrefix icon="repeat-outline" pack="eva"></nb-icon>
-      <input type="number" min="1" max="99" value="1" nbInput fieldSize="small"
-             style="width: 5.5em; padding-right: 0.5em">
-    </nb-form-field>
+
+    <app-number-slider-field icon="repeat-outline" [min]="1" [max]="99" [value]="1"></app-number-slider-field>
   </div>
 
   <div

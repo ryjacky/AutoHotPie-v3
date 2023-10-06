@@ -7,11 +7,12 @@ import {PageNotFoundComponent} from './components/';
 import {WebviewDirective} from './directives/';
 import {FormsModule} from '@angular/forms';
 import {ShortcutInputComponent} from './components/shortcut-input/shortcut-input.component';
-import {NbButtonModule, NbIconModule, NbInputModule, NbPopoverModule} from '@nebular/theme';
+import {NbButtonModule, NbFormFieldModule, NbIconModule, NbInputModule, NbPopoverModule} from '@nebular/theme';
 import {PieButtonsComponent} from './components/pie-buttons/pie-buttons.component';
 import {TitlebarComponent} from './components/titlebar/titlebar.component';
 import {RouterLink} from '@angular/router';
 import { EditorTitlebarComponent } from './components/editor-titlebar/editor-titlebar.component';
+import { NumberSliderFieldComponent } from './components/number-slider-field/number-slider-field.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,9 @@ import { EditorTitlebarComponent } from './components/editor-titlebar/editor-tit
     ShortcutInputComponent,
     PieButtonsComponent,
     TitlebarComponent,
-    EditorTitlebarComponent],
+    EditorTitlebarComponent,
+    NumberSliderFieldComponent,
+  ],
   imports: [
     CommonModule,
     TranslateModule,
@@ -30,14 +33,16 @@ import { EditorTitlebarComponent } from './components/editor-titlebar/editor-tit
     NbPopoverModule,
     NbButtonModule,
     NbIconModule,
-    NgOptimizedImage],
+    NgOptimizedImage,
+    NbFormFieldModule
+  ],
   exports: [TranslateModule,
     WebviewDirective,
     FormsModule,
     ShortcutInputComponent,
     PieButtonsComponent,
     TitlebarComponent,
-    EditorTitlebarComponent]
+    EditorTitlebarComponent, NumberSliderFieldComponent]
 })
 export class SharedModule {
 }

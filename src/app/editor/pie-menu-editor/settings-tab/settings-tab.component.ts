@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./settings-tab.component.scss']
 })
 export class SettingsTabComponent {
+  selectionColor: any;
 
+  updatePieMenu() {
+    // TODO: UPDATE the state
+  }
 }
