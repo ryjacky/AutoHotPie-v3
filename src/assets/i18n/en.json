@@ -83,6 +83,7 @@
       "ADD_FROM_EXISTING": "Add from existing"
     },
     "HOME": {
+      "ADD_FROM_EXISTING": "Add from existing",
       "SIDEBAR_TITLE": "Profiles",
       "CLICK_TO_SELECT_APP": "Click to select application",
       "CREATE_PROF": "Create Profile",

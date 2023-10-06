@@ -14,7 +14,13 @@ import {RouterLink} from '@angular/router';
 import { EditorTitlebarComponent } from './components/editor-titlebar/editor-titlebar.component';
 
 @NgModule({
-  declarations: [PageNotFoundComponent, WebviewDirective, ShortcutInputComponent, PieButtonsComponent, TitlebarComponent, EditorTitlebarComponent],
+  declarations: [
+    PageNotFoundComponent,
+    WebviewDirective,
+    ShortcutInputComponent,
+    PieButtonsComponent,
+    TitlebarComponent,
+    EditorTitlebarComponent],
   imports: [
     CommonModule,
     TranslateModule,
@@ -25,7 +31,13 @@ import { EditorTitlebarComponent } from './components/editor-titlebar/editor-tit
     NbButtonModule,
     NbIconModule,
     NgOptimizedImage],
-  exports: [TranslateModule, WebviewDirective, FormsModule, ShortcutInputComponent, PieButtonsComponent, TitlebarComponent, EditorTitlebarComponent]
+  exports: [TranslateModule,
+    WebviewDirective,
+    FormsModule,
+    ShortcutInputComponent,
+    PieButtonsComponent,
+    TitlebarComponent,
+    EditorTitlebarComponent]
 })
 export class SharedModule {
 }

@@ -49,6 +49,7 @@ export class AppComponent {
   }
 
   async initAppdata() {
+    //TODO: Should be put in welcome guide
     window.log.info('Initializing/Loading app data');
 
     if ((await PieletteDBHelper.profile.count()) === 0) {

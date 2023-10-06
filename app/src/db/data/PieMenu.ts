@@ -13,7 +13,7 @@ export class PieMenu {
     public hotkey = '',
     public escapeRadius = 0,
     public openInScreenCenter = false,
-    public selectionColor = '',
+    public selectionColor = '#1DAEAA',
     public pieItemIds: number[] = [],
     public id?: number
   ) {}

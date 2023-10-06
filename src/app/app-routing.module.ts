@@ -7,8 +7,6 @@ import {HomeRoutingModule} from './editor/home/home-routing.module';
 import {PieMenuEditorModule} from './editor/pie-menu-editor/pie-menu-editor.module';
 import {SettingsComponent} from './editor/settings/settings.component';
 import {SettingsModule} from './editor/settings/settings.module';
-import {HelpAndAboutComponent} from './editor/help-and-about/help-and-about.component';
-import {HelpAndAboutModule} from './editor/help-and-about/help-and-about.module';
 import {PieMenuEditorRoutingModule} from './editor/pie-menu-editor/pie-menu-editor-routing.module';
 import {PieMenuUIRoutingModule} from './pie-menu-ui/pie-menu-ui-routing-module';
 import {SplashScreenRoutingModule} from './splash-screen/splash-screen-routing.module';
@@ -24,10 +22,6 @@ const routes: Routes = [
     component: SettingsComponent
   },
   {
-    path: 'helpAndAbout',
-    component: HelpAndAboutComponent
-  },
-  {
     path: '**',
     component: PageNotFoundComponent
   }
@@ -41,7 +35,6 @@ const routes: Routes = [
     PieMenuEditorRoutingModule,
     PieMenuUIRoutingModule,
     SettingsModule,
-    HelpAndAboutModule,
     SplashScreenRoutingModule,
     // The following must be kept, otherwise the app will not work (I have no idea why)
     PieMenuEditorModule
