@@ -6,24 +6,24 @@
   <canvas
     #pieCenter
     [style.position]="'absolute'"
-    [style.left.px]="centerX - ringWidth/2 - ringRadius"
-    [style.top.px]="centerY - ringWidth/2 - ringRadius"
-    [width]="ringRadius * 2 + ringWidth"
-    [height]="ringRadius * 2 + ringWidth"></canvas>
+    [style.left.px]="centerX - centerThickness/2 - centerRadius"
+    [style.top.px]="centerY - centerThickness/2 - centerRadius"
+    [width]="centerRadius * 2 + centerThickness"
+    [height]="centerRadius * 2 + centerThickness"></canvas>
   <canvas
     #pieCenterSector
     [style.rotate]="centerRotation + 'rad'"
     [style.position]="'absolute'"
-    [style.left.px]="centerX - ringWidth/2 - ringRadius"
-    [style.top.px]="centerY - ringWidth/2 - ringRadius"
-    [width]="ringRadius * 2 + ringWidth"
-    [height]="ringRadius * 2 + ringWidth"></canvas>
+    [style.left.px]="centerX - centerThickness/2 - centerRadius"
+    [style.top.px]="centerY - centerThickness/2 - centerRadius"
+    [width]="centerRadius * 2 + centerThickness"
+    [height]="centerRadius * 2 + centerThickness"></canvas>
 
   <div
     *ngFor="let pieItem of pieItems; let i = index"
     [style.left.px]="centerX"
     [style.top.px]="centerY"
-    [style.width.px]="outerRadius"
+    [style.width.px]="pieItemSpread"
     [style.height.px]="0"
     [style.rotate]="-90 + i * 360 / pieItems.length + 'deg'"
     [style.display]="'flex'"

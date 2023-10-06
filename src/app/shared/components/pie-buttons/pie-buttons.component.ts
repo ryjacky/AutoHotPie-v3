@@ -19,9 +19,9 @@ import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 })
 export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() pieMenuId = 1;
-  @Input() ringRadius = 20;
-  @Input() ringWidth = 10;
-  @Input() outerRadius = 150;
+  @Input() centerRadius = 20;
+  @Input() centerThickness = 10;
+  @Input() pieItemSpread = 150;
   @Input() editorMode = false;
 
   @ViewChild('pieCenter') pieCenter: any;
@@ -126,11 +126,11 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   private drawCenter() {
     const ctx = this.pieCenter.nativeElement.getContext('2d');
 
-    const center = this.ringRadius + this.ringWidth / 2;
+    const center = this.centerRadius + this.centerThickness / 2;
 
     ctx.beginPath();
-    ctx.arc(center, center, this.ringRadius, 0, 2 * Math.PI);
-    ctx.lineWidth = this.ringWidth;
+    ctx.arc(center, center, this.centerRadius, 0, 2 * Math.PI);
+    ctx.lineWidth = this.centerThickness;
     ctx.strokeStyle = 'black';
     ctx.stroke();
     ctx.closePath();
@@ -138,13 +138,13 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
   private drawCenterSector() {
     const ctx = this.pieCenterSector.nativeElement.getContext('2d');
-    ctx.clearRect(0, 0, this.ringRadius * 2 + this.ringWidth, this.ringRadius * 2 + this.ringWidth);
+    ctx.clearRect(0, 0, this.centerRadius * 2 + this.centerThickness, this.centerRadius * 2 + this.centerThickness);
 
-    const center = this.ringRadius + this.ringWidth / 2;
+    const center = this.centerRadius + this.centerThickness / 2;
 
     ctx.beginPath();
-    ctx.arc(center, center, this.ringRadius, -Math.PI / this.pieItems.length, Math.PI / this.pieItems.length);
-    ctx.lineWidth = this.ringWidth - 2;
+    ctx.arc(center, center, this.centerRadius, -Math.PI / this.pieItems.length, Math.PI / this.pieItems.length);
+    ctx.lineWidth = this.centerThickness - 2;
     ctx.strokeStyle = 'green';
     ctx.stroke();
     ctx.closePath();

@@ -64,13 +64,19 @@ export class AppComponent {
       ]);
       const pieMenuId = await PieletteDBHelper.pieMenu.put(new PieMenu(
         'Default Pie Menu',
-        true,
-        PieMenuActivationMode.HOVER_OVER_THEN_RELEASE,
-        '',
-        0,
-        false,
-        '',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
         [1,2,3,4,5],
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
         1
         ));
       await PieletteDBHelper.profile.put(new Profile(

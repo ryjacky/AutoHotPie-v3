@@ -99,3 +99,4 @@ Thumbs.db
 /app/src/plugin/AugmentedAddonHeader.js
 /app/src/pieletteWindows/PieEditorWindow.js
 /app/src/actions/PieTaskContext.js
+/app/src/actions/PieSingleTaskContext.js

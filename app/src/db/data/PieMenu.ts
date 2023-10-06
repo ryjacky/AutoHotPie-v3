@@ -12,7 +12,13 @@ export interface IPieMenu {
   hotkey: string;
   escapeRadius: number;
   openInScreenCenter: boolean;
-  selectionColor: string;
+  mainColor: string;
+  secondaryColor: string;
+  iconSize: number;
+  centerRadius: number;
+  centerThickness: number;
+  pieItemSpread: number;
+  pieItemRoundness: number;
   pieItemIds: number[];
   id?: number;
 }
@@ -25,8 +31,16 @@ export class PieMenu implements IPieMenu {
     public hotkey = '',
     public escapeRadius = 0,
     public openInScreenCenter = false,
-    public selectionColor = '#1DAEAA',
+    public mainColor = '#1DAEAA',
+    public secondaryColor: string = '#1DAEAA',  // TODO: Need to be changed
     public pieItemIds: number[] = [],
+    public centerRadius: number = 20,
+    public centerThickness: number = 10,
+    public iconSize: number = 16,
+    public pieItemRoundness: number = 7,
+    public pieItemSpread: number = 150,
     public id?: number
   ) {}
+
+
 }

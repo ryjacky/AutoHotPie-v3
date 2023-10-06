@@ -44,16 +44,9 @@ export class PieMenuListRowComponent implements OnInit {
     if (this.nProfilesConnected > 1) {
       window.log.info('Duplicating pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ')');
 
-      PieletteDBHelper.pieMenu.add({
-        activationMode: this.pieMenu.activationMode,
-        enabled: this.pieMenu.enabled,
-        escapeRadius: this.pieMenu.escapeRadius,
-        hotkey: this.pieMenu.hotkey,
-        name: this.pieMenu.name + ' (copy)',
-        openInScreenCenter: this.pieMenu.openInScreenCenter,
-        pieItemIds: this.pieMenu.pieItemIds,
-        selectionColor: this.pieMenu.selectionColor
-      }).then((id) => {
+      const newPieMenu = structuredClone(this.pieMenu);
+      newPieMenu.id = undefined;
+      PieletteDBHelper.pieMenu.add(newPieMenu).then((id) => {
         this.pieMenuChange.emit({remove: this.pieMenu.id, add: id as number});
       });
     }

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IPieItem} from '../../../../../app/src/db/data/PieItem';
-import {IPieletteDB, PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
+import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
 
@@ -31,7 +31,7 @@ export class PieMenuService extends PieMenu {
     this.hotkey = pieMenu.hotkey;
     this.escapeRadius = pieMenu.escapeRadius;
     this.openInScreenCenter = pieMenu.openInScreenCenter;
-    this.selectionColor = pieMenu.selectionColor;
+    this.mainColor = pieMenu.mainColor;
     this.pieItemIds = pieMenu.pieItemIds;
 
     const pieItems = await PieletteDBHelper.pieItem.bulkGet(pieMenu.pieItemIds);

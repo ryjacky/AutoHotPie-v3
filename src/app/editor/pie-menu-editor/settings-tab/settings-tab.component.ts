@@ -12,7 +12,7 @@ export class SettingsTabComponent {
 
   constructor(pieMenuService: PieMenuService) {
     this.pieMenuService = pieMenuService;
-    this.selectionColor = pieMenuService.selectionColor;
+    this.selectionColor = pieMenuService.mainColor;
   }
   updatePieMenu() {
     // TODO: UPDATE the state}
