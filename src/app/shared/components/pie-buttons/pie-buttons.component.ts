@@ -10,6 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {PieMenuService} from '../../../core/services/pieMenu/pie-menu.service';
+import {IPieItem, PieItem} from '../../../../../app/src/db/data/PieItem';
 
 @Component({
   selector: 'app-pie-buttons',
@@ -26,9 +27,11 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Output() activePieItemId = new EventEmitter<number | undefined>();
 
+  pieItemArray: (IPieItem | undefined)[] = [];
+
   centerX = document.body.clientWidth / 2;
   centerY = document.body.clientHeight / 2;
-  activeBtnIndex = -1;
+  activeBtnIndex = 0;
   centerRotation = 0;
 
   pieMenuService: PieMenuService;
@@ -39,14 +42,6 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnInit() {
-    this.updatePieItem().then(() => {
-      this.drawCenterSector();
-      this.drawCenter();
-
-      this.activeBtnIndex = 0;
-      this.activePieItemId.emit(this.pieMenuService.pieItemArray[0]?.id);
-    });
-
     // Reset the pie menu center position when the window is resized
     window.addEventListener('resize', () => {
       this.centerX = this.pieMenuContainer.nativeElement.offsetWidth / 2;
@@ -54,17 +49,6 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
       window.log.debug(`Pie menu window resized, updating center position`);
     });
-
-    if (this.editorMode) {
-      window.addEventListener('mousemove', () => {
-        this.drawCenter();
-        this.drawCenterSector();
-      });
-      window.addEventListener('keyup', () => {
-        this.drawCenter();
-        this.drawCenterSector();
-      });
-    }
 
     window.electronAPI.closePieMenuRequested(() => {
       window.log.debug('Received closePieMenuRequested event');
@@ -75,11 +59,36 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   ngAfterViewInit() {
     this.centerX = this.pieMenuContainer.nativeElement.offsetWidth / 2;
     this.centerY = this.pieMenuContainer.nativeElement.offsetHeight / 2;
+
+    if (this.editorMode) {
+      // Pie menu only needs to be actively updated when in editor mode
+      document.body.addEventListener('mousemove', () => this.updatePieItem());
+      document.body.addEventListener('mouseup', () => this.updatePieItem());
+      document.body.addEventListener('click', () => this.updatePieItem());
+      document.body.addEventListener('pointerup', () => this.updatePieItem());
+      document.body.addEventListener('mousedown', () => this.updatePieItem());
+      document.body.addEventListener('mouseenter', () => this.updatePieItem());
+      document.body.addEventListener('mouseleave', () => this.updatePieItem());
+      document.body.addEventListener('mouseout', () => this.updatePieItem());
+      document.body.addEventListener('mouseover', () => this.updatePieItem());
+      document.body.addEventListener('wheel', () => this.updatePieItem());
+      document.body.addEventListener('contextmenu', () => this.updatePieItem());
+      document.body.addEventListener('dblclick', () => this.updatePieItem());
+      document.body.addEventListener('pointerdown', () => this.updatePieItem());
+      document.body.addEventListener('pointermove', () => this.updatePieItem());
+      document.body.addEventListener('pointercancel', () => this.updatePieItem());
+      document.body.addEventListener('pointerenter', () => this.updatePieItem());
+      document.body.addEventListener('pointerleave', () => this.updatePieItem());
+      document.body.addEventListener('gotpointercapture', () => this.updatePieItem());
+      document.body.addEventListener('lostpointercapture', () => this.updatePieItem());
+    }
+
+    this.updatePieItem();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.pieMenuId) {
-      this.updatePieItem().then(() => this.drawCenterSector());
+      this.updatePieItem();
     }
   }
 
@@ -88,12 +97,12 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
       this.runPieTasks();
     } else {
       this.activeBtnIndex = index;
-      this.activePieItemId.emit(this.pieMenuService.pieItemArray[index]?.id);
+      this.activePieItemId.emit(this.pieItemArray[index]?.id);
     }
   }
 
   runPieTasks() {
-    window.electronAPI.runPieTasks(JSON.stringify(this.pieMenuService.pieItemArray[this.activeBtnIndex]?.pieTaskContexts ?? []));
+    window.electronAPI.runPieTasks(JSON.stringify(this.pieItemArray[this.activeBtnIndex]?.pieTaskContexts ?? []));
   }
 
   onPointerMove(event: PointerEvent) {
@@ -107,11 +116,11 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
     this.activeBtnIndex =
       ((Math.floor((
             // Set 0 degree to the top and offset by half of a sector
-            ((Math.PI / 2 + this.centerRotation) + Math.PI / this.pieMenuService.pieItemArray.length)
+            ((Math.PI / 2 + this.centerRotation) + Math.PI / this.pieItemArray.length)
             // Normalize to [-a, b], abs(a) + b = 1
             / (2 * Math.PI))
           // Scale to [-c, d], abs(c) + d = pieItems.length
-          * this.pieMenuService.pieItemArray.length)
+          * this.pieItemArray.length)
 
         // ---------------------------------------------------------------------------
         // Technically speaking, assume 0 degree is at 3 o'clock,
@@ -119,15 +128,19 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
         // b and d represents a rotation of (1.5PI - PI/pieItems.length) radians clockwise
         // ---------------------------------------------------------------------------
 
-      ) + this.pieMenuService.pieItemArray.length) % this.pieMenuService.pieItemArray.length;     // Map to [0, pieItems.length)
+      ) + this.pieItemArray.length) % this.pieItemArray.length;     // Map to [0, pieItems.length)
   }
 
   async updatePieItem() {
     if (!this.editorMode) {
+      // Reloading in editor mode will stash unsaved changes
       await this.pieMenuService.load(this.pieMenuId, true);
-      this.drawCenter();
-      this.drawCenterSector();
+      window.log.debug(JSON.stringify(this.pieMenuService.pieItems.size));
     }
+
+    this.pieItemArray = Array.from(this.pieMenuService.pieItems.values());
+    this.drawCenter();
+    this.drawCenterSector();
   }
 
   drawCenter() {
@@ -163,11 +176,30 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
       center,
       center,
       this.pieMenuService.centerRadius,
-      -Math.PI / this.pieMenuService.pieItemArray.length,
-      Math.PI / this.pieMenuService.pieItemArray.length);
+      -Math.PI / this.pieItemArray.length,
+      Math.PI / this.pieItemArray.length);
     ctx.lineWidth = this.pieMenuService.centerThickness - 2;
     ctx.strokeStyle = this.pieMenuService.mainColor;
     ctx.stroke();
     ctx.closePath();
+  }
+
+  iconExists(pieItem?: PieItem) {
+    return pieItem?.iconBase64 !== undefined && pieItem?.iconBase64 !== '';
+  }
+
+  getComputedBiasedRotation(index: number) {
+    if (index % (this.pieItemArray.length/2) === 0) {
+      return 0 + 'deg';
+    }
+    return +90 - index * 360 / this.pieItemArray.length + 'deg';
+  }
+
+  getComputedSelfRotation(index: number) {
+    if (index === 0) {
+      return 90 + 'deg';
+    } else if (index === this.pieItemArray.length/2) {
+      return -90 + 'deg';
+    }
   }
 }

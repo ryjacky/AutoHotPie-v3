@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {PieSingleTaskContext} from '../../../../app/src/actions/PieSingleTaskContext';
 import {ToastrService} from 'ngx-toastr';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
+import {PieletteEnv} from 'pielette-core/lib/PieletteEnv';
 
 @Component({
   selector: 'app-pie-menu-editor',
@@ -76,4 +77,53 @@ export class PieMenuEditorComponent {
   addPieItem() {
     this.pieMenuService.addEmptyPieItem();
   }
+
+  removePieItem() {
+    if (this.pieMenuService.pieItemIds.length <= 1) {
+      this.toastr.error('', 'No! Don\'t remove the last one!', {timeOut: 1000, positionClass: 'toast-bottom-right'});
+      return;
+    }
+    this.pieMenuService.removePieItem(this.activePieItemId ?? -1);
+    this.activePieItemId = this.pieMenuService.pieItemIds[0];
+  }
+
+  setPieItemName(event: Event) {
+    const pieItem = this.pieMenuService.pieItems.get(this.activePieItemId ?? -1);
+    if (pieItem === undefined) { return; }
+
+    pieItem.name = (event.target as HTMLInputElement).value;
+  }
+
+  setPieItemIcon(event: Event) {
+    if ((event as MouseEvent).altKey){
+      this.pieMenuService.removeIconAtPieItem(this.activePieItemId ?? 0);
+    } else {
+      this.openIconSelector();
+    }
+  }
+
+  async openIconSelector() {
+    const filePath = String(await window.electronAPI.openDialogForResult(
+      '%appdata%\\Pielette\\Icons',
+      [{name: 'All', extensions: ['*']}]));
+
+    const fileName = filePath.split('\\').pop()?.split('/').pop() ?? '';
+    let icon;
+
+    if (fileName.startsWith('[eva]') && fileName.endsWith('.png')) {
+      window.log.debug('Icon is native');
+      icon = fileName.replace('.png', '');
+    } else {
+      // Seems like the file path is not a string (or maybe a "fake" string), we have to convert it to string manually
+      icon = await window.electronAPI.getFileIconBase64(filePath);
+      window.log.debug('Icon is not native');
+    }
+
+    const pieItem = this.pieMenuService.pieItems.get(this.activePieItemId ?? -1);
+    if (pieItem !== undefined){
+      pieItem.iconBase64 = icon;
+    }
+
+  }
+
 }

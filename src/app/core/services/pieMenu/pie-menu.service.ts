@@ -16,10 +16,6 @@ export class PieMenuService extends PieMenu {
     super();
   }
 
-  public get pieItemArray(): (IPieItem | undefined)[] {
-    return Array.from(this.pieItems.values());
-  }
-
   public get basePieMenu(): IPieMenu {
     const basePieMenu = new PieMenu();
     for (const pieMenuKey in basePieMenu) {
@@ -29,6 +25,22 @@ export class PieMenuService extends PieMenu {
       }
     }
     return basePieMenu;
+  }
+
+  public getPieItemNameAt(pieItemId: number): string {
+    return this.pieItems.get(pieItemId)?.name ?? '';
+  }
+
+  public isIconAtPieItemNative(pieItemId: number): boolean {
+    return (this.pieItems.get(pieItemId ?? -1)?.iconBase64 ?? '').startsWith('[eva]');
+  }
+
+  public getPieItemIconAt(pieItemId: number): string {
+    if (this.isIconAtPieItemNative(pieItemId)){
+      return (this.pieItems.get(pieItemId ?? -1)?.iconBase64 ?? '').replace('[eva]', '');
+    }
+
+    return this.pieItems.get(pieItemId ?? -1)?.iconBase64 ?? '';
   }
 
   public async addEmptyPieItem() {
@@ -62,6 +74,7 @@ export class PieMenuService extends PieMenu {
       }
     }
 
+    this.pieItems.clear();
     const pieItems = await PieletteDBHelper.pieItem.bulkGet(pieMenu.pieItemIds);
     for (let i = 0; i < pieItems.length; i++) {
       if (pieItems[i] === undefined) {
@@ -113,5 +126,18 @@ export class PieMenuService extends PieMenu {
     }
     await PieletteDBHelper.pieItem.bulkPut(nonEmptyPieItems);
 
+  }
+
+  removePieItem(pieItemId: number) {
+    this.pieItems.delete(pieItemId);
+    this.pieItemIds = this.pieItemIds.filter(id => id !== pieItemId);
+  }
+
+  removeIconAtPieItem(pieItemId: number) {
+    const pieItem = this.pieItems.get(pieItemId);
+
+    if (pieItem !== undefined) {
+      pieItem.iconBase64 = '';
+    }
   }
 }

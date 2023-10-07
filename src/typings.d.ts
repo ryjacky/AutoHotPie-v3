@@ -24,8 +24,8 @@ interface Window {
     openInBrowser: (url: string) => void;
     closePieMenuRequested: (callback: () => void) => void;
     isUpdateAvailable: () => Promise<boolean>;
-    openDialogForResult: (defaultPath: string) => Promise<string>;
-    getFileIcon: (path: string) => Promise<string>;
+    openDialogForResult: (defaultPath: string, filter: [{name: string; extensions: string[]}]) => Promise<string>;
+    getFileIconBase64: (path: string) => Promise<string>;
 
     /**
      * Returns the path to the executable and the path to the icon of the foreground application

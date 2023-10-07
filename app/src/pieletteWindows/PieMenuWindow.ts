@@ -8,7 +8,7 @@ export class PieMenuWindow extends BrowserWindow {
   private readonly prefix = '../../';
   constructor() {
     super({
-      transparent: false,
+      transparent: true,
       frame: false,
       alwaysOnTop: true,
       resizable: false,

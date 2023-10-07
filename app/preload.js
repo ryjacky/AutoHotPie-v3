@@ -17,9 +17,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   closePieMenuRequested: (callback) => ipcRenderer.on('closePieMenuRequested', callback),
   getSetting: (settingName) => ipcRenderer.invoke('getSetting', [settingName]),
   setSetting: (settingName, value) => ipcRenderer.invoke('setSetting', [settingName, value]),
-  openDialogForResult: (defaultPath) => ipcRenderer.invoke('openDialogForResult', [defaultPath]),
+  openDialogForResult: (defaultPath, filter) => ipcRenderer.invoke('openDialogForResult', [defaultPath, filter]),
   getPieTaskAddonHeaders: () => ipcRenderer.invoke('getPieTaskAddonHeaders'),
-  getFileIcon: (path) => ipcRenderer.sendSync('getFileIcon', [path]),
+  getFileIconBase64: (path) => ipcRenderer.invoke('getFileIconBase64', [path]),
   runPieTasks: (pieTasksJSON) => ipcRenderer.invoke('runPieTasks', [pieTasksJSON]),
   openPieMenuEditor: (pieMenuId) => ipcRenderer.invoke('openPieMenuEditor', [pieMenuId]),
 })

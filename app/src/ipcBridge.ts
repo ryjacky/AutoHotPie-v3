@@ -1,4 +1,4 @@
-import {app, ipcMain, dialog} from "electron";
+import {app, ipcMain, dialog, nativeImage} from "electron";
 import * as child_process from "child_process";
 import {PieletteSettings} from "./settings/PieletteSettings";
 import * as activeWindow from "active-win";
@@ -9,6 +9,7 @@ import {PieletteAddonManager} from "./plugin/PieletteAddonManager";
 import {PieSingleTaskContext} from "./actions/PieSingleTaskContext";
 import {disablePieMenu, enablePieMenu, hidePieMenu, initGlobalHotkeyService} from "../main";
 import {PieEditorWindow} from "./pieletteWindows/PieEditorWindow";
+import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 
 /**
  * Sets up IPC listeners for the main process,
@@ -50,7 +51,14 @@ export function initElectronAPI() {
     ))
   });
 
-  ipcMain.handle('getFileIcon', (event, args) => app.getFileIcon(args[0]));
+  ipcMain.handle('getFileIconBase64', async (event, args) => {
+    const filePath = args[0];
+    try {
+      return (await nativeImage.createThumbnailFromPath(filePath, {width: 32, height: 32})).toDataURL();
+    } catch (e) {
+      return (await app.getFileIcon(filePath)).toDataURL();
+    }
+  });
 
   ipcMain.handle('toggleService', (event, args) => {
     Log.main.info("Toggling Global Hotkey Service. Turning it " + (!args[0] ? "on" : "off") + "");
@@ -93,9 +101,14 @@ export function initElectronAPI() {
   });
   ipcMain.handle('openDialogForResult', (event, args) => {
     // args[0] = default path
+    // args[1] = filters
+
+    args[0] = args[0].replace("%appdata%\\Pielette\\", PieletteEnv.DEFAULT_DATA_PATH).replaceAll("/", "\\")
+    Log.main.info("Opening dialog for file selection, default path is " + args[0] + "");
+
     return dialog.showOpenDialogSync({
       defaultPath: args[0],
-      filters: [{name: "Executables", extensions: ["exe"]}],
+      filters: args[1],
       properties: ['openFile']
     })
   });

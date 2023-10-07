@@ -26,12 +26,37 @@
     </button>
     <nb-tabset [style.width.%]="100">
       <nb-tab tabTitle="Pie Item Details" style="margin-top: 1em;">
-        <div>
-          <button nbButton ghost size="tiny" style="margin-bottom: 1em;">
-            <nb-icon icon="radio-button-on-outline"></nb-icon>
+        <div style="display: flex; margin: 1em">
+          <button
+            nbTooltip="Click to add/Alt+Click to remove icon." nbTooltipPlacement="top"
+            nbButton
+            ghost
+            size="small"
+            style="border: dashed 2px;min-width: 42px;min-height: 42px;padding: 7px;max-width: 42px;max-height: 42px;"
+            (click)="setPieItemIcon($event)">
+            <nb-icon
+              *ngIf="pieMenuService.isIconAtPieItemNative(activePieItemId ?? 0)"
+              [icon]="pieMenuService.getPieItemIconAt(activePieItemId ?? 0)">
+            </nb-icon>
+            <img
+              *ngIf="!pieMenuService.isIconAtPieItemNative(activePieItemId ?? 0)"
+              [src]="pieMenuService.getPieItemIconAt(activePieItemId ?? 0)"
+              style="max-width: 25px; max-height: 25px;">
+          </button>
+          <input
+            type="text"
+            style="margin: 0 10px"
+            nbInput
+            fullWidth
+            status="basic"
+            (input)="setPieItemName($event)"
+            [value]="pieMenuService.getPieItemNameAt(activePieItemId ?? 0)"
+          >
+          <button nbButton ghost size="small" nbTooltip="Double click to remove." nbTooltipPlacement="top" nbTooltipStatus="warning" (dblclick)="removePieItem()">
+            <nb-icon icon="trash-outline"/>
           </button>
         </div>
-        <div style="height: 80vh; padding-right: 5px; display: flex; flex-direction: column; align-items: center;">
+        <div style="height: 72vh; padding-right: 5px; display: flex; flex-direction: column; align-items: center;">
 
           <div *ngFor="let pieTaskContexts of pieMenuService.getPieTaskContext(this.activePieItemId ?? -1); let i = index"
                style="display: flex; flex-direction: column; flex-wrap: nowrap; align-content: flex-start; justify-content: flex-start; align-items: center; ">

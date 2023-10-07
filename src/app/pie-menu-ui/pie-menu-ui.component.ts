@@ -8,6 +8,5 @@ import {PieMenuService} from '../core/services/pieMenu/pie-menu.service';
   providers: [PieMenuService]
 })
 export class PieMenuUIComponent {
-  @Input() editorMode = false;
   constructor() {}
 }

@@ -25,12 +25,20 @@
       <app-number-slider-field [min]="0" [max]="255" [(value)]="pieMenuService.pieItemRoundness"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
+      {{ "PAGES.EDITOR.PIE_ITEM_WIDTH" | translate }}
+      <app-number-slider-field [min]="pieMenuService.iconSize" [max]="255" [(value)]="pieMenuService.pieItemWidth"></app-number-slider-field>
+    </div>
+    <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.MAIN_COLOR" | translate }}
       <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenuService.mainColor"></ngx-colors>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.SECONDARY_COLOR" | translate }}
       <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenuService.secondaryColor"></ngx-colors>
+    </div>
+    <div class="setting-row" style="width: 100%">
+      {{ "PAGES.EDITOR.ICON_COLOR" | translate }}
+      <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenuService.iconColor"></ngx-colors>
     </div>
   </nb-list-item>
 </nb-list>

@@ -14,6 +14,7 @@ export interface IPieMenu {
   openInScreenCenter: boolean;
   mainColor: string;
   secondaryColor: string;
+  iconColor: string;
   iconSize: number;
   centerRadius: number;
   centerThickness: number;
@@ -34,6 +35,7 @@ export class PieMenu implements IPieMenu {
     public openInScreenCenter = false,
     public mainColor = '#1DAEAA',
     public secondaryColor: string = '#282828',
+    public iconColor: string = '#FFFFFF',
     public pieItemIds: number[] = [],
     public centerRadius: number = 20,
     public centerThickness: number = 10,

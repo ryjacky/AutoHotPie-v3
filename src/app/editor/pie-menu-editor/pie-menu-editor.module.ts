@@ -10,7 +10,7 @@ import {
   NbIconModule, NbInputModule,
   NbListModule, NbRadioModule,
   NbSelectModule, NbTabsetModule, NbTagModule,
-  NbToggleModule
+  NbToggleModule, NbTooltipModule
 } from '@nebular/theme';
 import {RouterLink} from '@angular/router';
 import { ActionCardComponent } from './action-card/action-card.component';
@@ -46,7 +46,8 @@ import {NgxColorsModule} from "ngx-colors";
     CdkDrag,
     NbTagModule,
     PieMenuUIModule,
-    NgxColorsModule
+    NgxColorsModule,
+    NbTooltipModule
   ]
 })
 export class PieMenuEditorModule { }
