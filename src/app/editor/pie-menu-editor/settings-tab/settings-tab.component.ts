@@ -7,14 +7,9 @@ import {PieMenuService} from '../../../core/services/pieMenu/pie-menu.service';
   styleUrls: ['./settings-tab.component.scss']
 })
 export class SettingsTabComponent {
-  selectionColor: any;
   pieMenuService: PieMenuService;
 
   constructor(pieMenuService: PieMenuService) {
     this.pieMenuService = pieMenuService;
-    this.selectionColor = pieMenuService.mainColor;
-  }
-  updatePieMenu() {
-    // TODO: UPDATE the state}
   }
 }

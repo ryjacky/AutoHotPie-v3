@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {IPieItem} from '../../../../../app/src/db/data/PieItem';
 import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
-import {PieMenu} from '../../../../../app/src/db/data/PieMenu';
+import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
 
 @Injectable()
@@ -10,6 +10,17 @@ export class PieMenuService extends PieMenu {
   private loaded = false;
   constructor() {
     super();
+  }
+
+  public get basePieMenu(): IPieMenu {
+    const basePieMenu = new PieMenu();
+    for (const pieMenuKey in basePieMenu) {
+      if (pieMenuKey in this) {
+        // @ts-ignore
+        basePieMenu[pieMenuKey] = this[pieMenuKey];
+      }
+    }
+    return basePieMenu;
   }
 
   public async load(pieMenuId: number, reload = false){
@@ -25,14 +36,15 @@ export class PieMenuService extends PieMenu {
       return;
     }
 
-    this.name = pieMenu.name;
-    this.enabled = pieMenu.enabled;
-    this.activationMode = pieMenu.activationMode;
-    this.hotkey = pieMenu.hotkey;
-    this.escapeRadius = pieMenu.escapeRadius;
-    this.openInScreenCenter = pieMenu.openInScreenCenter;
-    this.mainColor = pieMenu.mainColor;
-    this.pieItemIds = pieMenu.pieItemIds;
+    // Not using Object.assign(this, pieMenu); because we cannot guarantee
+    // that the database object has the same properties as the class,
+    // e.g. a structure change due to program update.
+    for (const pieMenuKey in pieMenu) {
+      if (pieMenuKey in this) {
+        // @ts-ignore
+        this[pieMenuKey] = pieMenu[pieMenuKey];
+      }
+    }
 
     const pieItems = await PieletteDBHelper.pieItem.bulkGet(pieMenu.pieItemIds);
     for (let i = 0; i < pieItems.length; i++) {
@@ -74,8 +86,8 @@ export class PieMenuService extends PieMenu {
       return;
     }
 
-    window.log.debug('Saving pie menu state: ' + JSON.stringify(this));
-    PieletteDBHelper.pieMenu.update(this.id ?? -1, {pieItems: this.pieItemIds});
+    window.log.debug('Saving pie menu state: ' + JSON.stringify(this.basePieMenu));
+    PieletteDBHelper.pieMenu.update(this.id ?? -1, this.basePieMenu);
 
     for (const pieItem of this.pieItems.values()) {
       if (pieItem) {

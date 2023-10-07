@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 
 @Component({
   selector: 'app-number-slider-field',
@@ -11,6 +11,8 @@ export class NumberSliderFieldComponent implements OnInit {
   @Input() value = 0;
   @Input() icon = '';
   @Input() fieldSize: 'small' | 'medium' | 'large' = 'small';
+
+  @Output() valueChange = new EventEmitter<number>();
 
   @ViewChild('inputField') inputField: any;
 
@@ -36,6 +38,7 @@ export class NumberSliderFieldComponent implements OnInit {
 
     const delta = (e.clientX - this.pointerStartX);
     this.value = Math.max(this.min, Math.min(this.max, this.prevValue + delta));
+    this.onChange(e);
   }
 
   onPointerUp() {
@@ -45,5 +48,6 @@ export class NumberSliderFieldComponent implements OnInit {
   onChange(e: Event) {
     this.value = Math.max(this.min, Math.min(this.max, Number((e.target as HTMLInputElement).value)));
     this.inputField.nativeElement.value = this.value;
+    this.valueChange.emit(this.value);
   }
 }
