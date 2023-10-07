@@ -20,6 +20,7 @@ export interface IPieMenu {
   pieItemSpread: number;
   pieItemRoundness: number;
   pieItemIds: number[];
+  pieItemWidth: number;
   id?: number;
 }
 
@@ -32,15 +33,19 @@ export class PieMenu implements IPieMenu {
     public escapeRadius = 0,
     public openInScreenCenter = false,
     public mainColor = '#1DAEAA',
-    public secondaryColor: string = '#1DAEAA',  // TODO: Need to be changed
+    public secondaryColor: string = '#282828',
     public pieItemIds: number[] = [],
     public centerRadius: number = 20,
     public centerThickness: number = 10,
+    public pieItemWidth: number = 100,
     public iconSize: number = 16,
     public pieItemRoundness: number = 7,
     public pieItemSpread: number = 150,
     public id?: number
-  ) {}
+  ) {
+    // We cannot use name parameter due to the limitation of dexie.js
+  }
+
 
 
 }

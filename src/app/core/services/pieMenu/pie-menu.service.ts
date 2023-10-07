@@ -1,15 +1,23 @@
 import {Injectable} from '@angular/core';
-import {IPieItem} from '../../../../../app/src/db/data/PieItem';
+import {IPieItem, PieItem} from '../../../../../app/src/db/data/PieItem';
 import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
 
+/**
+ * Service to load and save the pie menu state.
+ */
 @Injectable()
 export class PieMenuService extends PieMenu {
-  private pieItems = new Map<number, IPieItem | undefined>();
+  public readonly pieItems = new Map<number, IPieItem | undefined>();
   private loaded = false;
+
   constructor() {
     super();
+  }
+
+  public get pieItemArray(): (IPieItem | undefined)[] {
+    return Array.from(this.pieItems.values());
   }
 
   public get basePieMenu(): IPieMenu {
@@ -21,6 +29,14 @@ export class PieMenuService extends PieMenu {
       }
     }
     return basePieMenu;
+  }
+
+  public async addEmptyPieItem() {
+    const pieItem = new PieItem('');
+    pieItem.id = await PieletteDBHelper.pieItem.put(pieItem) as number;
+
+    this.pieItems.set(pieItem.id, pieItem);
+    this.pieItemIds.push(pieItem.id);
   }
 
   public async load(pieMenuId: number, reload = false){
@@ -80,19 +96,22 @@ export class PieMenuService extends PieMenu {
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     this.pieItems.get(id)!.pieTaskContexts = actions;
   }
-  public save() {
+  public async save() {
     if (!this.loaded) {
       window.log.warn('Cannot save pie menu state, not loaded');
       return;
     }
 
     window.log.debug('Saving pie menu state: ' + JSON.stringify(this.basePieMenu));
-    PieletteDBHelper.pieMenu.update(this.id ?? -1, this.basePieMenu);
+    await PieletteDBHelper.pieMenu.update(this.id ?? -1, this.basePieMenu);
 
+    const nonEmptyPieItems: PieItem[] = [];
     for (const pieItem of this.pieItems.values()) {
       if (pieItem) {
-        PieletteDBHelper.pieItem.put(pieItem, pieItem.id);
+        nonEmptyPieItems.push(pieItem);
       }
     }
+    await PieletteDBHelper.pieItem.bulkPut(nonEmptyPieItems);
+
   }
 }

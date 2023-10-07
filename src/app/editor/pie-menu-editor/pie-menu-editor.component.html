@@ -1,8 +1,17 @@
 <section class="layout" style="height: 100%">
   <div class="growL"
        style=" background: var(--accordion-header-disabled-text-color); border-radius: 1em; padding: 0.5em 1em;">
-    <label
-      style="margin: 0; color: var(--button-ghost-basic-text-color);">{{"PAGES.EDITOR.PREVIEW" | translate}}</label>
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;">
+      <label
+        style="margin: 0; color: var(--button-ghost-basic-text-color);">{{"PAGES.EDITOR.PREVIEW" | translate}}</label>
+      <button nbButton size="small" (click)="addPieItem()">
+        <nb-icon icon="plus" pack="eva"></nb-icon>
+      </button>
+    </div>
     <app-pie-buttons [editorMode]="true" (activePieItemId)="activePieItemId = $event" [pieMenuId]="pieMenuId"></app-pie-buttons>
   </div>
 
@@ -16,7 +25,12 @@
       {{ 'PAGES.EDITOR.SAVE' | translate }}
     </button>
     <nb-tabset [style.width.%]="100">
-      <nb-tab tabTitle="Actions" style="margin-top: 1em;">
+      <nb-tab tabTitle="Pie Item Details" style="margin-top: 1em;">
+        <div>
+          <button nbButton ghost size="tiny" style="margin-bottom: 1em;">
+            <nb-icon icon="radio-button-on-outline"></nb-icon>
+          </button>
+        </div>
         <div style="height: 80vh; padding-right: 5px; display: flex; flex-direction: column; align-items: center;">
 
           <div *ngFor="let pieTaskContexts of pieMenuService.getPieTaskContext(this.activePieItemId ?? -1); let i = index"

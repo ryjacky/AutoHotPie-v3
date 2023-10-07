@@ -72,4 +72,8 @@ export class PieMenuEditorComponent {
     this.pieMenuService.save();
     this.toastr.success('', 'Saved!', {timeOut: 1000, positionClass: 'toast-bottom-right'});
   }
+
+  addPieItem() {
+    this.pieMenuService.addEmptyPieItem();
+  }
 }

@@ -62,23 +62,13 @@ export class AppComponent {
         new PieItem('', 'PieItem 4'),
         new PieItem('', 'PieItem 5'),
       ]);
-      const pieMenuId = await PieletteDBHelper.pieMenu.put(new PieMenu(
-        'Default Pie Menu',
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        [1,2,3,4,5],
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        1
-        ));
+
+      const defaultPieMenu = new PieMenu();
+      defaultPieMenu.name = 'Default Pie Menu';
+      defaultPieMenu.id = 1;
+      defaultPieMenu.pieItemIds = [1, 2, 3, 4, 5];
+      const pieMenuId = await PieletteDBHelper.pieMenu.put(defaultPieMenu);
+
       await PieletteDBHelper.profile.put(new Profile(
         'Default Profile',
         [pieMenuId as number],

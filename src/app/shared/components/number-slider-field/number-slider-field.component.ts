@@ -21,8 +21,11 @@ export class NumberSliderFieldComponent implements OnInit {
   pointerStartX = 0;
 
   ngOnInit() {
-    document.addEventListener('pointermove', this.onPointerMove.bind(this));
-    document.addEventListener('pointerup', this.onPointerUp.bind(this));
+    // FIXME: pointermove and pointerup events are not fired
+    //  when the pointer is moved outside the number slider field, if
+    //  the user uses a pen-tablet (known issue on xp pen)
+    window.addEventListener('pointermove', this.onPointerMove.bind(this));
+    window.addEventListener('pointerup', this.onPointerUp.bind(this));
   }
 
   onPointerDown(e: PointerEvent) {
@@ -38,7 +41,7 @@ export class NumberSliderFieldComponent implements OnInit {
 
     const delta = (e.clientX - this.pointerStartX);
     this.value = Math.max(this.min, Math.min(this.max, this.prevValue + delta));
-    this.onChange(e);
+    this.valueChange.emit(this.value);
   }
 
   onPointerUp() {

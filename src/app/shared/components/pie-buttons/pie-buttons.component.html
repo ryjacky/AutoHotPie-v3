@@ -3,41 +3,43 @@
   style="position: relative; width: 100%; height: 100%; overflow: hidden"
   (pointermove)="onPointerMove($event)"
   (pointerenter)="updatePieItem()">
+
   <canvas
     #pieCenter
     [style.position]="'absolute'"
-    [style.left.px]="centerX - centerThickness/2 - centerRadius"
-    [style.top.px]="centerY - centerThickness/2 - centerRadius"
-    [width]="centerRadius * 2 + centerThickness"
-    [height]="centerRadius * 2 + centerThickness"></canvas>
+    [style.left.px]="centerX - pieMenuService.centerThickness/2 - pieMenuService.centerRadius"
+    [style.top.px]="centerY - pieMenuService.centerThickness/2 - pieMenuService.centerRadius"
+    [width]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
+    [height]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"></canvas>
   <canvas
     #pieCenterSector
     [style.rotate]="centerRotation + 'rad'"
     [style.position]="'absolute'"
-    [style.left.px]="centerX - centerThickness/2 - centerRadius"
-    [style.top.px]="centerY - centerThickness/2 - centerRadius"
-    [width]="centerRadius * 2 + centerThickness"
-    [height]="centerRadius * 2 + centerThickness"></canvas>
+    [style.left.px]="centerX - pieMenuService.centerThickness/2 - pieMenuService.centerRadius"
+    [style.top.px]="centerY - pieMenuService.centerThickness/2 - pieMenuService.centerRadius"
+    [width]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
+    [height]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
+  ></canvas>
 
   <div
-    *ngFor="let pieItem of pieItems; let i = index"
+    *ngFor="let pieItem of pieMenuService.pieItemArray; let i = index"
     [style.left.px]="centerX"
     [style.top.px]="centerY"
-    [style.width.px]="pieItemSpread"
+    [style.width.px]="pieMenuService.pieItemSpread"
     [style.height.px]="0"
-    [style.rotate]="-90 + i * 360 / pieItems.length + 'deg'"
+    [style.rotate]="-90 + i * 360 / pieMenuService.pieItemArray.length + 'deg'"
     [style.display]="'flex'"
     [style.align-items]="'center'"
     [style.transform-origin]="'center left'"
     [style.justify-content]="'flex-end'"
     [style.position]="'absolute'">
     <button
-      [style.rotate]="+90 - i * 360 / pieItems.length + 'deg'"
-      [style.background]="activeBtnIndex === i ? hoveredColor : '#333333'"
+      [style.rotate]="+90 - i * 360 / pieMenuService.pieItemArray.length + 'deg'"
+      [style.background]="activeBtnIndex === i ? pieMenuService.mainColor : pieMenuService.secondaryColor"
       [style.border-radius.px]="7"
-      [style.width.px]="70"
-      [style.height.px]="buttonHeight"
+      [style.width.px]="pieMenuService.pieItemWidth"
       [style.border-width.px]="0"
+      [style.padding.px]="6"
       [style.color]="'white'"
       (click)="onButtonClicked(i)">
       {{pieItem?.name ?? 'Error'}}
