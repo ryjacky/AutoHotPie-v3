@@ -23,6 +23,7 @@ import { NumberSliderFieldComponent } from './components/number-slider-field/num
     TitlebarComponent,
     EditorTitlebarComponent,
     NumberSliderFieldComponent,
+    NumberSliderFieldComponent,
   ],
   imports: [
     CommonModule,
@@ -42,7 +43,7 @@ import { NumberSliderFieldComponent } from './components/number-slider-field/num
     ShortcutInputComponent,
     PieButtonsComponent,
     TitlebarComponent,
-    EditorTitlebarComponent, NumberSliderFieldComponent]
+    EditorTitlebarComponent, NumberSliderFieldComponent, NumberSliderFieldComponent]
 })
 export class SharedModule {
 }

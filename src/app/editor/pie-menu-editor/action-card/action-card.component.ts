@@ -25,4 +25,6 @@ export class ActionCardComponent implements OnInit {
     if (event?.target?.value === null) { return; }
     this.pieTaskContext.args[argName] = event.target.value;
   }
+
+  protected readonly Number = Number;
 }

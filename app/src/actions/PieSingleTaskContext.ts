@@ -4,6 +4,8 @@ export class PieSingleTaskContext {
   constructor(
     public addonId: string,
     public args: OnExecutedArgs,
+    public delay: number = 0,
+    public repeat: number = 1,
   ) {
   }
 

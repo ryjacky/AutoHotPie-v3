@@ -3,17 +3,37 @@ import {PieletteSettings} from "../settings/PieletteSettings";
 import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
 import {IAddonHeader, Log, PieTaskAddon} from "pielette-core";
 import {AugmentedAddonHeader} from "./AugmentedAddonHeader";
+import {clearInterval} from "timers";
 
 export class PieletteAddonManager {
   // TODO: Make this configurable at user end
   private static readonly pluginManager = new PluginManager({npmInstallMode: "noCache"});
 
-  private static readonly pieTask: Map<string, PieTaskAddon> = new Map<string, PieTaskAddon>();
+  private static readonly pieTasks: Map<string, PieTaskAddon> = new Map<string, PieTaskAddon>();
   private static readonly header: Map<string, IAddonHeader> = new Map<string, IAddonHeader>();
 
   static runPieTasks(context: PieSingleTaskContext): void {
     // So somehow if you put a breakpoint here, the get result is empty, but it actually contains the object.
-    PieletteAddonManager.pieTask.get(context.addonId)?.onExecuted(context.args);
+    const pieTask = PieletteAddonManager.pieTasks.get(context.addonId);
+    if (pieTask) {
+      let i = 0;
+
+      // Repeat and delay are possibly undefined when updating from old version
+      context.repeat ??= 1;
+      context.delay ??= 1000;
+
+      const executor = setInterval(() => {
+        if (i >= context.repeat) {
+          clearInterval(executor);
+          return;
+        }
+
+        Log.main.debug(`i: ${i}, repeat: ${context.repeat}, delay: ${context.delay}`);
+
+        pieTask.onExecuted(context.args);
+        i++;
+      }, context.delay);
+    }
   }
 
   static get headerObject(): AugmentedAddonHeader[] {
@@ -41,7 +61,7 @@ export class PieletteAddonManager {
         const main = new plugin.Main();
         if (main instanceof PieTaskAddon){
           const pieTaskAddon = main as PieTaskAddon;
-          this.pieTask.set(pluginId, pieTaskAddon);
+          this.pieTasks.set(pluginId, pieTaskAddon);
         }
 
       } catch (e) {
