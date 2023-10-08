@@ -2,9 +2,11 @@ import {BrowserWindow} from "electron";
 import {EditorConstants} from "../constants/EditorConstants";
 import * as path from "path";
 import * as fs from "fs";
+import {GlobalHotkeyServiceListener} from "pielette-mouse-key-hook";
 
-export class EditorWindow extends BrowserWindow {
+export class EditorWindow extends BrowserWindow implements GlobalHotkeyServiceListener {
   private readonly prefix = '../../';
+
   constructor() {
     super({
       minWidth: EditorConstants.WINDOW_WIDTH,
@@ -30,6 +32,10 @@ export class EditorWindow extends BrowserWindow {
 
     this.loadEditorURL();
     this.preventClose();
+  }
+
+  onProcessExit(): void {
+    this.webContents.send('globalHotkeyServiceExited')
   }
 
   private loadEditorURL() {

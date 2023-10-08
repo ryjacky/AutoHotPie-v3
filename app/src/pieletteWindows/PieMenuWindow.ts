@@ -1,11 +1,13 @@
 import {BrowserWindow, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
+import {GlobalHotkeyService, IMouseKeyEvent, MouseKeyEventListener} from "pielette-mouse-key-hook";
 
-export class PieMenuWindow extends BrowserWindow {
+export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener {
   private hidden: boolean = false;
   private disabled: boolean = false;
   private readonly prefix = '../../';
+
   constructor() {
     super({
       transparent: true,
@@ -15,7 +17,7 @@ export class PieMenuWindow extends BrowserWindow {
       webPreferences: {
         nodeIntegration: false,
         // Maker sure the second argument contains the prefix at the beginning
-        preload: path.join(__dirname,  '../../preload.js'),
+        preload: path.join(__dirname, '../../preload.js'),
         contextIsolation: true,  // false if you want to run e2e test with Spectron
       },
     });
@@ -23,6 +25,31 @@ export class PieMenuWindow extends BrowserWindow {
     this.preventClose();
     this.hide();
     this.loadPieMenuURL();
+    GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
+  }
+
+  onDoubleClick(event: IMouseKeyEvent): void {
+  }
+
+  onDragStarted(event: IMouseKeyEvent): void {
+  }
+
+  onDragFinished(event: IMouseKeyEvent): void {
+    if (!this.hidden) {
+      this.webContents.send('closePieMenuRequested');
+    }
+  }
+
+  onKeyDown(event: IMouseKeyEvent): void {
+    if (event.alt && event.shift && event.control)
+      this.show();
+
+  }
+
+  onKeyUp(event: IMouseKeyEvent): void {
+    if (!this.hidden) {
+      this.webContents.send('closePieMenuRequested');
+    }
   }
 
   loadPieMenuURL() {
@@ -58,7 +85,9 @@ export class PieMenuWindow extends BrowserWindow {
   }
 
   show() {
-    if (this.disabled) {return;}
+    if (this.disabled) {
+      return;
+    }
 
     if (this.hidden) {
       this.hidden = false;
@@ -87,7 +116,6 @@ export class PieMenuWindow extends BrowserWindow {
   enable() {
     this.disabled = false;
   }
-
 
 
 }

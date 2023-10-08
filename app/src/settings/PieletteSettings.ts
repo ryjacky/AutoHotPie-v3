@@ -1,8 +1,8 @@
 import {Schema} from "electron-store";
 import {app} from "electron";
 import * as Store from "electron-store";
-import {KeyEvent, RespondType} from "mousekeyhook.js";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
+import {MouseKeyEvent} from "pielette-mouse-key-hook";
 
 interface IPieletteSettingSchema {
   pieMenuCancelKey: string;
@@ -14,7 +14,7 @@ interface IPieletteSettingSchema {
 const PieletteSettingSchema: Schema<IPieletteSettingSchema> = {
   pieMenuCancelKey: {
     type: 'string',
-    default: JSON.stringify(new KeyEvent(RespondType.MOUSE_DOWN, 'Escape'))
+    default: JSON.stringify(new MouseKeyEvent())
   },
   runOnStartup: {
     type: 'boolean',
@@ -51,7 +51,7 @@ app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);
 export const PieletteSettings = new Store<IPieletteSettingSchema>({
   schema: PieletteSettingSchema, migrations: {
     '3.0.2': (store) => {
-      store.set('pieMenuCancelKey', JSON.stringify(new KeyEvent(RespondType.KEY_DOWN, 'Escape')));
+      store.set('pieMenuCancelKey', JSON.stringify(new MouseKeyEvent("KeyDown", "Escape")));
     }
   }
 });

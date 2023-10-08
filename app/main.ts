@@ -1,6 +1,5 @@
 import {app, BrowserWindow, Menu, screen, Tray} from 'electron';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
-import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "./src/plugin/PieletteAddonManager";
 import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
@@ -18,7 +17,6 @@ let tray = null;
 
 // Initialization
 // User data is initialized in app.component.ts and can only be initialized there (with minimal code).
-initGlobalHotkeyService();
 initElectronWindows();
 initElectronAPI();
 initLoggerForRenderer();
@@ -26,37 +24,6 @@ initSystemTray();
 PieletteAddonManager.loadPlugins();
 
 // Functions
-export function initGlobalHotkeyService() {
-  if (isGHotkeyServiceRunning()) return;
-
-  Log.main.info('Initializing global hotkey service');
-
-  getGHotkeyServiceInstance().onHotkeyEvent.push(
-    (event: KeyEvent) => {
-      Log.main.debug('onKeyEvent - ' + event.type + ' ' + event.value)
-
-      switch (event.type) {
-        case RespondType.KEY_DOWN:
-          //TODO: Get listened hotkeys
-          if (event.value.trim() === 'None+A') {
-            Log.main.debug('Key down event received, showing pie menu');
-            pieMenuWindow?.show();
-          }
-          break;
-        case RespondType.KEY_UP:
-          Log.main.debug('Key up event received, closing pie menu');
-          if (!pieMenuWindow?.isHidden()) {
-            pieMenuWindow?.webContents.send('closePieMenuRequested');
-          }
-          break;
-      }
-    });
-  getGHotkeyServiceInstance().onProcessExit = (() => {
-    Log.main.debug('Global hotkey service exited.');
-
-    editorWindow?.webContents.send('globalHotkeyServiceExited')
-  });
-}
 
 function initElectronWindows() {
   try {

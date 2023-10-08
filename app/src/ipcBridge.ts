@@ -2,12 +2,11 @@ import {app, ipcMain, dialog, nativeImage} from "electron";
 import * as child_process from "child_process";
 import {PieletteSettings} from "./settings/PieletteSettings";
 import * as activeWindow from "active-win";
-import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
 import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "./plugin/PieletteAddonManager";
 import {PieSingleTaskContext} from "./actions/PieSingleTaskContext";
-import {disablePieMenu, enablePieMenu, hidePieMenu, initGlobalHotkeyService} from "../main";
+import {disablePieMenu, enablePieMenu, hidePieMenu} from "../main";
 import {PieEditorWindow} from "./pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 
@@ -64,13 +63,14 @@ export function initElectronAPI() {
     Log.main.info("Toggling Global Hotkey Service. Turning it " + (!args[0] ? "on" : "off") + "");
     // args[0] = serviceActive
 
-    if (isGHotkeyServiceRunning()) {
-      getGHotkeyServiceInstance().exitProcess();
-      return false;
-    } else {
-      initGlobalHotkeyService();
-      return true;
-    }
+    Log.main.error("toggleService() is not implemented yet");
+    // if (isGHotkeyServiceRunning()) {
+    //   getGHotkeyServiceInstance().exitProcess();
+    //   return false;
+    // } else {
+    //   initGlobalHotkeyService();
+    //   return true;
+    // }
   });
   ipcMain.handle('runPieTasks', (event, args) => {
     hidePieMenu();
@@ -124,29 +124,30 @@ export function initElectronAPI() {
     return pieTaskAddonHeaderJSONArr;
   });
   ipcMain.handle('listenKeyForResult', (event, args) => {
+    Log.main.error("listenKeyForResult() is not implemented yet");
     // args[0] = ignoredKeys
-    if (!isGHotkeyServiceRunning()) {
-      return;
-    }
-
-    return new Promise(resolve => {
-      Log.main.info("Listening for valid hotkey once");
-      disablePieMenu();
-
-      const listener = (event: KeyEvent) => {
-        if (event.type === RespondType.KEY_DOWN
-          && !args[0].includes((event.value.split('+').pop() ?? 'PLACEHOLDER').trim())) {
-
-          getGHotkeyServiceInstance().removeTempKeyListener();
-          Log.main.info("Hotkey " + event.value + " is pressed");
-          enablePieMenu();
-          resolve(event.value);
-        }
-      }
-
-      getGHotkeyServiceInstance().addTempKeyListener(listener);
-
-    });
+    // if (!isGHotkeyServiceRunning()) {
+    //   return;
+    // }
+    //
+    // return new Promise(resolve => {
+    //   Log.main.info("Listening for valid hotkey once");
+    //   disablePieMenu();
+    //
+    //   const listener = (event: KeyEvent) => {
+    //     if (event.type === RespondType.KEY_DOWN
+    //       && !args[0].includes((event.value.split('+').pop() ?? 'PLACEHOLDER').trim())) {
+    //
+    //       getGHotkeyServiceInstance().removeTempKeyListener();
+    //       Log.main.info("Hotkey " + event.value + " is pressed");
+    //       enablePieMenu();
+    //       resolve(event.value);
+    //     }
+    //   }
+    //
+    //   getGHotkeyServiceInstance().addTempKeyListener(listener);
+    //
+    // });
 
   });
 }

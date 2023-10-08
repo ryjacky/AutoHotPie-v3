@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {KeyEvent} from "mousekeyhook.js";
+import {IMouseKeyEvent} from 'pielette-mouse-key-hook';
 
 @Component({
   selector: 'app-settings',
@@ -30,7 +30,7 @@ export class SettingsComponent implements OnInit {
     window.electronAPI.getSetting('pieMenuCancelKey').then((value) => {
       window.log.info('Retrieved pieMenuCancelKey from settings: ' + value);
 
-      this.pieMenuCancelKey = (JSON.parse(value) as KeyEvent).value;
+      this.pieMenuCancelKey = (JSON.parse(value) as IMouseKeyEvent).input;
 
       window.log.info('The value is: ' + this.pieMenuCancelKey);
     });

@@ -1,5 +1,4 @@
 import {BrowserWindow} from "electron";
-import {EditorConstants} from "../constants/EditorConstants";
 import * as path from "path";
 import * as fs from "fs";
 
@@ -31,4 +30,5 @@ export class SplashScreenWindow extends BrowserWindow {
     const editorWindowURL = new URL(path.join('file:', __dirname, editorWindowPath));
     this.loadURL(editorWindowURL.href);
   }
+
 }
