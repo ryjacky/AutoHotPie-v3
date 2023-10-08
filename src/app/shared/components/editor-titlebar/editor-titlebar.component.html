@@ -1,0 +1,20 @@
+<div
+  style="
+    z-index: 999;
+    padding: 0 160px 0 16px;
+    width: 100vw;
+    height: var(--title-bar-height);
+    background-color: var(--color-basic-900);
+    display: flex;
+    align-items: center;
+    border: 0 solid black;
+    border-bottom-width: 1px;
+    justify-content: space-between;
+    align-content: center">
+  <img #icon ngSrc="./assets/icons/favicon.ico" style="padding-right: 16px;" height="24px" width="auto" alt="favicon"/>
+
+  <label [style.color]="'gray'">{{ 'PAGES.EDITOR.CURRENTLY_EDITING' | translate }}{{ pieMenuName }}</label>
+
+  <div style="flex-grow: 1; -webkit-app-region: drag; height: 100%"></div>
+
+</div>

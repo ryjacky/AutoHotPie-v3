@@ -1,24 +1,19 @@
 import {app, BrowserWindow, Menu, screen, Tray} from 'electron';
-import * as path from 'path';
-import * as fs from 'fs';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
-import {EditorConstants} from "./src/constants/EditorConstants";
 import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
-import {AHPEnv} from "pielette-core/lib/AHPEnv";
 import {Log} from "pielette-core";
-import {AHPAddonManager} from "./src/plugin/AHPAddonManager";
+import {PieletteAddonManager} from "./src/plugin/PieletteAddonManager";
 import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
 import {EditorWindow} from "./src/pieletteWindows/EditorWindow";
+import {PieEditorWindow} from "./src/pieletteWindows/PieEditorWindow";
+import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
+import {SplashScreenWindow} from "./src/pieletteWindows/SplashScreenWindow";
 
 // Variables
 let pieMenuWindow: PieMenuWindow | undefined;
 let editorWindow: EditorWindow | undefined;
-app.setPath("userData", AHPEnv.DEFAULT_DATA_PATH);
+app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);
 
-export let pieMenuDisabled = false;
-let primaryScreenWidth = 0;
-let primaryScreenHeight = 0;
-let pieMenuHidden = true;
 let tray = null;
 
 // Initialization
@@ -28,7 +23,7 @@ initElectronWindows();
 initElectronAPI();
 initLoggerForRenderer();
 initSystemTray();
-AHPAddonManager.loadPlugins();
+PieletteAddonManager.loadPlugins();
 
 // Functions
 export function initGlobalHotkeyService() {
@@ -50,7 +45,7 @@ export function initGlobalHotkeyService() {
           break;
         case RespondType.KEY_UP:
           Log.main.debug('Key up event received, closing pie menu');
-          if (!pieMenuHidden) {
+          if (!pieMenuWindow?.isHidden()) {
             pieMenuWindow?.webContents.send('closePieMenuRequested');
           }
           break;
@@ -89,7 +84,9 @@ function initElectronWindows() {
 function createWindow(): BrowserWindow {
   pieMenuWindow = new PieMenuWindow();
   editorWindow = new EditorWindow();
+  new SplashScreenWindow();
 
+  new PieEditorWindow(1);
 
   return editorWindow;
 }
@@ -98,8 +95,6 @@ function initSystemTray() {
   app.whenReady().then(() => {
     // Get screen size
     const { screen } = require('electron')
-    primaryScreenWidth = screen.getPrimaryDisplay().bounds.width;
-    primaryScreenHeight = screen.getPrimaryDisplay().bounds.height;
 
     tray = new Tray(__dirname + '/assets/favicon.ico')
     const contextMenu = Menu.buildFromTemplate([

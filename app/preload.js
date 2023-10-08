@@ -17,11 +17,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   closePieMenuRequested: (callback) => ipcRenderer.on('closePieMenuRequested', callback),
   getSetting: (settingName) => ipcRenderer.invoke('getSetting', [settingName]),
   setSetting: (settingName, value) => ipcRenderer.invoke('setSetting', [settingName, value]),
-  openDialogForResult: (defaultPath) => ipcRenderer.invoke('openDialogForResult', [defaultPath]),
-  getActionList: () => ipcRenderer.invoke('getActionList'),
-  getDetailedActionList: () => ipcRenderer.invoke('getDetailedActionList'),
-  getFileIcon: (path) => ipcRenderer.sendSync('getFileIcon', [path]),
-  runActions: (actionListJson) => ipcRenderer.invoke('runActions', [actionListJson]),
+  openDialogForResult: (defaultPath, filter) => ipcRenderer.invoke('openDialogForResult', [defaultPath, filter]),
+  getPieTaskAddonHeaders: () => ipcRenderer.invoke('getPieTaskAddonHeaders'),
+  getFileIconBase64: (path) => ipcRenderer.invoke('getFileIconBase64', [path]),
+  runPieTasks: (pieTasksJSON) => ipcRenderer.invoke('runPieTasks', [pieTasksJSON]),
+  openPieMenuEditor: (pieMenuId) => ipcRenderer.invoke('openPieMenuEditor', [pieMenuId]),
 })
 
 contextBridge.exposeInMainWorld('log', {

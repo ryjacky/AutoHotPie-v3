@@ -1,0 +1,103 @@
+<div
+  class="action-card">
+
+  <div class="setting-row">
+    <nb-select
+      fullWidth
+      placeholder="Action"
+      [(selected)]="pieTaskContext.addonId"
+      size="small">
+      <nb-option
+        *ngFor="let augmentedAddonHeader of augmentedAddonHeaders; let i = index"
+        (selectionChange)="selectedPluginPropertyIndex = i"
+        [value]="augmentedAddonHeader.id">{{augmentedAddonHeader.header.displayName}}</nb-option>
+
+    </nb-select>
+  </div>
+
+  <div class="setting-row" style="padding-top: 5px">
+    <div
+      style="
+        padding-right: 5px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-grow: 1;"
+    >
+      Delay
+      <app-number-slider-field
+        nbTooltip="Delay between each repeat in milliseconds"
+        nbtooltipplacement="top"
+        [style.padding-left.px]="5"
+        icon="clock-outline"
+        [min]="1"
+        [max]="10000"
+        [value]="pieTaskContext.delay"
+        (valueChange)="pieTaskContext.delay = $event"
+      ></app-number-slider-field>
+    </div>
+    <div
+      style="
+        padding-left: 5px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex-grow: 1;"
+    >
+      Repeat
+      <app-number-slider-field
+        nbTooltip="Time to repeat the task"
+        nbtooltipplacement="top"
+        [style.padding-left.px]="5"
+        icon="repeat-outline"
+        [min]="1"
+        [max]="99"
+        [value]="pieTaskContext.repeat"
+        (valueChange)="pieTaskContext.repeat = $event"
+      ></app-number-slider-field>
+    </div>
+  </div>
+
+  <div
+    *ngIf="selectedPluginPropertyIndex >= 0"
+    [style.width]="'100%'"
+  >
+    <div
+      *ngFor="let param of augmentedAddonHeaders[selectedPluginPropertyIndex].header.receiveArgs"
+      class="setting-row"
+      style="margin-top: 1em"
+    >
+      {{ param.argName }}
+      <textarea
+        *ngIf="param.fieldType === 'text'"
+        nbInput
+        fullWidth
+        placeholder="{{ 'PAGES.EDITOR.TEXT_PLACEHOLDER' | translate }}"
+        style="resize: vertical; margin-left: 1em; max-height: 10em;"
+        [value]="pieTaskContext.args[(param.argName)]"
+        (change)="updateArgs(param.argName, $event)"></textarea>
+
+      <nb-form-field *ngIf="param.fieldType === 'number'">
+        <nb-icon nbPrefix icon="repeat-outline" pack="eva"></nb-icon>
+        <input
+          type="number"
+          value="1"
+          fullWidth
+          nbInput
+          fieldSize="small"
+          style="padding-right: 0.5em"
+          [value]="pieTaskContext.args[(param.argName)]"
+          (change)="updateArgs(param.argName, $event)"
+        >
+      </nb-form-field>
+
+      <app-shortcut-input
+        *ngIf="param.fieldType === 'hotkeys'"
+        [hotkey]="pieTaskContext.args[(param.argName)]"
+        (hotkeyChange)="pieTaskContext.args[(param.argName)] = $event"></app-shortcut-input>
+    </div>
+  </div>
+</div>
+

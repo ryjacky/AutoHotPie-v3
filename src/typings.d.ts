@@ -18,14 +18,14 @@ interface Window {
     fatal: (message: string) => void;
   };
   electronAPI: {
-    getActionList: () => Promise<number[]>;
-    runActions: (actionListJson: string) => void;
-    getDetailedActionList: () => Promise<string[]>;
+    openPieMenuEditor: (pieMenuId: number) => void;
+    runPieTasks: (pieTasksJSON: string) => void;
+    getPieTaskAddonHeaders: () => Promise<string[]>;
     openInBrowser: (url: string) => void;
     closePieMenuRequested: (callback: () => void) => void;
     isUpdateAvailable: () => Promise<boolean>;
-    openDialogForResult: (defaultPath: string) => Promise<string>;
-    getFileIcon: (path: string) => Promise<string>;
+    openDialogForResult: (defaultPath: string, filter: [{name: string; extensions: string[]}]) => Promise<string>;
+    getFileIconBase64: (path: string) => Promise<string>;
 
     /**
      * Returns the path to the executable and the path to the icon of the foreground application

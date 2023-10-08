@@ -20,14 +20,14 @@
     </td>
     <td
       style="width: 100%; display: flex; flex-direction: row; flex-wrap: nowrap; align-content: center; justify-content: center; align-items: center;">
-      <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenu.selectionColor" (input)="updatePieMenu()"></ngx-colors>
+      <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenu.mainColor" (input)="updatePieMenu()"></ngx-colors>
 
     </td>
     <td>
       <app-shortcut-input #shortcutInput [hotkey]="pieMenu.hotkey" (hotkeyChange)="shortcutInputChanged($event)"></app-shortcut-input>
     </td>
     <td style="text-align: center;">
-      <button nbButton ghost [routerLink]="['/pie-menu-editor', pieMenu.id]" status="primary"
+      <button nbButton ghost (click)="openPieMenuEditor(pieMenu.id)" status="primary"
               style="
                     border: 1px solid var(--button-filled-basic-disabled-background-color);
                     padding: 10px">

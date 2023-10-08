@@ -13,8 +13,8 @@ export class PieletteDB extends Dexie {
 
     // If a data column is array, you have to add * in front of it.
     this.version(1).stores({
-      pieItem: "++id, name, enabled, *actions, iconBase64, useIconColor",
-      pieMenu: "++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, selectionColor, *pieItemIds",
+      pieItem: "++id, name, enabled, *pieTaskContexts, iconBase64, useIconColor",
+      pieMenu: "++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, mainColor, secondaryColor, *pieItemIds, centerRadius, centerThickness, iconSize, pieItemRoundness, pieItemSpread",
       profile: "++id, name, enabled, *pieMenus, *exes, iconBase64",
     });
   }

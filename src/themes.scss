@@ -38,7 +38,7 @@ $nb-themes: nb-register-theme((
   text-control-color: var(--color-basic-1100),
 
   tabset-tab-padding: 0.5rem 1rem,
-  tabset-content-padding: 0
+  tabset-content-padding: 0,
   // add your variables here like:
   // color-primary-100: #f2f6ff,
   // color-primary-200: #d9e4ff,
@@ -49,4 +49,7 @@ $nb-themes: nb-register-theme((
   // color-primary-700: #1a34b8,
   // color-primary-800: #102694,
   // color-primary-900: #091c7a,
+
+  header-height: 42px,
+  header-padding: 0px
 ), dark, dark);

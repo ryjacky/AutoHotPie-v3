@@ -1,0 +1,101 @@
+<section class="layout" style="height: 100%">
+  <div class="growL"
+       style=" background: var(--accordion-header-disabled-text-color); border-radius: 1em; padding: 0.5em 1em;">
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;">
+      <label
+        style="margin: 0; color: var(--button-ghost-basic-text-color);">{{"PAGES.EDITOR.PREVIEW" | translate}}</label>
+      <button nbButton size="small" (click)="addPieItem()">
+        <nb-icon icon="plus" pack="eva"></nb-icon>
+      </button>
+    </div>
+    <app-pie-buttons [editorMode]="true" (activePieItemId)="activePieItemId = $event" [pieMenuId]="pieMenuId"></app-pie-buttons>
+  </div>
+
+  <div class="growM">
+    <button
+      nbButton
+      size="small"
+      status="success"
+      style="position: absolute; align-self: flex-end;"
+      (click)="save()">
+      {{ 'PAGES.EDITOR.SAVE' | translate }}
+    </button>
+    <nb-tabset [style.width.%]="100">
+      <nb-tab tabTitle="Pie Item Details" style="margin-top: 1em;">
+        <div style="display: flex; margin: 1em">
+          <button
+            nbTooltip="Click to add/Alt+Click to remove icon." nbTooltipPlacement="top"
+            nbButton
+            ghost
+            size="small"
+            style="border: dashed 2px;min-width: 42px;min-height: 42px;padding: 7px;max-width: 42px;max-height: 42px;"
+            (click)="setPieItemIcon($event)">
+            <nb-icon
+              *ngIf="pieMenuService.isIconAtPieItemNative(activePieItemId ?? 0)"
+              [icon]="pieMenuService.getPieItemIconAt(activePieItemId ?? 0)">
+            </nb-icon>
+            <img
+              *ngIf="!pieMenuService.isIconAtPieItemNative(activePieItemId ?? 0)"
+              [src]="pieMenuService.getPieItemIconAt(activePieItemId ?? 0)"
+              style="max-width: 25px; max-height: 25px;">
+          </button>
+          <input
+            type="text"
+            style="margin: 0 10px"
+            nbInput
+            fullWidth
+            status="basic"
+            (input)="setPieItemName($event)"
+            [value]="pieMenuService.getPieItemNameAt(activePieItemId ?? 0)"
+          >
+          <button nbButton ghost size="small" nbTooltip="Double click to remove." nbTooltipPlacement="top" nbTooltipStatus="warning" (dblclick)="removePieItem()">
+            <nb-icon icon="trash-outline"/>
+          </button>
+        </div>
+        <div style="height: 72vh; padding-right: 5px; display: flex; flex-direction: column; align-items: center;">
+
+          <div *ngFor="let pieTaskContexts of pieMenuService.getPieTaskContext(this.activePieItemId ?? -1); let i = index"
+               style="display: flex; flex-direction: column; flex-wrap: nowrap; align-content: flex-start; justify-content: flex-start; align-items: center; ">
+            <div style="display: flex">
+              <app-action-card [pieTaskContext]="pieTaskContexts" style="height: fit-content"></app-action-card>
+              <div style="display: flex; flex-direction: column; margin-left: 0.5em;">
+                <button
+                  (click)="moveUp(i)"
+                  *ngIf="i !== 0" nbButton fullWidth ghost size="tiny" style="margin-bottom: 2px;">
+                  <nb-icon icon="arrow-upward-outline"/>
+                </button>
+                <button
+                  (click)="moveDown(i)"
+                  *ngIf="i !== pieMenuService.getPieItemActions(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
+                  style="margin-bottom: 2px;">
+                  <nb-icon icon="arrow-downward-outline"/>
+                </button>
+                <button nbButton ghost size="tiny" (click)="deleteAction(i)">
+                  <nb-icon icon="trash-2-outline"></nb-icon>
+                </button>
+              </div>
+            </div>
+
+            <nb-icon style="min-height: 32px" icon="arrow-downward-outline"></nb-icon>
+          </div>
+          <button nbButton ghost style="height: 64px; width: 64px; border: solid;margin-bottom: 3em;"
+                  (click)="addAction()">
+            <nb-icon icon="plus-outline" style="min-width: 32px; height: 32px"></nb-icon>
+          </button>
+        </div>
+      </nb-tab>
+
+      <nb-tab tabTitle="Settings" style="width: 100%">
+        <app-settings-tab/>
+
+      </nb-tab>
+    </nb-tabset>
+
+  </div>
+
+
+</section>

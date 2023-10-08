@@ -86,7 +86,7 @@ export class HomeComponent implements OnInit, OnChanges {
       this.profInput.nativeElement.value,
       undefined,
       [this.activeWindow.owner.path],
-      this.activeWindow.base64Icon
+      this.activeWindow.base64Icon?.replace('data:image/png;base64,', '')
     );
 
     PieletteDBHelper.profile.add(newProf).then(() => {
@@ -106,10 +106,11 @@ export class HomeComponent implements OnInit, OnChanges {
 
   clearPopover() {
     if (this.profInput !== undefined) {
-      return;
+      return '';
     }
 
     this.activeWindow = undefined;
+    return '';
   }
 
 }

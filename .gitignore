@@ -94,3 +94,9 @@ Thumbs.db
 /app/src/plugin/AHPAddonManager.js
 /app/src/settings/PieletteSettings.js
 /app/src/pieletteWindows/PieMenuWindow.js
+/app/src/pieletteWindows/EditorWindow.js
+/app/src/plugin/PieletteAddonManager.js
+/app/src/plugin/AugmentedAddonHeader.js
+/app/src/pieletteWindows/PieEditorWindow.js
+/app/src/actions/PieTaskContext.js
+/app/src/actions/PieSingleTaskContext.js

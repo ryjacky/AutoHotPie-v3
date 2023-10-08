@@ -8,6 +8,7 @@
     "YES": "Yes"
   },
   "TITLE_BAR": {
+    "HOME": "Home",
     "SETTINGS": "Settings",
     "HELP": "Help"
   },
@@ -20,6 +21,15 @@
       "CANCEL": "Cancel"
     },
     "EDITOR": {
+      "ICON_SIZE": "Icon size",
+      "CENTER_RADIUS": "Center radius",
+      "CENTER_THICKNESS": "Center thickness",
+      "PIE_ITEM_SPREAD": "Pie item spread",
+      "PIE_ITEM_ROUNDNESS": "Pie item roundness",
+      "PIE_ITEM_WIDTH": "Pie item width",
+      "MAIN_COLOR": "Main color",
+      "SECONDARY_COLOR": "Secondary color",
+      "ICON_COLOR": "Icon color",
       "ACTIONS": "Actions",
       "OPENURL_PLACEHOLDER": "URL",
       "DROP_PIE_MENU": "Drag a pie menu from the top right panel and drop it here",
@@ -35,6 +45,7 @@
       "PREVIEW": "Preview",
       "PROP": "Properties",
       "SAVE": "Save",
+      "CURRENTLY_EDITING": "Currently editing: ",
       "ESCAPE_RADIUS": "Escape radius",
       "SHORTCUTS": "Shortcuts"
     },
@@ -81,6 +92,7 @@
       "ADD_FROM_EXISTING": "Add from existing"
     },
     "HOME": {
+      "ADD_FROM_EXISTING": "Add from existing",
       "SIDEBAR_TITLE": "Profiles",
       "CLICK_TO_SELECT_APP": "Click to select application",
       "CREATE_PROF": "Create Profile",

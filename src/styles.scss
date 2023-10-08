@@ -1,6 +1,7 @@
 @use 'themes' as *;
 
 @use '@nebular/theme/styles/globals' as *;
+@import 'ngx-toastr/toastr';
 
 @include nb-install() {
   @include nb-theme-global();
@@ -12,6 +13,14 @@
 }
 body {
   overflow: hidden;
+}
+
+.toast-success {
+  background-color: var(--color-success-600);
+}
+
+.toast-container .ngx-toastr {
+  box-shadow: 0 0 12px #000000;
 }
 
 nb-layout .layout {
