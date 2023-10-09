@@ -1,3 +1,13 @@
-<app-pie-buttons [pieMenuId]="1" [style.width.%]="100" [style.height.%]="100" [editorMode]="false"/>
+<app-pie-buttons
+  [style.opacity.%]="display ? 100 : 0"
+  [pieMenuId]="1"
+  [style.width.%]="100"
+  [style.height.%]="100"
+  [editorMode]="false"
+  [centerY]="y"
+  [centerX]="x"
+  (mouseenter)="mouseEnter($event)"
+  (mouseleave)="mouseLeave()"
+/>
 <!--  <app-pie-guiding-line [globalX]="1000" [globalY]="500" [strokeWidth]=1 />-->
 

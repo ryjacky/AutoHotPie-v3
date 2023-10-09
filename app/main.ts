@@ -1,4 +1,4 @@
-import {app, BrowserWindow, Menu, screen, Tray} from 'electron';
+import {app, BrowserWindow, Menu, Tray} from 'electron';
 import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "./src/plugin/PieletteAddonManager";
@@ -17,27 +17,21 @@ app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);
 let tray = null;
 
 // ------------------------------- Main -------------------------------
-// Added 400 ms to fix the black background issue while using transparent window.
-// More details at https://github.com/electron/electron/issues/15947
-app.on('ready', () => setTimeout(openSplashScreen, 400));
-
-// Note: windows-all-closed listener is removed
-// because we want to keep the app running in the background
-
+app.on('ready', () => openSplashScreen());
 app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (editorWindow === null) {
-    openSplashScreen();
+    // TODO: (MAC) openEditorWindow();
   }
 });
 
-// Initialization
-// User data is initialized in app.component.ts and can only be initialized there (with minimal code).
+// Note: windows-all-closed listener is removed because we want to keep the app running in the background
 
+
+// User data is initialized in app.component.ts and can only be initialized there (in the renderer process).
 initElectronAPI();
 initLoggerForRenderer();
-
 PieletteAddonManager.loadPlugins().then(() => {
   splashScreenWindow?.close();
 
