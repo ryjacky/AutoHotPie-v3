@@ -8,6 +8,11 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
   private disabled: boolean = false;
   private readonly prefix = '../../';
 
+  private readonly x: number = 0;
+  private readonly y: number = 0;
+  private readonly width: number = 0;
+  private readonly height: number = 0;
+
   constructor() {
     super({
       transparent: true,
@@ -21,6 +26,13 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
         contextIsolation: true,  // false if you want to run e2e test with Spectron
       },
     });
+
+    for (const display of screen.getAllDisplays()) {
+      if (display.bounds.x < this.x) { this.x = display.bounds.x; }
+      if (display.bounds.y < this.y) { this.y = display.bounds.y; }
+      this.width += display.bounds.width;
+      this.height += display.bounds.height;
+    }
 
     this.preventClose();
     this.hide();
@@ -42,7 +54,7 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
 
   onKeyDown(event: IMouseKeyEvent): void {
     if (event.alt && event.shift && event.control)
-      this.show();
+      this.show(event.x, event.y);
 
   }
 
@@ -84,7 +96,7 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     }
   }
 
-  show() {
+  show(x?: number, y?: number) {
     if (this.disabled) {
       return;
     }
@@ -92,16 +104,13 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     if (this.hidden) {
       this.hidden = false;
 
-      // Show the window at cursor position, centered
-      const primaryScreenWidth = screen.getPrimaryDisplay().bounds.width;
-      const primaryScreenHeight = screen.getPrimaryDisplay().bounds.height;
-
+      // FIXME: creating window across all monitors because getCursorScreenPoint() is not working with windows ink
+      //  enabled window such as chrome, windows default photo viewer, etc.
       this.setBounds({
-        width: primaryScreenWidth,
-        height: primaryScreenHeight,
-        // TODO: Does not work with digital pen when the cursor is on top of any chromium window
-        x: screen.getCursorScreenPoint().x - primaryScreenWidth / 2,
-        y: screen.getCursorScreenPoint().y - primaryScreenHeight / 2
+        width: this.width,
+        height: this.height,
+        x: this.x,
+        y: this.y
       })
 
       super.show();

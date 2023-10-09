@@ -20,6 +20,8 @@ import {IPieItem, PieItem} from '../../../../../app/src/db/data/PieItem';
 export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() pieMenuId = 1;
   @Input() editorMode = false;
+  @Input() centerX = document.body.clientWidth / 2;
+  @Input() centerY = document.body.clientHeight / 2;
 
   @ViewChild('pieCenter') pieCenter: any;
   @ViewChild('pieCenterSector') pieCenterSector: any;
@@ -29,8 +31,6 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
   pieItemArray: (IPieItem | undefined)[] = [];
 
-  centerX = document.body.clientWidth / 2;
-  centerY = document.body.clientHeight / 2;
   activeBtnIndex = 0;
   centerRotation = 0;
 
