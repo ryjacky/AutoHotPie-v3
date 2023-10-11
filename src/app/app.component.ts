@@ -79,6 +79,10 @@ export class AppComponent {
 
     }
 
+    PieletteDBHelper.pieMenu.each((pieMenu) => {
+      window.electronAPI.addHotkey(pieMenu.hotkey, pieMenu.id ?? -1);
+    });
+
     window.log.info('App data loaded');
   }
 

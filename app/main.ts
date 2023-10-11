@@ -4,12 +4,11 @@ import {Log} from "pielette-core";
 import {PieletteAddonManager} from "./src/plugin/PieletteAddonManager";
 import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
 import {EditorWindow} from "./src/pieletteWindows/EditorWindow";
-import {PieEditorWindow} from "./src/pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 import {SplashScreenWindow} from "./src/pieletteWindows/SplashScreenWindow";
 
 // ------------------------------- Global Variables -------------------------------
-let pieMenuWindow: PieMenuWindow | undefined;
+export let pieMenuWindow: PieMenuWindow | undefined;
 let editorWindow: EditorWindow | undefined;
 let splashScreenWindow: SplashScreenWindow | undefined;
 app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);

@@ -48,6 +48,7 @@ interface Window {
     getVersion: () => Promise<string>;
 
     getSetting: (settingName: string) => Promise<any>;
+    addHotkey: (hotkeyString: string, pieMenuId: number) => void;
     setSetting: (settingName: string, value: any) => any;
     disablePieMenu: () => void;
     enablePieMenu: () => void;

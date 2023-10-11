@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getFileIconBase64: (path) => ipcRenderer.invoke('getFileIconBase64', [path]),
   runPieTasks: (pieTasksJSON) => ipcRenderer.invoke('runPieTasks', [pieTasksJSON]),
   openPieMenuEditor: (pieMenuId) => ipcRenderer.invoke('openPieMenuEditor', [pieMenuId]),
+  addHotkey: (hotkeyString, pieMenuId) => ipcRenderer.invoke('addHotkey', [hotkeyString, pieMenuId]),
 })
 
 contextBridge.exposeInMainWorld('log', {

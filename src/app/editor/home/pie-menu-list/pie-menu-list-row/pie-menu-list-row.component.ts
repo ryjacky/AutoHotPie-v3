@@ -51,7 +51,7 @@ export class PieMenuListRowComponent implements OnInit {
   }
 
   async shortcutInputChanged(newHotkey: MouseKeyEvent) {
-    window.log.info('Trying to change hotkey of pie menu to ' + newHotkey);
+    window.log.info('Trying to change hotkey of pie menu to ' + MouseKeyEventObject.stringify(newHotkey));
     this.newHotkey = newHotkey;
 
     if ((await PieletteDBHelper.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(newHotkey)).count()) > 0) {

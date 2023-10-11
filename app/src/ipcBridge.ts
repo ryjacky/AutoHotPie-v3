@@ -6,7 +6,7 @@ import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "./plugin/PieletteAddonManager";
 import {PieSingleTaskContext} from "./actions/PieSingleTaskContext";
-import {disablePieMenu, enablePieMenu, hidePieMenu} from "../main";
+import {disablePieMenu, enablePieMenu, hidePieMenu, pieMenuWindow} from "../main";
 import {PieEditorWindow} from "./pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 
@@ -94,6 +94,11 @@ export function initElectronAPI() {
     Log.main.info("Retrieving setting " + args[0] + ", value is " + value + "");
 
     return value;
+  });
+  ipcMain.handle('addHotkey', (event, args) => {
+    // args[0] = hotkey string
+    // args[1] = pieMenuId
+    pieMenuWindow?.addListeningHotkeys(args[0], args[1]);
   });
   ipcMain.handle('setSetting', (event, args) => {
     Log.main.info("Setting " + args[0] + " to " + args[1] + "");

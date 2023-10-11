@@ -2,11 +2,15 @@ import {BrowserWindow, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
 import {GlobalHotkeyService, MouseKeyEvent, MouseKeyEventListener} from "pielette-mouse-key-hook";
+import {MouseKeyEventObject} from "../mouseKeyEvent/MouseKeyEventObject";
+import {Log} from "pielette-core";
 
 export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener {
   private hidden: boolean = false;
   private disabled: boolean = false;
   private readonly prefix = '../../';
+
+  private listeningHotkeys: Map<string, number> = new Map<string, number>();
 
   constructor() {
     super({
@@ -28,6 +32,11 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
   }
 
+  addListeningHotkeys(hotkey: string, pieMenuId: number) {
+    Log.main.debug(`Adding hotkey ${hotkey} for pie menu ${pieMenuId}`)
+    this.listeningHotkeys.set(hotkey, pieMenuId);
+  }
+
   onDoubleClick(event: MouseKeyEvent): void {
   }
 
@@ -41,8 +50,19 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
   }
 
   onKeyDown(event: MouseKeyEvent): void {
-    if (event[6] && event[5] && event[4])
-      this.show(event[2], event[3]);
+    let x = event[2];
+    let y = event[3];
+
+    // Search for the pie menu id related to the hotkey
+    event[2] = 0;
+    event[3] = 0;
+    const pieMenuId = this.listeningHotkeys.get(MouseKeyEventObject.stringify(event))
+
+    // TODO: ipcRenderer.showPieMenu(this.listeningHotkeys.get(MouseKeyEventObject.stringify(event));
+
+    if (!pieMenuId) { return; }
+
+    this.show(x, y);
 
   }
 

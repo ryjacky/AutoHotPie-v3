@@ -3,7 +3,7 @@ import {MouseKeyEvent} from "../db/data/PieMenu";
 export class MouseKeyEventObject {
   static eventTypes = ['MouseDoubleClick', 'MouseDragStarted', 'MouseDragFinished', 'KeyDown', 'KeyUp'];
   static createString(): string {
-    return JSON.stringify(this.create());
+    return this.stringify(this.create());
   }
 
   static create(
@@ -21,13 +21,14 @@ export class MouseKeyEventObject {
     try {
       return JSON.parse(json) as MouseKeyEvent;
     } catch (e) {
-      window.log.error("Error while parsing mouse key event: " + e);
+      console.error("Error while parsing mouse key event: " + e);
       return this.create();
     }
   }
 
   static stringify(mouseKeyEvent: MouseKeyEvent): string {
-    return JSON.stringify(mouseKeyEvent);
+    mouseKeyEvent[1] = mouseKeyEvent[1].toUpperCase();
+    return JSON.stringify(mouseKeyEvent).trim();
   }
 
   static fromKeyboardEvent(event: KeyboardEvent): MouseKeyEvent {
