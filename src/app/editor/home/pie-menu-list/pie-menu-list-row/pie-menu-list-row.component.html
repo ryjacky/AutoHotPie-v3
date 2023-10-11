@@ -37,12 +37,11 @@
 
     </td>
     <td>
-<!--      TODO: GET BACK -->
-<!--      <app-shortcut-input-->
-<!--        #shortcutInput-->
-<!--        [hotkey]="profileService.pieMenus.get(pieMenuId)?.hotkeyEncoded ?? '')"-->
-<!--        (hotkeyChange)="shortcutInputChanged($event)">-->
-<!--      </app-shortcut-input>-->
+      <app-shortcut-input
+        #shortcutInput
+        [hotkeyString]="this.profileService.pieMenus.get(this.pieMenuId)?.hotkey ?? emptyMouseKeyEventString()"
+        (hotkeyChange)="shortcutInputChanged($event)">
+      </app-shortcut-input>
     </td>
 
     <!--  Edit/Remove buttons  -->

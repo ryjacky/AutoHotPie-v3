@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
 import {AugmentedAddonHeader} from '../../../../../app/src/plugin/AugmentedAddonHeader';
+import { MouseKeyEvent } from '../../../../../app/src/db/data/PieMenu';
 
 @Component({
   selector: 'app-action-card',
@@ -26,6 +27,7 @@ export class ActionCardComponent implements OnInit {
     this.pieTaskContext.args[argName] = event.target.value;
   }
 
-  protected readonly Number = Number;
-  protected readonly String = String;
+  getTypedHotkey(param: any) {
+    return this.pieTaskContext.args[param.argName] as MouseKeyEvent;
+  }
 }

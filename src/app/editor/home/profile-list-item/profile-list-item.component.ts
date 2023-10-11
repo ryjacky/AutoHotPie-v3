@@ -1,6 +1,7 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {Profile} from '../../../../../app/src/db/data/Profile';
+import {ProfileService} from '../../../core/services/profile/profile.service';
 
 @Component({
   selector: 'app-profile-list-item',
@@ -10,17 +11,20 @@ import {Profile} from '../../../../../app/src/db/data/Profile';
 
 export class ProfileListItemComponent {
   @Input() profile: Profile = new Profile('');
-  @Input() selectedProfileId = 0;
-  @Output() profileSelected = new EventEmitter<number>();
-  @Output() profileUpdated = new EventEmitter();
 
   @ViewChild('profNameInput') profNameInput: any;
   @ViewChild('editButton') editButton: any;
 
   inputDisabled = true;
 
+  profileService: ProfileService;
+
+  constructor(profileService: ProfileService) {
+    this.profileService = profileService;
+  }
+
   selectProfile() {
-    this.profileSelected.emit(this.profile.id);
+    this.profileService.load(this.profile.id ?? 0, true);
   }
 
   startEditing() {
@@ -30,10 +34,7 @@ export class ProfileListItemComponent {
   completeEditing() {
     this.inputDisabled = true;
 
-    PieletteDBHelper.profile.update(this.profile.id ?? 0, {name: this.profNameInput.nativeElement.value}).then(() => {
-      this.profile.name = this.profNameInput.nativeElement.value;
-      window.log.info('Profile of id ' + this.profile.id + ' updated its name to ' + this.profile.name);
-    });
+    this.profileService.setName(this.profNameInput.nativeElement.value);
   }
 
 }

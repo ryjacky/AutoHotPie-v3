@@ -3,7 +3,7 @@ import {NbDialogService, NbPosition} from '@nebular/theme';
 import {ProfileService} from '../../../../core/services/profile/profile.service';
 import {PieletteDBHelper} from '../../../../../../app/src/db/PieletteDB';
 import {MouseKeyEvent, PieMenu} from '../../../../../../app/src/db/data/PieMenu';
-import {MouseKeyEventHelper} from '../../../../../../app/src/mouseKeyEvent/MouseKeyEventHelper';
+import {MouseKeyEventObject} from '../../../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
 
 @Component({
   selector: 'app-pie-menu-list-row',
@@ -15,7 +15,7 @@ export class PieMenuListRowComponent implements OnInit {
   @ViewChild('shortcutInput') shortcutInput: any;
   @ViewChild('nameInput') nameInput: any;
   @ViewChild('hotkeyAcquisitionDialog') confirmReplaceDialog: any;
-  newHotkey: MouseKeyEvent = MouseKeyEventHelper.emptyMouseKeyEvent();
+  newHotkey: MouseKeyEvent = MouseKeyEventObject.create();
 
   protected readonly nbPosition = NbPosition;
 
@@ -40,8 +40,11 @@ export class PieMenuListRowComponent implements OnInit {
     if (!success) {
       return;
     }
-    PieletteDBHelper.pieMenu.where('hotkeyEncoded').equals(this.newHotkey)
-      .modify((pieMenu: PieMenu) => pieMenu.hotkey = MouseKeyEventHelper.emptyMouseKeyEvent())
+    PieletteDBHelper.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(this.newHotkey))
+      .modify((pieMenu: PieMenu) => {
+        pieMenu.hotkey = MouseKeyEventObject.createString();
+        this.profileService.setPieMenuHotkey(pieMenu.id ?? -1, MouseKeyEventObject.create());
+      })
       .then(() => {
         this.profileService.setPieMenuHotkey(this.pieMenuId, this.newHotkey);
       });
@@ -51,7 +54,7 @@ export class PieMenuListRowComponent implements OnInit {
     window.log.info('Trying to change hotkey of pie menu to ' + newHotkey);
     this.newHotkey = newHotkey;
 
-    if ((await PieletteDBHelper.pieMenu.where('hotkeyEncoded').equals(newHotkey).count()) > 0) {
+    if ((await PieletteDBHelper.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(newHotkey)).count()) > 0) {
       this.dialogService.open(this.confirmReplaceDialog);
     } else {
       this.profileService.setPieMenuHotkey(this.pieMenuId, newHotkey);
@@ -63,4 +66,7 @@ export class PieMenuListRowComponent implements OnInit {
     window.electronAPI.openPieMenuEditor(pieMenuId);
   }
 
+  emptyMouseKeyEventString() {
+    return MouseKeyEventObject.createString();
+  }
 }

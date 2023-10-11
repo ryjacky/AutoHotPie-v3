@@ -1,3 +1,5 @@
+import {MouseKeyEventObject} from "../../mouseKeyEvent/MouseKeyEventObject";
+
 /**
  * Represents a mouse or keyboard event.
  * - [0] eventName: The name of the event.
@@ -24,7 +26,7 @@ export interface IPieMenu {
   name: string;
   enabled: boolean;
   activationMode: PieMenuActivationMode;
-  hotkey: MouseKeyEvent;
+  hotkey: string;
   escapeRadius: number;
   openInScreenCenter: boolean;
   mainColor: string;
@@ -45,7 +47,7 @@ export class PieMenu implements IPieMenu {
     public name = "New Pie Menu",
     public enabled = true,
     public activationMode = PieMenuActivationMode.HOVER_OVER_THEN_RELEASE,
-    public hotkey = ["KeyUp", "", 0, 0, false, false, false],
+    public hotkey = MouseKeyEventObject.createString(),
     public escapeRadius = 0,
     public openInScreenCenter = false,
     public mainColor = '#1DAEAA',

@@ -2,6 +2,7 @@ import {Profile} from '../../../../../app/src/db/data/Profile';
 import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {IPieMenu, MouseKeyEvent, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieItem} from '../../../../../app/src/db/data/PieItem';
+import {MouseKeyEventObject} from '../../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
 
 export class ProfileService extends Profile {
   loaded = false;
@@ -31,7 +32,7 @@ export class ProfileService extends Profile {
     for (const profileKey in profile) {
       if (profileKey in this) {
         // @ts-ignore
-        this[profileKey] = pieMenu[profileKey];
+        this[profileKey] = profile[profileKey];
       }
     }
 
@@ -51,6 +52,11 @@ export class ProfileService extends Profile {
     }
 
     this.loaded = true;
+  }
+
+  setName(name: string) {
+    this.name = name;
+    PieletteDBHelper.profile.update(this.id ?? 0, {name: this.name});
   }
 
   toggle() {
@@ -74,16 +80,16 @@ export class ProfileService extends Profile {
     if (this.nProfileConnected.get(pieMenu.id ?? 0) ?? 0 > 1) {
       window.log.info('Duplicating pie menu ' + pieMenu.id + ' (name: ' + pieMenu.name + ')');
 
-      await this.createAndAddPieMenu(pieMenu);
-      await this.removePieMenu(pieMenu.id ?? 0);
+      await this.createAndAddPieMenu(pieMenu, pieMenu.id);
     }
   }
 
   /**
    *
    * @param fromPieMenu The original pie menu to be copied. If not provided, a new pie menu will be created.
+   * @param replacePieMenuId If provided, the new pie menu will replace the pie menu with this id.
    */
-  async createAndAddPieMenu(fromPieMenu?: IPieMenu) {
+  async createAndAddPieMenu(fromPieMenu?: IPieMenu, replacePieMenuId?: number) {
     let newPieMenu: PieMenu;
     if (fromPieMenu) {
       newPieMenu = structuredClone(fromPieMenu);
@@ -95,24 +101,41 @@ export class ProfileService extends Profile {
     }
 
     const newPieMenuId = await PieletteDBHelper.pieMenu.add(newPieMenu);
-    this.addPieMenu(newPieMenuId as number);
+    newPieMenu.id = newPieMenuId as number;
+    this.addPieMenu(newPieMenu, replacePieMenuId);
   }
 
-  addPieMenu(pieMenuId: number) {
-    this.pieMenuIds.push(pieMenuId);
-    PieletteDBHelper.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
+  async addPieMenu(pieMenu: PieMenu, replacePieMenuId?: number) {
+    window.log.debug('Adding pie menu ' + pieMenu.id + ' (name: ' + pieMenu.name + ')');
+
+    if (replacePieMenuId) {
+      this.pieMenuIds = this.pieMenuIds.map((id) => id === replacePieMenuId ? pieMenu.id ?? -1 : id);
+    } else {
+      this.pieMenuIds.push(pieMenu.id ?? -1);
+    }
+    this.pieMenus.set(pieMenu.id ?? -1, pieMenu);
+
+    await PieletteDBHelper.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
+
+    this.nProfileConnected.set(
+      pieMenu.id ?? -1,
+      await PieletteDBHelper.profile.where('pieMenuIds').equals(pieMenu.id ?? -1).count());
   }
 
   setPieMenuHotkey(pieMenuId: number, hotkey: MouseKeyEvent) {
-    if (hotkey.length !== 7
-      || !(hotkey[0] in ['MouseDoubleClick', 'MouseDragStarted', 'MouseDragFinished', 'KeyDown', 'KeyUp'])){
-      window.log.error('Invalid hotkey');
+    if (hotkey.length !== 7){
+      window.log.error('Invalid hotkey, length is not 7: ' + hotkey.length);
       return;
     }
+    if (!MouseKeyEventObject.eventTypes.find((element) => element === hotkey[0])){
+      window.log.error('Invalid hotkey, event name does not exist: ' + hotkey[0]);
+      return;
+    }
+
     const pieMenu = this.pieMenus.get(pieMenuId);
 
     if (pieMenu) {
-      pieMenu.hotkey = hotkey;
+      pieMenu.hotkey = MouseKeyEventObject.stringify(hotkey);
       PieletteDBHelper.pieMenu.update(pieMenuId, {hotkey: pieMenu.hotkey});
     }
   }
@@ -143,10 +166,12 @@ export class ProfileService extends Profile {
 
   setPieMenuName(pieMenuId: number, value: string) {
     const pieMenu = this.pieMenus.get(pieMenuId);
-
     if (pieMenu) {
+      window.log.debug('Setting pie menu name to ' + value);
       pieMenu.name = value;
       PieletteDBHelper.pieMenu.update(pieMenuId, {name: value});
+    } else {
+      window.log.error('Pie menu of id: ' + pieMenuId + ' not found');
     }
   }
 }
