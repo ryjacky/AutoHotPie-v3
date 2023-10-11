@@ -17,7 +17,7 @@
   </div>
 
   <div [style.display]="!profSettingsRevealed ? 'flex' : 'none'" class="center-horizontal">
-    <app-pie-menu-list [pieMenuIds]="profile.pieMenus" (pieMenuChange)="onPieMenuChanged($event)"
+    <app-pie-menu-list [pieMenuIds]="profile.pieMenuIds" (pieMenuChange)="onPieMenuChanged($event)"
                        style="max-height: 65vh; overflow-y: scroll;"/>
 
   </div>

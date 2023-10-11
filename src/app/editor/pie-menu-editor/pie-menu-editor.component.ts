@@ -2,7 +2,6 @@ import {Component, Input} from '@angular/core';
 import {PieSingleTaskContext} from '../../../../app/src/actions/PieSingleTaskContext';
 import {ToastrService} from 'ngx-toastr';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
-import {PieletteEnv} from 'pielette-core/lib/PieletteEnv';
 
 @Component({
   selector: 'app-pie-menu-editor',
@@ -66,7 +65,11 @@ export class PieMenuEditorComponent {
   }
 
   addAction() {
-    this.pieMenuService.getPieItemActions(this.activePieItemId ?? -1).push(new PieSingleTaskContext('ahp-send-key', {}));
+    this.pieMenuService.getPieItemActions(this.activePieItemId ?? -1).push(
+      new PieSingleTaskContext(
+        'ahp-send-key',
+        {}
+      ));
   }
 
   save() {

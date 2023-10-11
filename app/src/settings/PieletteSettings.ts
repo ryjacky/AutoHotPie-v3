@@ -13,8 +13,8 @@ interface IPieletteSettingSchema {
 
 const PieletteSettingSchema: Schema<IPieletteSettingSchema> = {
   pieMenuCancelKey: {
-    type: 'string',
-    default: JSON.stringify(new MouseKeyEvent())
+    type: 'array',
+    default: ["KeyDown", "Escape", 0, 0, false, false, false]
   },
   runOnStartup: {
     type: 'boolean',
@@ -51,7 +51,7 @@ app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);
 export const PieletteSettings = new Store<IPieletteSettingSchema>({
   schema: PieletteSettingSchema, migrations: {
     '3.0.2': (store) => {
-      store.set('pieMenuCancelKey', JSON.stringify(new MouseKeyEvent("KeyDown", "Escape")));
+      store.set('pieMenuCancelKey', ["KeyDown", "Escape", 0, 0, false, false, false]);
     }
   }
 });

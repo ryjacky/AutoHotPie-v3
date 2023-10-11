@@ -1,7 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {NbDialogService, NbPosition} from '@nebular/theme';
+import {ProfileService} from '../../../../core/services/profile/profile.service';
 import {PieletteDBHelper} from '../../../../../../app/src/db/PieletteDB';
-import {PieMenu} from '../../../../../../app/src/db/data/PieMenu';
+import {MouseKeyEvent, PieMenu} from '../../../../../../app/src/db/data/PieMenu';
+import {MouseKeyEventHelper} from '../../../../../../app/src/mouseKeyEvent/MouseKeyEventHelper';
 
 @Component({
   selector: 'app-pie-menu-list-row',
@@ -9,79 +11,50 @@ import {PieMenu} from '../../../../../../app/src/db/data/PieMenu';
   styleUrls: ['./pie-menu-list-row.component.scss']
 })
 export class PieMenuListRowComponent implements OnInit {
-  @Input() pieMenu: PieMenu = new PieMenu();
-  @Output() pieMenuChange = new EventEmitter<{ remove: number | undefined; add: number | undefined }>();
+  @Input() pieMenuId = 0;
   @ViewChild('shortcutInput') shortcutInput: any;
   @ViewChild('nameInput') nameInput: any;
   @ViewChild('hotkeyAcquisitionDialog') confirmReplaceDialog: any;
-
-  newHotkey = '';
-  prevHotkey = '';
-
-  nProfilesConnected = 1;
+  newHotkey: MouseKeyEvent = MouseKeyEventHelper.emptyMouseKeyEvent();
 
   protected readonly nbPosition = NbPosition;
 
-  constructor(private dialogService: NbDialogService) {
+  constructor(
+    private dialogService: NbDialogService,
+    public profileService: ProfileService,
+  ) {
   }
 
   updatePieMenu() {
     this.nameInput.nativeElement.blur();
 
-    // this.pieMenu.selectionColor is auto updated in the color picker
-
-    this.pieMenu.name = this.nameInput.nativeElement.value;
-    PieletteDBHelper.pieMenu.put(this.pieMenu);
+    this.profileService.setPieMenuName(this.pieMenuId, this.nameInput.nativeElement.value);
   }
 
   ngOnInit(): void {
-    PieletteDBHelper.profile.where('pieMenus').equals(this.pieMenu.id ?? 0).count().then((count) => {
-      this.nProfilesConnected = count;
-    });
   }
 
-  duplicatePieMenu() {
-    if (this.nProfilesConnected > 1) {
-      window.log.info('Duplicating pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ')');
 
-      const newPieMenu = structuredClone(this.pieMenu);
-      newPieMenu.id = undefined;
-      PieletteDBHelper.pieMenu.add(newPieMenu).then((id) => {
-        this.pieMenuChange.emit({remove: this.pieMenu.id, add: id as number});
-      });
-    }
-  }
-
-  acquireHotkey(success = true) {
+  robHotkeyFromOtherProfiles(success = true) {
+    // Rob the hotkey from other pie menu
     if (!success) {
-      this.pieMenu.hotkey = this.prevHotkey;
-      window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') not changed per user request');
       return;
     }
-    PieletteDBHelper.pieMenu.where('hotkey').equals(this.newHotkey)
-      .modify((pieMenu: PieMenu) => pieMenu.hotkey = '')
+    PieletteDBHelper.pieMenu.where('hotkeyEncoded').equals(this.newHotkey)
+      .modify((pieMenu: PieMenu) => pieMenu.hotkey = MouseKeyEventHelper.emptyMouseKeyEvent())
       .then(() => {
-        PieletteDBHelper.pieMenu.put(this.pieMenu);
-        this.pieMenuChange.emit();
-        window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') changed to ' + this.newHotkey);
-        window.log.info('All other pie menus with hotkey ' + this.newHotkey + ' had their hotkey removed');
+        this.profileService.setPieMenuHotkey(this.pieMenuId, this.newHotkey);
       });
   }
 
-  async shortcutInputChanged(newHotkey: string) {
-    window.log.info('Trying to change hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') to ' + newHotkey);
+  async shortcutInputChanged(newHotkey: MouseKeyEvent) {
+    window.log.info('Trying to change hotkey of pie menu to ' + newHotkey);
     this.newHotkey = newHotkey;
-    this.prevHotkey = this.pieMenu.hotkey;
 
-    this.pieMenu.hotkey = newHotkey;
-
-    if ((await PieletteDBHelper.pieMenu.where('hotkey').equals(newHotkey).count()) > 0) {
+    if ((await PieletteDBHelper.pieMenu.where('hotkeyEncoded').equals(newHotkey).count()) > 0) {
       this.dialogService.open(this.confirmReplaceDialog);
-      window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') already in use, ' +
-        'prompting user to replace it');
     } else {
-      PieletteDBHelper.pieMenu.put(this.pieMenu);
-      window.log.info('Hotkey of pie menu ' + this.pieMenu.id + ' (name: ' + this.pieMenu.name + ') changed to ' + newHotkey);
+      this.profileService.setPieMenuHotkey(this.pieMenuId, newHotkey);
     }
   }
 
@@ -89,4 +62,5 @@ export class PieMenuListRowComponent implements OnInit {
     if (pieMenuId === undefined) { return; }
     window.electronAPI.openPieMenuEditor(pieMenuId);
   }
+
 }

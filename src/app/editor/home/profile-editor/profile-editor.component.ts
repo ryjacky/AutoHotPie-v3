@@ -43,12 +43,12 @@ export class ProfileEditorComponent {
     // and I finally know that when event is going to be undefined if both remove and add is undefined
     // because they're not passed in the event
     if (event === undefined) {
-      this.profile.pieMenus = [...this.profile.pieMenus];
+      this.profile.pieMenuIds = [...this.profile.pieMenuIds];
 
       return;
     }
 
-    let newPieMenuList = this.profile.pieMenus;
+    let newPieMenuList = this.profile.pieMenuIds;
     if (event.remove !== undefined) {
       newPieMenuList = newPieMenuList.filter((pieMenuId) => pieMenuId !== event.remove);
       window.log.info('Removed pie menu ' + event.remove + ' from profile ' + this.profile.id);
@@ -63,7 +63,7 @@ export class ProfileEditorComponent {
         this.profile.id ?? 0,
         {pieMenus: newPieMenuList})
         .then(() => {
-          this.profile.pieMenus = newPieMenuList;
+          this.profile.pieMenuIds = newPieMenuList;
         });
     }
   }
@@ -76,15 +76,15 @@ export class ProfileEditorComponent {
 
   openPieMenuSelector(pieMenuSelectorDialog: TemplateRef<any>) {
     this.dialogService.open(pieMenuSelectorDialog, {
-      context: PieletteDBHelper.pieMenu.where('id').noneOf(this.profile.pieMenus).toArray(),
+      context: PieletteDBHelper.pieMenu.where('id').noneOf(this.profile.pieMenuIds).toArray(),
     });
   }
 
   addPieMenu(id: number) {
-    if (this.profile.pieMenus.includes(id)) {
+    if (this.profile.pieMenuIds.includes(id)) {
       return;
     }
-    PieletteDBHelper.profile.update(this.profile, {pieMenus: [...this.profile.pieMenus, id]});
+    PieletteDBHelper.profile.update(this.profile, {pieMenus: [...this.profile.pieMenuIds, id]});
   }
 
   async addMissingExeClicked() {

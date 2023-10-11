@@ -1,8 +1,7 @@
 import {Profile} from '../../../../../app/src/db/data/Profile';
 import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
-import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
+import {IPieMenu, MouseKeyEvent, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieItem} from '../../../../../app/src/db/data/PieItem';
-import {MouseKeyEvent} from "pielette-mouse-key-hook";
 
 export class ProfileService extends Profile {
   loaded = false;
@@ -104,6 +103,20 @@ export class ProfileService extends Profile {
     PieletteDBHelper.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
   }
 
+  setPieMenuHotkey(pieMenuId: number, hotkey: MouseKeyEvent) {
+    if (hotkey.length !== 7
+      || !(hotkey[0] in ['MouseDoubleClick', 'MouseDragStarted', 'MouseDragFinished', 'KeyDown', 'KeyUp'])){
+      window.log.error('Invalid hotkey');
+      return;
+    }
+    const pieMenu = this.pieMenus.get(pieMenuId);
+
+    if (pieMenu) {
+      pieMenu.hotkey = hotkey;
+      PieletteDBHelper.pieMenu.update(pieMenuId, {hotkey: pieMenu.hotkey});
+    }
+  }
+
   addExe(path: string){
     this.exes.push(path);
     PieletteDBHelper.profile.update(this.id ?? 0, {exes: this.exes});
@@ -135,34 +148,5 @@ export class ProfileService extends Profile {
       pieMenu.name = value;
       PieletteDBHelper.pieMenu.update(pieMenuId, {name: value});
     }
-  }
-
-  setPieMenuHotkeyEncoded(pieMenuId: number, value: MouseKeyEvent) {
-    const pieMenu = this.pieMenus.get(pieMenuId);
-
-    if (pieMenu) {
-      pieMenu.hotkeyEncoded = value.encode();
-      PieletteDBHelper.pieMenu.update(pieMenuId, {hotkeyEncoded: pieMenu.hotkeyEncoded});
-    }
-  }
-
-  getPieMenuMainColor(pieMenuId: number) {
-    return this.getPieMenu(pieMenuId)?.mainColor ?? '';
-  }
-
-  getPieMenuName(pieMenuId: number) {
-    return this.getPieMenu(pieMenuId)?.name ?? '';
-  }
-
-  getNProfilesConnected(pieMenuId: number) {
-    return this.nProfileConnected.get(pieMenuId) ?? 0;
-  }
-
-  getPieMenuHotkeyDecoded(pieMenuId: number){
-    return MouseKeyEvent.decode(this.getPieMenu(pieMenuId)?.hotkeyEncoded ?? '');
-  }
-
-  getPieMenu(pieMenuId: number) {
-    return this.pieMenus.get(pieMenuId);
   }
 }

@@ -1,17 +1,12 @@
 import {BrowserWindow, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
-import {GlobalHotkeyService, IMouseKeyEvent, MouseKeyEventListener} from "pielette-mouse-key-hook";
+import {GlobalHotkeyService, MouseKeyEvent, MouseKeyEventListener} from "pielette-mouse-key-hook";
 
 export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener {
   private hidden: boolean = false;
   private disabled: boolean = false;
   private readonly prefix = '../../';
-
-  private readonly x: number = 0;
-  private readonly y: number = 0;
-  private readonly width: number = 0;
-  private readonly height: number = 0;
 
   constructor() {
     super({
@@ -27,38 +22,31 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
       },
     });
 
-    for (const display of screen.getAllDisplays()) {
-      if (display.bounds.x < this.x) { this.x = display.bounds.x; }
-      if (display.bounds.y < this.y) { this.y = display.bounds.y; }
-      this.width += display.bounds.width;
-      this.height += display.bounds.height;
-    }
-
     this.preventClose();
     this.hide();
     this.loadPieMenuURL();
     GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
   }
 
-  onDoubleClick(event: IMouseKeyEvent): void {
+  onDoubleClick(event: MouseKeyEvent): void {
   }
 
-  onDragStarted(event: IMouseKeyEvent): void {
+  onDragStarted(event: MouseKeyEvent): void {
   }
 
-  onDragFinished(event: IMouseKeyEvent): void {
+  onDragFinished(event: MouseKeyEvent): void {
     if (!this.hidden) {
       this.webContents.send('closePieMenuRequested');
     }
   }
 
-  onKeyDown(event: IMouseKeyEvent): void {
-    if (event.alt && event.shift && event.control)
-      this.show(event.x, event.y);
+  onKeyDown(event: MouseKeyEvent): void {
+    if (event[6] && event[5] && event[4])
+      this.show(event[2], event[3]);
 
   }
 
-  onKeyUp(event: IMouseKeyEvent): void {
+  onKeyUp(event: MouseKeyEvent): void {
     if (!this.hidden) {
       this.webContents.send('closePieMenuRequested');
     }
@@ -104,13 +92,16 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     if (this.hidden) {
       this.hidden = false;
 
-      // FIXME: creating window across all monitors because getCursorScreenPoint() is not working with windows ink
-      //  enabled window such as chrome, windows default photo viewer, etc.
+      // Show the window at cursor position, centered
+      const primaryScreenWidth = screen.getPrimaryDisplay().bounds.width;
+      const primaryScreenHeight = screen.getPrimaryDisplay().bounds.height;
+
       this.setBounds({
-        width: this.width,
-        height: this.height,
-        x: this.x,
-        y: this.y
+        width: primaryScreenWidth,
+        height: primaryScreenHeight,
+        // TODO: Does not work with digital pen when the cursor is on top of any chromium window
+        x: (x ?? screen.getCursorScreenPoint().x) - primaryScreenWidth / 2,
+        y: (y ?? screen.getCursorScreenPoint().y) - primaryScreenHeight / 2
       })
 
       super.show();
