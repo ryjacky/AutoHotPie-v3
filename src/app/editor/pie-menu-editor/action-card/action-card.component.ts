@@ -27,4 +27,5 @@ export class ActionCardComponent implements OnInit {
   }
 
   protected readonly Number = Number;
+  protected readonly String = String;
 }

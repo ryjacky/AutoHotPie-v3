@@ -3,11 +3,13 @@ import {NbPopoverDirective, NbPosition} from '@nebular/theme';
 import {PieletteDBHelper} from '../../../../app/src/db/PieletteDB';
 import {Profile} from '../../../../app/src/db/data/Profile';
 import {ReadonlyWindowDetails} from '../../../../app/src/appWindow/WindowDetails';
+import {ProfileService} from '../../core/services/profile/profile.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  providers: [ProfileService]
 })
 export class HomeComponent implements OnInit, OnChanges {
   @ViewChild('profileListItemComponent') profileListItemComponent: any;
@@ -20,18 +22,14 @@ export class HomeComponent implements OnInit, OnChanges {
   activeWindow: ReadonlyWindowDetails | undefined;
   remainingSec = 5;
 
-  selectedProfId = 1;
-
   profiles: Profile[] = [];
+  profileService: ProfileService;
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   protected readonly NbPosition = NbPosition;
 
-  /**
-   * This function will possibly return undefined if when profiles is either empty or has not yet loaded.
-   */
-  get selectedProf(): Profile | undefined {
-    return this.profiles.find((prof) => prof.id === this.selectedProfId) ?? this.profiles[0];
+  constructor(profileService: ProfileService) {
+    this.profileService = profileService;
   }
 
   ngOnInit(): void {
@@ -39,7 +37,9 @@ export class HomeComponent implements OnInit, OnChanges {
     PieletteDBHelper.profile.each((prof) => {
       this.profiles.push(prof);
     }).then(() => {
-      this.selectedProfId = this.profiles[0].id ?? 0;
+      if (this.profiles[0].id) {
+        this.profileService.load(this.profiles[0].id);
+      }
     });
   }
 
@@ -93,10 +93,6 @@ export class HomeComponent implements OnInit, OnChanges {
       this.profiles.push(newProf);
       window.log.info('Profile of id ' + newProf.id + ' created with name ' + newProf.name);
     });
-  }
-
-  updateSelectedProfile($event: number) {
-    this.selectedProfId = $event;
   }
 
   reloadProfEditor() {

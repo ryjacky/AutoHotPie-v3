@@ -95,7 +95,7 @@
 
       <app-shortcut-input
         *ngIf="param.fieldType === 'hotkeys'"
-        [hotkey]="pieTaskContext.args[(param.argName)]"
+        [hotkey]="String(pieTaskContext.args[(param.argName)])"
         (hotkeyChange)="pieTaskContext.args[(param.argName)] = $event"></app-shortcut-input>
     </div>
   </div>

@@ -1,9 +1,9 @@
-import {OnExecutedArgs} from "pielette-core";
+import {RuntimeArgs} from "pielette-core";
 
 export class PieSingleTaskContext {
   constructor(
     public addonId: string,
-    public args: OnExecutedArgs,
+    public args: RuntimeArgs,
     public delay: number = 0,
     public repeat: number = 1,
   ) {

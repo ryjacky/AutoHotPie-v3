@@ -34,13 +34,13 @@ initElectronAPI();
 initLoggerForRenderer();
 PieletteAddonManager.loadPlugins().then(() => {
   splashScreenWindow?.close();
+  splashScreenWindow = undefined;
+
+  initSystemTray();
 
   pieMenuWindow = new PieMenuWindow();
   editorWindow = new EditorWindow();
 
-  initSystemTray();
-
-  new PieEditorWindow(1);
 });
 
 // ------------------------------- Helper Functions -------------------------------

@@ -11,15 +11,12 @@
 
             </div>
             <div style="max-height: 70vh; overflow-y: scroll; padding-right: 0.5em;">
-                <app-profile-list-item #profileListItemComponent *ngFor="let prof of profiles;"
-                                       [profile]="prof" (profileSelected)="updateSelectedProfile($event)"
-                                       [selectedProfileId]="selectedProfId"
-                                       (profileUpdated)="reloadProfEditor()"/>
+                <app-profile-list-item #profileListItemComponent *ngFor="let prof of profiles;" [profile]="prof" />
             </div>
 
         </div>
 
-        <app-profile-editor *ngIf="selectedProf" #profileEditorComponent [profile]="selectedProf"/>
+        <app-profile-editor #profileEditorComponent/>
 
     </section>
 </div>

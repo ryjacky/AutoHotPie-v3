@@ -4,8 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {APP_CONFIG} from '../environments/environment';
 import {PieletteDBHelper} from '../../app/src/db/PieletteDB';
 import {Router} from '@angular/router';
-import {NbPosition} from '@nebular/theme';
-import {PieMenu, PieMenuActivationMode} from '../../app/src/db/data/PieMenu';
+import {PieMenu} from '../../app/src/db/data/PieMenu';
 import {Profile} from '../../app/src/db/data/Profile';
 import {PieItem} from '../../app/src/db/data/PieItem';
 
