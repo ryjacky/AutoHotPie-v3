@@ -3,6 +3,8 @@ import {PieItem} from "./data/PieItem";
 import {PieMenu} from "./data/PieMenu";
 import {Profile} from "./data/Profile";
 
+
+// TODO: Create as a service
 export class PieletteDB extends Dexie {
   pieItem!: Table<PieItem>;
   pieMenu!: Table<PieMenu>;
@@ -17,7 +19,13 @@ export class PieletteDB extends Dexie {
       pieMenu: "++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, mainColor, secondaryColor, *pieItemIds, centerRadius, centerThickness, iconSize, pieItemRoundness, pieItemSpread",
       profile: "++id, name, enabled, *pieMenuIds, *exes, iconBase64",
     });
+
+    Dexie.on('storagemutated', () => {
+      console.log('Storage mutated');
+    });
   }
+
+
 }
 
 export const PieletteDBHelper = new PieletteDB();

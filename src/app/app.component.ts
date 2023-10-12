@@ -7,6 +7,7 @@ import {Router} from '@angular/router';
 import {PieMenu} from '../../app/src/db/data/PieMenu';
 import {Profile} from '../../app/src/db/data/Profile';
 import {PieItem} from '../../app/src/db/data/PieItem';
+import {DBShareService} from "./core/services/db/dbshare.service";
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent {
   constructor(
     private router: Router,
     private electronService: ElectronService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private dbShareService: DBShareService
   ) {
     this.initAppdata();
 
@@ -51,7 +53,7 @@ export class AppComponent {
     //TODO: Should be put in welcome guide
     window.log.info('Initializing/Loading app data');
 
-    if ((await PieletteDBHelper.profile.count()) === 0) {
+    if ((await this.dbShareService.getProfileCount()) === 0) {
       window.log.info('No profile found, creating default profile');
 
       await PieletteDBHelper.pieItem.bulkPut([

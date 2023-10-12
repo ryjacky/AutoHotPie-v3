@@ -1,5 +1,4 @@
 import {BrowserWindow} from "electron";
-import {EditorConstants} from "../constants/EditorConstants";
 import * as path from "path";
 import * as fs from "fs";
 
@@ -7,10 +6,6 @@ export class PieEditorWindow extends BrowserWindow {
   private readonly prefix = '../../';
   constructor(id: number) {
     super({
-      minWidth: EditorConstants.WINDOW_WIDTH,
-      minHeight: EditorConstants.WINDOW_HEIGHT,
-      width: EditorConstants.WINDOW_WIDTH,
-      height: EditorConstants.WINDOW_HEIGHT,
       titleBarStyle: 'hidden',
       titleBarOverlay: {
         color: '#1f2122',

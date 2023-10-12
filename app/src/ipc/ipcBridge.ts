@@ -1,20 +1,21 @@
 import {app, ipcMain, dialog, nativeImage} from "electron";
 import * as child_process from "child_process";
-import {PieletteSettings} from "./settings/PieletteSettings";
+import {PieletteSettings} from "../settings/PieletteSettings";
 import * as activeWindow from "active-win";
-import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
+import {ReadonlyWindowDetails} from "../appWindow/WindowDetails";
 import {Log} from "pielette-core";
-import {PieletteAddonManager} from "./plugin/PieletteAddonManager";
-import {PieSingleTaskContext} from "./actions/PieSingleTaskContext";
-import {disablePieMenu, enablePieMenu, hidePieMenu, pieMenuWindow} from "../main";
-import {PieEditorWindow} from "./pieletteWindows/PieEditorWindow";
+import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
+import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
+import {disablePieMenu, enablePieMenu, hidePieMenu, pieMenuWindow} from "../../main";
+import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 
 /**
  * Sets up IPC listeners for the main process,
  * see typings.d.ts for the list of available listeners and its documentation
  * */
-export function initElectronAPI() {
+
+export function initIPC() {
   ipcMain.handle('openPieMenuEditor', (event, args) => {
     // args[0] = pieMenuId
     Log.main.info("Opening pie menu editor for pie menu " + args[0] + "");

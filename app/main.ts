@@ -1,5 +1,5 @@
 import {app, BrowserWindow, Menu, Tray} from 'electron';
-import {initElectronAPI, initLoggerForRenderer} from "./src/ipcBridge";
+import {initIPC, initLoggerForRenderer} from "./src/ipc/ipcBridge";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "./src/plugin/PieletteAddonManager";
 import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
@@ -29,7 +29,7 @@ app.on('activate', () => {
 
 
 // User data is initialized in app.component.ts and can only be initialized there (in the renderer process).
-initElectronAPI();
+initIPC();
 initLoggerForRenderer();
 PieletteAddonManager.loadPlugins().then(() => {
   splashScreenWindow?.close();

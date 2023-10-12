@@ -1,5 +1,4 @@
 import {BrowserWindow} from "electron";
-import {EditorConstants} from "../constants/EditorConstants";
 import * as path from "path";
 import * as fs from "fs";
 import {GlobalHotkeyServiceListener} from "pielette-mouse-key-hook";
@@ -7,12 +6,14 @@ import {GlobalHotkeyServiceListener} from "pielette-mouse-key-hook";
 export class EditorWindow extends BrowserWindow implements GlobalHotkeyServiceListener {
   private readonly prefix = '../../';
 
+  static readonly DEFAULT_WINDOW_WIDTH = 1080;
+  static readonly DEFAULT_WINDOW_HEIGHT = 720;
   constructor() {
     super({
-      minWidth: EditorConstants.WINDOW_WIDTH,
-      minHeight: EditorConstants.WINDOW_HEIGHT,
-      width: EditorConstants.WINDOW_WIDTH,
-      height: EditorConstants.WINDOW_HEIGHT,
+      minWidth: EditorWindow.DEFAULT_WINDOW_WIDTH,
+      minHeight: EditorWindow.DEFAULT_WINDOW_HEIGHT,
+      width: EditorWindow.DEFAULT_WINDOW_WIDTH,
+      height: EditorWindow.DEFAULT_WINDOW_HEIGHT,
       titleBarStyle: 'hidden',
       titleBarOverlay: {
         color: '#1f2122',
