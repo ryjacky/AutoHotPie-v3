@@ -4,6 +4,17 @@ console.log("preload.js is loaded")
 
 // !!! IMPORTANT !!!
 // Also declare the API you want to expose in typings.d.ts
+
+contextBridge.exposeInMainWorld('dbAPI', {
+  // ---------------------- Invoke ----------------------
+  // hotkeys: string[]
+  possibleHotkeyChange: (hotkeys) => ipcRenderer.invoke('db.possibleHotkeyChange', hotkeys),
+
+  // ---------------------- On ----------------------
+
+
+});
+
 contextBridge.exposeInMainWorld('electronAPI', {
   disablePieMenu: () => ipcRenderer.invoke('disablePieMenu'),
   enablePieMenu: () => ipcRenderer.invoke('enablePieMenu'),

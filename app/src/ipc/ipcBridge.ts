@@ -16,6 +16,21 @@ import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
  * */
 
 export function initIPC() {
+  // -------------------------- IPCEvents relating to the DB --------------------------
+  ipcMain.handle('db.possibleHotkeyChange', (event, hotkeys) => {
+    Log.main.debug(hotkeys)
+  });
+
+
+
+
+
+
+
+
+
+
+
   ipcMain.handle('openPieMenuEditor', (event, args) => {
     // args[0] = pieMenuId
     Log.main.info("Opening pie menu editor for pie menu " + args[0] + "");
