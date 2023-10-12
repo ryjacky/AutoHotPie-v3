@@ -87,7 +87,3 @@ export function disablePieMenu() {
 export function enablePieMenu() {
   pieMenuWindow?.enable();
 }
-
-export function hidePieMenu() {
-  pieMenuWindow?.hide();
-}

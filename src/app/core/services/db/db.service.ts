@@ -20,24 +20,17 @@ export class DBService extends Dexie {
     this.version(1).stores({
       pieItem: '++id, name, enabled, *pieTaskContexts, iconBase64, useIconColor',
       // eslint-disable-next-line max-len
-      pieMenu: '++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, mainColor, secondaryColor, *pieItemIds, centerRadius, centerThickness, iconSize, pieItemRoundness, pieItemSpread',
+      pieMenu: '++id, name, enabled, activationMode, escapeRadius, openInScreenCenter, mainColor, secondaryColor, *pieItemIds, centerRadius, centerThickness, iconSize, pieItemRoundness, pieItemSpread',
       profile: '++id, name, enabled, *pieMenuIds, *exes, iconBase64',
     });
 
     // Let IPC Main know that the database has changed
     Dexie.on('storagemutated', async (changedParts: ObservabilitySet) => {
       const changedPartsString = JSON.stringify(changedParts);
-      if (changedPartsString.includes(`/hotkey`) || changedPartsString.includes(`/profile/pieMenuIds`)){
+      if (changedPartsString.includes(`/pieMenuHotkeys`) || changedPartsString.includes(`/profile/pieMenuIds`)){
         window.log.debug('Hotkey changed, sending IPC message to main process');
 
-        const activePieMenuIds = [];
-        for (const profile of await this.profile.toArray()) {
-          if (profile.enabled) {
-            activePieMenuIds.push(...profile.pieMenuIds);
-          }
-        }
-
-        window.dbAPI.possibleHotkeyChange(JSON.stringify(await this.pieMenu.bulkGet(activePieMenuIds)));
+        window.dbAPI.possibleHotkeyChange(JSON.stringify(await this.profile.toArray()));
       }
     });
   }
@@ -69,12 +62,15 @@ export class DBService extends Dexie {
         'Default Profile',
         [pieMenuId as number],
         [],
+        [],
         undefined,
         true,
         1
       ));
 
     }
+
+    window.dbAPI.possibleHotkeyChange(JSON.stringify(await this.profile.toArray()));
 
     window.log.info('App data loaded');
   }

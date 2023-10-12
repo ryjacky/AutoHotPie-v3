@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
-import {MouseKeyEvent} from '../../../../../app/src/db/data/PieMenu';
-import {MouseKeyEventObject} from '../../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
+import {MouseKeyEventHelper} from '../../../../../app/src/mouseKeyEvent/MouseKeyEventHelper';
 
 @Component({
   selector: 'app-shortcut-input',
@@ -8,31 +7,28 @@ import {MouseKeyEventObject} from '../../../../../app/src/mouseKeyEvent/MouseKey
   styleUrls: ['./shortcut-input.component.scss']
 })
 export class ShortcutInputComponent implements OnChanges {
-  @Input() hotkey: MouseKeyEvent = MouseKeyEventObject.create();
   @Input() hotkeyString = '';
   @Input() isSingleKey = false;
-  @Output() hotkeyChange = new EventEmitter<MouseKeyEvent>();
+  @Output() hotkeyChange = new EventEmitter<string>();
   @ViewChild('shortcutInput') shortcutInput: any;
 
   displayString = '';
 
   ngOnChanges() {
-    if (this.hotkeyString) {
-      this.hotkey = MouseKeyEventObject.fromString(this.hotkeyString);
-    }
+    const hotkey = this.hotkeyString.split(':');
     this.displayString =
-      (this.hotkey[5] ? 'Ctrl+' : '') +
-      (this.hotkey[4] ? 'Shift+' : '') +
-      (this.hotkey[6] ? 'Alt+' : '') +
-      (this.hotkey[1].toUpperCase());
+      (hotkey[3] === 'true' ? 'Ctrl+' : '') +
+      (hotkey[2] === 'true' ? 'Shift+' : '') +
+      (hotkey[4] === 'true' ? 'Alt+' : '') +
+      ((hotkey[1] ?? '').toUpperCase());
 
     console.log('this.displayString: ' + this.displayString);
   }
 
   onKeyDown(event: KeyboardEvent) {
     if (!this.isSingleKey && (event.key === 'Control' || event.key === 'Alt' || event.key === 'Shift')) { return; }
-    this.hotkey = MouseKeyEventObject.fromKeyboardEvent(event);
-    this.hotkeyChange.emit(this.hotkey);
+    this.hotkeyString = MouseKeyEventHelper.KeyboardEventToString(event);
+    this.hotkeyChange.emit(this.hotkeyString);
 
     // Un-focus the element at the very last to make sure
     // hotkey is updated/sent to the parent component before the element is blurred

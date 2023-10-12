@@ -6,10 +6,10 @@ import {ReadonlyWindowDetails} from "../appWindow/WindowDetails";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
 import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
-import {disablePieMenu, enablePieMenu, hidePieMenu, pieMenuWindow} from "../../main";
+import {disablePieMenu, enablePieMenu, pieMenuWindow} from "../../main";
 import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
-import {PieMenu} from "../db/data/PieMenu";
+import { Profile } from "../db/data/Profile";
 
 /**
  * Sets up IPC listeners for the main process,
@@ -18,12 +18,12 @@ import {PieMenu} from "../db/data/PieMenu";
 
 export function initIPC() {
   // -------------------------- IPCEvents relating to the DB --------------------------
-  ipcMain.handle('db.possibleHotkeyChange', (event, pieMenuArrayJson: string) => {
+  ipcMain.handle('db.possibleHotkeyChange', (event, profileArrayJson: string) => {
     Log.main.debug("Updating hotkeys for pie menu window");
-    Log.main.debug("pieMenuJson: " + pieMenuArrayJson)
+    Log.main.debug("profileArrayJson: " + profileArrayJson)
     pieMenuWindow?.clearListeningHotkeys();
-    for (const pieMenu of JSON.parse(pieMenuArrayJson) as PieMenu[]) {
-      pieMenuWindow?.addListeningHotkeys(pieMenu);
+    for (const profile of JSON.parse(profileArrayJson) as Profile[]) {
+      pieMenuWindow?.addListeningHotkeys(profile);
     }
   });
 
@@ -95,14 +95,14 @@ export function initIPC() {
     // }
   });
   ipcMain.handle('runPieTasks', (event, args) => {
-    hidePieMenu();
-
     // args[0] = actionListJson
-    let contexts = JSON.parse(args[0]) as PieSingleTaskContext[];
-    for (let context of contexts) {
-      Log.main.debug(`Running action ${context.addonId} with parameters ${JSON.stringify(context.args)}`)
+    if (pieMenuWindow?.isCancelled) {return;}
 
-      PieletteAddonManager.runPieTasks(context);
+    let contexts = JSON.parse(args[0]) as PieSingleTaskContext[];
+    for (let i = contexts.length - 1; i >= 0; i--) {
+      Log.main.debug(`Running action ${contexts[i].addonId} with parameters ${JSON.stringify(contexts[i].args)}`)
+
+      PieletteAddonManager.runPieTasks(contexts[i]);
     }
   });
   ipcMain.handle('getVersion', () => {
@@ -111,6 +111,10 @@ export function initIPC() {
   });
   ipcMain.handle('getSetting', (event, args) => {
     // args[0] = settingKey
+    if (args[0] === "runOnStartup") {
+      return app.getLoginItemSettings().openAtLogin;
+    }
+
     const value = PieletteSettings.get(args[0]);
 
     Log.main.info("Retrieving setting " + args[0] + ", value is " + value + "");
@@ -125,6 +129,16 @@ export function initIPC() {
   });
   ipcMain.handle('setSetting', (event, args) => {
     Log.main.info("Setting " + args[0] + " to " + args[1] + "");
+
+    if (args[0] === "runOnStartup") {
+      app.setLoginItemSettings({
+        openAtLogin: args[1] as boolean,
+        openAsHidden: true
+      })
+
+      return;
+    }
+
     return PieletteSettings.set(args[0], args[1]);
   });
   ipcMain.handle('openDialogForResult', (event, args) => {

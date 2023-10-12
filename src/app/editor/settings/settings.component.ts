@@ -1,6 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import { MouseKeyEvent } from '../../../../app/src/db/data/PieMenu';
-import {MouseKeyEventObject} from '../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
 
 @Component({
   selector: 'app-settings',
@@ -13,7 +11,7 @@ export class SettingsComponent implements OnInit {
 
   runOnAppQuit = false;
   runOnStartup = false;
-  pieMenuCancelKey = MouseKeyEventObject.create();
+  pieMenuCancelKey = '';
 
   ngOnInit() {
     window.electronAPI.getSetting('runOnAppQuit').then((value) => {
@@ -47,7 +45,7 @@ export class SettingsComponent implements OnInit {
     window.electronAPI.setSetting('runOnStartup', $event);
   }
 
-  setPieMenuCancelKey($event: MouseKeyEvent) {
+  setPieMenuCancelKey($event: string) {
     this.pieMenuCancelKey = $event;
     window.electronAPI.setSetting('pieMenuCancelKey', $event);
   }

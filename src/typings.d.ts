@@ -10,7 +10,7 @@ interface Window {
   process: any;
   require: any;
   dbAPI: {
-    possibleHotkeyChange: (pieMenuArrayJson: string) => void;
+    possibleHotkeyChange: (profileArrayJson: string) => void;
   };
   log: {
     trace: (message: string) => void;
@@ -25,7 +25,6 @@ interface Window {
     runPieTasks: (pieTasksJSON: string) => void;
     getPieTaskAddonHeaders: () => Promise<string[]>;
     openInBrowser: (url: string) => void;
-    closePieMenuRequested: (callback: () => void) => void;
     isUpdateAvailable: () => Promise<boolean>;
     openDialogForResult: (defaultPath: string, filter: [{name: string; extensions: string[]}]) => Promise<string>;
     getFileIconBase64: (path: string) => Promise<string>;
@@ -47,6 +46,7 @@ interface Window {
     listenKeyForResult: (ignoredKeys: string[]) => Promise<string> | undefined;
 
     globalHotkeyServiceExited: (callback: () => void) => void;
+    openPieMenu: (callback: (pieMenuId: number) => void) => void;
 
     getVersion: () => Promise<string>;
 

@@ -8,7 +8,7 @@ console.log("preload.js is loaded")
 contextBridge.exposeInMainWorld('dbAPI', {
   // ---------------------- Invoke ----------------------
   // hotkeys: string[]
-  possibleHotkeyChange: (pieMenuArrayJson) => ipcRenderer.invoke('db.possibleHotkeyChange', pieMenuArrayJson),
+  possibleHotkeyChange: (profileArrayJson) => ipcRenderer.invoke('db.possibleHotkeyChange', profileArrayJson),
 
   // ---------------------- On ----------------------
 
@@ -25,7 +25,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   listenKeyForResult: (ignoredKeys) => ipcRenderer.invoke('listenKeyForResult', [ignoredKeys]),
   getVersion: () => ipcRenderer.invoke('getVersion'),
   globalHotkeyServiceExited: (callback) => ipcRenderer.on('globalHotkeyServiceExited', callback),
-  closePieMenuRequested: (callback) => ipcRenderer.on('closePieMenuRequested', callback),
+  openPieMenu: (callback) => ipcRenderer.on('openPieMenu', (event, pieMenuId) => {callback(pieMenuId)}),
   getSetting: (settingName) => ipcRenderer.invoke('getSetting', [settingName]),
   setSetting: (settingName, value) => ipcRenderer.invoke('setSetting', [settingName, value]),
   openDialogForResult: (defaultPath, filter) => ipcRenderer.invoke('openDialogForResult', [defaultPath, filter]),

@@ -37,10 +37,9 @@
   </button>
 
   <div style="flex-grow: 1; -webkit-app-region: drag; height: 100%"></div>
-  <button nbButton size="small" [status]="serviceActive ? 'danger' : 'success'" (click)="toggleService()">
-<!--  Make it a reload button  -->
-    <nb-icon [icon]="serviceActive ? 'stop-circle-outline' : 'play-circle-outline'"/>
-  </button>
+<!--  <button nbButton size="small" [status]="serviceActive ? 'danger' : 'success'" (click)="toggleService()">-->
+<!--    <nb-icon [icon]="serviceActive ? 'stop-circle-outline' : 'play-circle-outline'"/>-->
+<!--  </button>-->
 
 </div>
 
@@ -48,9 +47,6 @@
   <div style="display: flex;flex-direction: column;">
     <button nbButton ghost size="small" style="margin: 5px" (click)="openInBrowser('github');">
       {{'PAGES.SETTINGS.VIEW_ON_GITHUB' | translate}}
-    </button>
-    <button nbButton ghost size="small" style="margin: 0 5px 5px 5px;" (click)="openInBrowser('paypal')">
-      {{'PAGES.SETTINGS.DONATE_WITH_PAYPAL' | translate}}
     </button>
     <button nbButton ghost size="small" style="margin: 0 5px 5px 5px;" (click)="openInBrowser('bug')">
       {{'PAGES.SETTINGS.ABOUT_REPORT_BUG' | translate}}

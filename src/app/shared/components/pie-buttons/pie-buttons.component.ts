@@ -38,7 +38,6 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
   constructor(pieMenuService: PieMenuService) {
     this.pieMenuService = pieMenuService;
-    this.pieMenuService.load(this.pieMenuId, true);
   }
 
   ngOnInit() {
@@ -50,10 +49,6 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
       window.log.debug(`Pie menu window resized, updating center position`);
     });
 
-    window.electronAPI.closePieMenuRequested(() => {
-      window.log.debug('Received closePieMenuRequested event');
-      this.runPieTasks();
-    });
   }
 
   ngAfterViewInit() {
@@ -87,9 +82,7 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.pieMenuId) {
-      this.updatePieItem();
-    }
+    this.updatePieItem();
   }
 
   onButtonClicked(index: number) {
@@ -131,7 +124,10 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
       ) + this.pieItemArray.length) % this.pieItemArray.length;     // Map to [0, pieItems.length)
   }
 
-  async updatePieItem() {
+  async updatePieItem(pieMenuId?: number) {
+    if (pieMenuId !== undefined) {
+      this.pieMenuId = pieMenuId;
+    }
     if (!this.editorMode) {
       // Reloading in editor mode will stash unsaved changes
       await this.pieMenuService.load(this.pieMenuId, true);
@@ -200,6 +196,12 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
       return 90 + 'deg';
     } else if (index === this.pieItemArray.length/2) {
       return -90 + 'deg';
+    }
+  }
+
+  onPointerLeave() {
+    if (!this.editorMode){
+      this.runPieTasks();
     }
   }
 }

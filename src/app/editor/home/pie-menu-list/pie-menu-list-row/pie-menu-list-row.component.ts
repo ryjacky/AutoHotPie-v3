@@ -1,9 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {NbDialogService, NbPosition} from '@nebular/theme';
 import {ProfileService} from '../../../../core/services/profile/profile.service';
-import {MouseKeyEvent, PieMenu} from '../../../../../../app/src/db/data/PieMenu';
-import {MouseKeyEventObject} from '../../../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
-import {DBService} from '../../../../core/services/db/db.service';
 
 @Component({
   selector: 'app-pie-menu-list-row',
@@ -15,14 +12,14 @@ export class PieMenuListRowComponent implements OnInit {
   @ViewChild('shortcutInput') shortcutInput: any;
   @ViewChild('nameInput') nameInput: any;
   @ViewChild('hotkeyAcquisitionDialog') confirmReplaceDialog: any;
-  newHotkey: MouseKeyEvent = MouseKeyEventObject.create();
+  newHotkey = '';
+  currentHotkey = '';
 
   protected readonly nbPosition = NbPosition;
 
   constructor(
     private dialogService: NbDialogService,
     public profileService: ProfileService,
-    private dbService: DBService,
   ) {
   }
 
@@ -33,6 +30,8 @@ export class PieMenuListRowComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentHotkey = this.profileService.getHotkey(this.pieMenuId);
+    window.log.debug('Current hotkey of pie menu ' + this.pieMenuId + ' is ' + this.currentHotkey);
   }
 
 
@@ -41,23 +40,18 @@ export class PieMenuListRowComponent implements OnInit {
     if (!success) {
       return;
     }
-    this.dbService.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(this.newHotkey))
-      .modify((pieMenu: PieMenu) => {
-        pieMenu.hotkey = MouseKeyEventObject.createString();
-        this.profileService.setPieMenuHotkey(pieMenu.id ?? -1, MouseKeyEventObject.create());
-      })
-      .then(() => {
-        this.profileService.setPieMenuHotkey(this.pieMenuId, this.newHotkey);
-      });
+    this.profileService.setPieMenuHotkey(this.pieMenuId, this.newHotkey, true)
+      .then(() => {this.currentHotkey = this.newHotkey;});
   }
 
-  async shortcutInputChanged(newHotkey: MouseKeyEvent) {
-    window.log.info('Trying to change hotkey of pie menu to ' + MouseKeyEventObject.stringify(newHotkey));
+  async shortcutInputChanged(newHotkey: string) {
+    window.log.info('Trying to change hotkey of pie menu to ' + newHotkey);
     this.newHotkey = newHotkey;
 
-    if ((await this.dbService.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(newHotkey)).count()) > 0) {
+    if (!this.profileService.isHotkeyAvailable(newHotkey)) {
       this.dialogService.open(this.confirmReplaceDialog);
     } else {
+      this.currentHotkey = newHotkey;
       this.profileService.setPieMenuHotkey(this.pieMenuId, newHotkey);
     }
   }
@@ -65,9 +59,5 @@ export class PieMenuListRowComponent implements OnInit {
   openPieMenuEditor(pieMenuId?: number) {
     if (pieMenuId === undefined) { return; }
     window.electronAPI.openPieMenuEditor(pieMenuId);
-  }
-
-  emptyMouseKeyEventString() {
-    return MouseKeyEventObject.createString();
   }
 }

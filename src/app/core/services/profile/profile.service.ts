@@ -1,9 +1,8 @@
 import {Profile} from '../../../../../app/src/db/data/Profile';
-import {IPieMenu, MouseKeyEvent, PieMenu} from '../../../../../app/src/db/data/PieMenu';
+import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieItem} from '../../../../../app/src/db/data/PieItem';
-import {MouseKeyEventObject} from '../../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
 import {DBService} from '../db/db.service';
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class ProfileService extends Profile {
@@ -17,7 +16,7 @@ export class ProfileService extends Profile {
     super();
   }
 
-  public async load(profileId: number, reload = false){
+  public async load(profileId: number, reload = false) {
     if (this.loaded && !reload) {
       window.log.error('Pie Menu Service already loaded');
       return;
@@ -56,6 +55,13 @@ export class ProfileService extends Profile {
     }
 
     this.loaded = true;
+  }
+
+  isHotkeyAvailable(hotkey: string) {
+    for (const pieMenuHotkey of this.pieMenuHotkeys) {
+      if (pieMenuHotkey.includes(hotkey)){ return false; }
+    }
+    return true;
   }
 
   setName(name: string) {
@@ -126,37 +132,37 @@ export class ProfileService extends Profile {
       await this.dbService.profile.where('pieMenuIds').equals(pieMenu.id ?? -1).count());
   }
 
-  setPieMenuHotkey(pieMenuId: number, hotkey: MouseKeyEvent) {
-    if (hotkey.length !== 7){
-      window.log.error('Invalid hotkey, length is not 7: ' + hotkey.length);
-      return;
-    }
-    if (!MouseKeyEventObject.eventTypes.find((element) => element === hotkey[0])){
-      window.log.error('Invalid hotkey, event name does not exist: ' + hotkey[0]);
-      return;
+  async setPieMenuHotkey(pieMenuId: number, newHotkey: string, replace = false) {
+    if (!this.isHotkeyAvailable(newHotkey)) {
+      if (!replace) {
+        window.log.warn('Hotkey ' + newHotkey + ' already in use');
+        return;
+      } else {
+        await this.removePieMenuHotkey(newHotkey);
+      }
     }
 
-    const pieMenu = this.pieMenus.get(pieMenuId);
-
-    if (pieMenu) {
-      pieMenu.hotkey = MouseKeyEventObject.stringify(hotkey);
-      this.dbService.pieMenu.update(pieMenuId, {hotkey: pieMenu.hotkey});
-    }
+    this.pieMenuHotkeys = this.pieMenuHotkeys.filter((hotkey) => !hotkey.endsWith(`-${pieMenuId}`));
+    this.pieMenuHotkeys.push(`${newHotkey}-${pieMenuId}`);
+    this.dbService.profile.update(this.id ?? 0, {pieMenuHotkeys: this.pieMenuHotkeys});
   }
 
-  addExe(path: string){
+  addExe(path: string) {
     this.exes.push(path);
     this.dbService.profile.update(this.id ?? 0, {exes: this.exes});
   }
 
-  removeExe(path: string){
+  removeExe(path: string) {
     this.exes = this.exes.filter((exe) => exe !== path);
     this.dbService.profile.update(this.id ?? 0, {exes: this.exes});
   }
 
   removePieMenu(pieMenuId: number) {
+    this.pieMenuHotkeys = this.pieMenuHotkeys.filter((hotkey) => !hotkey.endsWith(`-${pieMenuId}`));
     this.pieMenuIds = this.pieMenuIds.filter((id) => id !== pieMenuId);
-    this.dbService.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
+    this.dbService.profile.update(
+      this.id ?? 0,
+      {pieMenuIds: this.pieMenuIds, pieMenuHotkeys: this.pieMenuHotkeys});
   }
 
   setPieMenuMainColor(pieMenuId: number, color: string) {
@@ -177,5 +183,15 @@ export class ProfileService extends Profile {
     } else {
       window.log.error('Pie menu of id: ' + pieMenuId + ' not found');
     }
+  }
+
+  getHotkey(pieMenuId: number) {
+    window.log.debug('Getting hotkey for pie menu ' + pieMenuId);
+    return this.pieMenuHotkeys.find((pieMenuHotkey) => pieMenuHotkey.endsWith(`-${pieMenuId}`)) ?? '';
+  }
+
+  async removePieMenuHotkey(hotkey: string) {
+    this.pieMenuHotkeys = this.pieMenuHotkeys.filter((pieMenuHotkey) => !pieMenuHotkey.includes(hotkey));
+    await this.dbService.profile.update(this.id ?? 0, {pieMenuHotkeys: this.pieMenuHotkeys});
   }
 }

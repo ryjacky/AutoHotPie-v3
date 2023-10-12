@@ -56,8 +56,6 @@
       "PIE_MENU_CANCEL_KEY_DESC": "This key will be used to close opened pie menus",
       "RUN_ON_STARTUP": "Run on startup",
       "RUN_ON_STARTUP_DESC": "Run AutoHotPie when you login to your computer",
-      "RUN_ON_APP_QUIT": "Run on app quit",
-      "RUN_ON_APP_QUIT_DESC": "Run AutoHotPie when you quit the app",
       "ABOUT_CHECKING_FOR_UPDATES": "Checking for updates...",
       "ABOUT_UPDATE_AVAILABLE": "Update available! Click to update.",
       "ABOUT_NO_UPDATE_AVAILABLE": "You're up to date!",

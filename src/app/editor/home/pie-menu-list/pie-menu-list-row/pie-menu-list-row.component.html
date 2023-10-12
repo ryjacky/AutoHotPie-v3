@@ -39,7 +39,7 @@
     <td>
       <app-shortcut-input
         #shortcutInput
-        [hotkeyString]="this.profileService.pieMenus.get(this.pieMenuId)?.hotkey ?? emptyMouseKeyEventString()"
+        [hotkeyString]="currentHotkey"
         (hotkeyChange)="shortcutInputChanged($event)">
       </app-shortcut-input>
     </td>

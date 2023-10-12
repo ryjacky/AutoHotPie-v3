@@ -1,8 +1,10 @@
 <div
   #pieMenuContainer
   style="position: relative; width: 100%; height: 100%; overflow: hidden"
-  (pointerenter)="this.updatePieItem()"
-  (pointermove)="onPointerMove($event)">
+  (pointerenter)="updatePieItem()"
+  (pointermove)="onPointerMove($event)"
+  (pointerleave)="onPointerLeave()"
+>
 
   <canvas
     #pieCenter
@@ -22,7 +24,7 @@
   ></canvas>
 
   <div
-    *ngFor="let pieItem of pieItemArray; let i = index"
+    *ngFor="let pieItemId of pieMenuService.pieItemIds; let i = index"
     [style.left.px]="centerX"
     [style.top.px]="centerY"
     [style.width.px]="pieMenuService.pieItemSpread"
@@ -52,17 +54,17 @@
         (click)="onButtonClicked(i)"
       >
         <nb-icon
-          *ngIf="pieMenuService.isIconAtPieItemNative(pieItem?.id ?? 0)"
+          *ngIf="pieMenuService.isIconAtPieItemNative(pieItemId ?? 0)"
           [style.color]="pieMenuService.iconColor"
-          [icon]="pieMenuService.getPieItemIconAt(pieItem?.id ?? 0)"
+          [icon]="pieMenuService.getPieItemIconAt(pieItemId ?? 0)"
           [style.min-width.px]="pieMenuService.iconSize"
           [style.min-height.px]="pieMenuService.iconSize"
           [style.max-width.px]="pieMenuService.iconSize"
           [style.max-height.px]="pieMenuService.iconSize"
         ></nb-icon>
         <img
-          *ngIf="!pieMenuService.isIconAtPieItemNative(pieItem?.id ?? 0) && iconExists(pieItem)"
-          [src]="pieMenuService.getPieItemIconAt(pieItem?.id ?? 0)"
+          *ngIf="!pieMenuService.isIconAtPieItemNative(pieItemId ?? 0) && iconExists(pieMenuService.pieItems.get(pieItemId))"
+          [src]="pieMenuService.getPieItemIconAt(pieItemId ?? 0)"
           [style.min-width.px]="pieMenuService.iconSize"
           [style.min-height.px]="pieMenuService.iconSize"
           [style.max-width.px]="pieMenuService.iconSize"
@@ -70,10 +72,10 @@
           style="object-fit: contain"
         >
         <div
-          [style.margin-left.px]="iconExists(pieItem) ? 5 : 0"
+          [style.margin-left.px]="iconExists(pieMenuService.pieItems.get(pieItemId)) ? 5 : 0"
           style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap"
         >
-          {{pieItem?.name ?? 'Error'}}
+          {{pieMenuService.pieItems.get(pieItemId)?.name ?? 'Error'}}
         </div>
       </button>
 

@@ -1,12 +1,14 @@
 import {BrowserWindow, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
-import {GlobalHotkeyService, MouseKeyEvent, MouseKeyEventListener} from "pielette-mouse-key-hook";
-import {MouseKeyEventObject} from "../mouseKeyEvent/MouseKeyEventObject";
+import {GlobalHotkeyService, MouseKeyEventListener} from "pielette-mouse-key-hook";
 import {Log} from "pielette-core";
-import {PieMenu} from "../db/data/PieMenu";
+import {Profile} from "../db/data/Profile";
+import {PieletteSettings} from "../settings/PieletteSettings";
 
 export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener {
+  public isCancelled: boolean = false;
+
   private hidden: boolean = false;
   private disabled: boolean = false;
   private readonly prefix = '../../';
@@ -37,44 +39,42 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     this.listeningHotkeys.clear();
   }
 
-  addListeningHotkeys(pieMenu: PieMenu) {
-    Log.main.debug(`Adding hotkey ${pieMenu.hotkey} for pie menu ${pieMenu.id}`)
-    this.listeningHotkeys.set(pieMenu.hotkey.toUpperCase(), pieMenu.id ?? -1);
-  }
+  addListeningHotkeys(profile: Profile) {
+    for (const hotkey of profile.pieMenuHotkeys) {
+      const idAndHotkey = hotkey.split('-');
+      Log.main.debug(`Adding hotkey ${idAndHotkey[0]}`)
 
-  onDoubleClick(event: MouseKeyEvent): void {
-  }
-
-  onDragStarted(event: MouseKeyEvent): void {
-  }
-
-  onDragFinished(event: MouseKeyEvent): void {
-    if (!this.hidden) {
-      this.webContents.send('closePieMenuRequested');
+      this.listeningHotkeys.set(idAndHotkey[0], Number(idAndHotkey[1]));
     }
   }
 
-  onKeyDown(event: MouseKeyEvent): void {
-    let x = event[2];
-    let y = event[3];
+  onDoubleClick(event: string): void {
+  }
 
+  onDragStarted(event: string): void {
+  }
+
+  onDragFinished(event: string): void {
+
+  }
+
+  onKeyDown(event: string): void {
+    if (event.split(':')[1] === PieletteSettings.get('pieMenuCancelKey').split(':')[1]){
+      this.isCancelled = true;
+      this.hide();
+    }
     // Search for the pie menu id related to the hotkey
-    event[2] = 0;
-    event[3] = 0;
-    const pieMenuId = this.listeningHotkeys.get(MouseKeyEventObject.stringify(event).toUpperCase())
-
-    // TODO: ipcRenderer.showPieMenu(this.listeningHotkeys.get(MouseKeyEventObject.stringify(event));
+    const pieMenuId = this.listeningHotkeys.get(event);
 
     if (!pieMenuId) { return; }
 
-    this.show(x, y);
-
+    // We don't want to keep updating the pie menu
+    if (this.hidden) this.webContents.send('openPieMenu', pieMenuId);
+    this.show();
   }
 
-  onKeyUp(event: MouseKeyEvent): void {
-    if (!this.hidden) {
-      this.webContents.send('closePieMenuRequested');
-    }
+  onKeyUp(event: string): void {
+    this.hide();
   }
 
   loadPieMenuURL() {
@@ -109,24 +109,27 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     }
   }
 
-  show(x?: number, y?: number) {
+  show() {
     if (this.disabled) {
       return;
     }
+
+    this.isCancelled = false;
 
     if (this.hidden) {
       this.hidden = false;
 
       // Show the window at cursor position, centered
-      const primaryScreenWidth = screen.getPrimaryDisplay().bounds.width;
-      const primaryScreenHeight = screen.getPrimaryDisplay().bounds.height;
+      const screenPoint = screen.getCursorScreenPoint();
+      const display = screen.getDisplayNearestPoint(screenPoint);
+
+      const bleed = 500;
 
       this.setBounds({
-        width: primaryScreenWidth,
-        height: primaryScreenHeight,
-        // TODO: Does not work with digital pen when the cursor is on top of any chromium window
-        x: (x ?? screen.getCursorScreenPoint().x) - primaryScreenWidth / 2,
-        y: (y ?? screen.getCursorScreenPoint().y) - primaryScreenHeight / 2
+        width: display.bounds.width + bleed * 2,
+        height: display.bounds.height + bleed * 2,
+        x: display.bounds.x - bleed,
+        y: display.bounds.y - bleed
       })
 
       super.show();

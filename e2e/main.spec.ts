@@ -48,7 +48,7 @@ test.describe('Check Home Page', async () => {
 
   test('Check title', async () => {
     const elem = await firstWindow.$('app-home h1');
-    const text = await elem.innerText();
+    const text = await elem?.innerText();
     expect(text).toBe('App works !');
   });
 

@@ -103,3 +103,5 @@ Thumbs.db
 /app/src/mouseKeyEvent/MouseKeyEventObject.js
 /app/src/db/data/PieMenu.js
 /app/src/ipc/ipcBridge.js
+/app/src/mouseKeyEvent/MouseKeyEventHelper.js
+/app/src/db/data/Profile.js
