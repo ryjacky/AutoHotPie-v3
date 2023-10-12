@@ -1,15 +1,19 @@
 import {Profile} from '../../../../../app/src/db/data/Profile';
-import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {IPieMenu, MouseKeyEvent, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieItem} from '../../../../../app/src/db/data/PieItem';
 import {MouseKeyEventObject} from '../../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
+import {DBService} from '../db/db.service';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class ProfileService extends Profile {
   loaded = false;
   public readonly pieMenus = new Map<number, IPieMenu | undefined>();
   public readonly nProfileConnected = new Map<number, number>();
 
-  constructor() {
+  constructor(
+    private dbService: DBService,
+  ) {
     super();
   }
 
@@ -20,7 +24,7 @@ export class ProfileService extends Profile {
     }
 
     this.id = profileId;
-    const profile = await PieletteDBHelper.profile.get(profileId);
+    const profile = await this.dbService.profile.get(profileId);
     if (!profile) {
       window.log.error('Pie Menu not found');
       return;
@@ -37,7 +41,7 @@ export class ProfileService extends Profile {
     }
 
     this.pieMenus.clear();
-    const pieMenu = await PieletteDBHelper.pieMenu.bulkGet(profile.pieMenuIds);
+    const pieMenu = await this.dbService.pieMenu.bulkGet(profile.pieMenuIds);
     for (let i = 0; i < pieMenu.length; i++) {
       if (pieMenu[i] === undefined) {
         window.log.warn('Trying to load profile but pie menu of id ' + profile.pieMenuIds[i] + ' not found');
@@ -47,7 +51,7 @@ export class ProfileService extends Profile {
       // Seems like .equals automatically does what Array.contains() do
       this.nProfileConnected.set(
         profile.pieMenuIds[i],
-        await PieletteDBHelper.profile.where('pieMenuIds').equals(pieMenu[i]?.id ?? 0).count());
+        await this.dbService.profile.where('pieMenuIds').equals(pieMenu[i]?.id ?? 0).count());
       this.pieMenus.set(profile.pieMenuIds[i], pieMenu[i]);
     }
 
@@ -56,12 +60,12 @@ export class ProfileService extends Profile {
 
   setName(name: string) {
     this.name = name;
-    PieletteDBHelper.profile.update(this.id ?? 0, {name: this.name});
+    this.dbService.profile.update(this.id ?? 0, {name: this.name});
   }
 
   toggle() {
     this.enabled = !this.enabled;
-    PieletteDBHelper.profile.update(this.id ?? 0, {enabled: this.enabled});
+    this.dbService.profile.update(this.id ?? 0, {enabled: this.enabled});
   }
 
   /**
@@ -96,11 +100,11 @@ export class ProfileService extends Profile {
       newPieMenu.id = undefined;
     } else {
       newPieMenu = new PieMenu();
-      const pieItemId = await PieletteDBHelper.pieItem.add(new PieItem(''));
+      const pieItemId = await this.dbService.pieItem.add(new PieItem(''));
       newPieMenu.pieItemIds = [pieItemId as number];
     }
 
-    const newPieMenuId = await PieletteDBHelper.pieMenu.add(newPieMenu);
+    const newPieMenuId = await this.dbService.pieMenu.add(newPieMenu);
     newPieMenu.id = newPieMenuId as number;
     this.addPieMenu(newPieMenu, replacePieMenuId);
   }
@@ -115,11 +119,11 @@ export class ProfileService extends Profile {
     }
     this.pieMenus.set(pieMenu.id ?? -1, pieMenu);
 
-    await PieletteDBHelper.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
+    await this.dbService.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
 
     this.nProfileConnected.set(
       pieMenu.id ?? -1,
-      await PieletteDBHelper.profile.where('pieMenuIds').equals(pieMenu.id ?? -1).count());
+      await this.dbService.profile.where('pieMenuIds').equals(pieMenu.id ?? -1).count());
   }
 
   setPieMenuHotkey(pieMenuId: number, hotkey: MouseKeyEvent) {
@@ -136,23 +140,23 @@ export class ProfileService extends Profile {
 
     if (pieMenu) {
       pieMenu.hotkey = MouseKeyEventObject.stringify(hotkey);
-      PieletteDBHelper.pieMenu.update(pieMenuId, {hotkey: pieMenu.hotkey});
+      this.dbService.pieMenu.update(pieMenuId, {hotkey: pieMenu.hotkey});
     }
   }
 
   addExe(path: string){
     this.exes.push(path);
-    PieletteDBHelper.profile.update(this.id ?? 0, {exes: this.exes});
+    this.dbService.profile.update(this.id ?? 0, {exes: this.exes});
   }
 
   removeExe(path: string){
     this.exes = this.exes.filter((exe) => exe !== path);
-    PieletteDBHelper.profile.update(this.id ?? 0, {exes: this.exes});
+    this.dbService.profile.update(this.id ?? 0, {exes: this.exes});
   }
 
   removePieMenu(pieMenuId: number) {
     this.pieMenuIds = this.pieMenuIds.filter((id) => id !== pieMenuId);
-    PieletteDBHelper.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
+    this.dbService.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
   }
 
   setPieMenuMainColor(pieMenuId: number, color: string) {
@@ -160,7 +164,7 @@ export class ProfileService extends Profile {
 
     if (pieMenu) {
       pieMenu.mainColor = color;
-      PieletteDBHelper.pieMenu.update(pieMenuId, {mainColor: color});
+      this.dbService.pieMenu.update(pieMenuId, {mainColor: color});
     }
   }
 
@@ -169,7 +173,7 @@ export class ProfileService extends Profile {
     if (pieMenu) {
       window.log.debug('Setting pie menu name to ' + value);
       pieMenu.name = value;
-      PieletteDBHelper.pieMenu.update(pieMenuId, {name: value});
+      this.dbService.pieMenu.update(pieMenuId, {name: value});
     } else {
       window.log.error('Pie menu of id: ' + pieMenuId + ' not found');
     }

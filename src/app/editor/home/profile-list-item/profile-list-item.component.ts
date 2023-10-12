@@ -1,5 +1,4 @@
 import {Component, Input, ViewChild} from '@angular/core';
-import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {Profile} from '../../../../../app/src/db/data/Profile';
 import {ProfileService} from '../../../core/services/profile/profile.service';
 

@@ -2,8 +2,8 @@ import {Component, ViewChild} from '@angular/core';
 import {ElectronService} from './core/services';
 import {TranslateService} from '@ngx-translate/core';
 import {APP_CONFIG} from '../environments/environment';
-import {PieletteDBHelper} from '../../app/src/db/PieletteDB';
 import {Router} from '@angular/router';
+import {DBService} from './core/services/db/db.service';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +19,7 @@ export class AppComponent {
     private router: Router,
     private electronService: ElectronService,
     private translate: TranslateService,
+    private dbService: DBService,
   ) {
     this.initAppdata();
 
@@ -46,7 +47,7 @@ export class AppComponent {
 
   async initAppdata() {
     //TODO: Should be put in welcome guide
-    await PieletteDBHelper.init();
+    await this.dbService.init();
   }
 
   isPieMenuEditor() {

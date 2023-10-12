@@ -1,25 +1,26 @@
-import Dexie, {Table} from "dexie";
-import {PieItem} from "./data/PieItem";
-import {PieMenu} from "./data/PieMenu";
-import {Profile} from "./data/Profile";
+import { Injectable } from '@angular/core';
+import {PieItem} from '../../../../../app/src/db/data/PieItem';
+import {PieMenu} from '../../../../../app/src/db/data/PieMenu';
+import {Profile} from '../../../../../app/src/db/data/Profile';
+import Dexie, {Table} from 'dexie';
 
-
-// TODO: Create as a service
-export class PieletteDB extends Dexie {
+@Injectable({
+  providedIn: 'platform'
+})
+export class DBService extends Dexie {
   pieItem!: Table<PieItem>;
   pieMenu!: Table<PieMenu>;
   profile!: Table<Profile>;
-
-  initialized = false;
 
   constructor() {
     super('myDatabase');
 
     // If a data column is array, you have to add * in front of it.
     this.version(1).stores({
-      pieItem: "++id, name, enabled, *pieTaskContexts, iconBase64, useIconColor",
-      pieMenu: "++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, mainColor, secondaryColor, *pieItemIds, centerRadius, centerThickness, iconSize, pieItemRoundness, pieItemSpread",
-      profile: "++id, name, enabled, *pieMenuIds, *exes, iconBase64",
+      pieItem: '++id, name, enabled, *pieTaskContexts, iconBase64, useIconColor',
+      // eslint-disable-next-line max-len
+      pieMenu: '++id, name, enabled, activationMode, hotkey, escapeRadius, openInScreenCenter, mainColor, secondaryColor, *pieItemIds, centerRadius, centerThickness, iconSize, pieItemRoundness, pieItemSpread',
+      profile: '++id, name, enabled, *pieMenuIds, *exes, iconBase64',
     });
 
     Dexie.on('storagemutated', () => {
@@ -28,10 +29,6 @@ export class PieletteDB extends Dexie {
   }
 
   async init() {
-    if (this.initialized) {
-      return;
-    }
-
     window.log.info('Initializing/Loading app data');
 
     if ((await this.profile.count()) === 0) {
@@ -66,10 +63,7 @@ export class PieletteDB extends Dexie {
       window.electronAPI.addHotkey(pieMenu.hotkey, pieMenu.id ?? -1);
     });
 
-    this.initialized = true;
     window.log.info('App data loaded');
   }
 
 }
-
-export const PieletteDBHelper = new PieletteDB();

@@ -1,7 +1,7 @@
 import {Component, TemplateRef} from '@angular/core';
-import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {NbDialogService, NbPosition} from '@nebular/theme';
 import {ProfileService} from '../../../core/services/profile/profile.service';
+import {DBService} from '../../../core/services/db/db.service';
 
 @Component({
   selector: 'app-profile-editor',
@@ -17,12 +17,13 @@ export class ProfileEditorComponent {
 
   constructor(
     private dialogService: NbDialogService,
+    private dbService: DBService,
     public profileService: ProfileService) {
   }
 
   openPieMenuSelector(pieMenuSelectorDialog: TemplateRef<any>) {
     this.dialogService.open(pieMenuSelectorDialog, {
-      context: PieletteDBHelper.pieMenu.where('id').noneOf(this.profileService.pieMenuIds).toArray(),
+      context: this.dbService.pieMenu.where('id').noneOf(this.profileService.pieMenuIds).toArray(),
     });
   }
 

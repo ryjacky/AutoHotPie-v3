@@ -1,9 +1,9 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {NbDialogService, NbPosition} from '@nebular/theme';
 import {ProfileService} from '../../../../core/services/profile/profile.service';
-import {PieletteDBHelper} from '../../../../../../app/src/db/PieletteDB';
 import {MouseKeyEvent, PieMenu} from '../../../../../../app/src/db/data/PieMenu';
 import {MouseKeyEventObject} from '../../../../../../app/src/mouseKeyEvent/MouseKeyEventObject';
+import {DBService} from '../../../../core/services/db/db.service';
 
 @Component({
   selector: 'app-pie-menu-list-row',
@@ -22,6 +22,7 @@ export class PieMenuListRowComponent implements OnInit {
   constructor(
     private dialogService: NbDialogService,
     public profileService: ProfileService,
+    private dbService: DBService,
   ) {
   }
 
@@ -40,7 +41,7 @@ export class PieMenuListRowComponent implements OnInit {
     if (!success) {
       return;
     }
-    PieletteDBHelper.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(this.newHotkey))
+    this.dbService.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(this.newHotkey))
       .modify((pieMenu: PieMenu) => {
         pieMenu.hotkey = MouseKeyEventObject.createString();
         this.profileService.setPieMenuHotkey(pieMenu.id ?? -1, MouseKeyEventObject.create());
@@ -54,7 +55,7 @@ export class PieMenuListRowComponent implements OnInit {
     window.log.info('Trying to change hotkey of pie menu to ' + MouseKeyEventObject.stringify(newHotkey));
     this.newHotkey = newHotkey;
 
-    if ((await PieletteDBHelper.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(newHotkey)).count()) > 0) {
+    if ((await this.dbService.pieMenu.where('hotkey').equals(MouseKeyEventObject.stringify(newHotkey)).count()) > 0) {
       this.dialogService.open(this.confirmReplaceDialog);
     } else {
       this.profileService.setPieMenuHotkey(this.pieMenuId, newHotkey);

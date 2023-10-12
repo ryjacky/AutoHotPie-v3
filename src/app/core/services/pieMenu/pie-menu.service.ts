@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {IPieItem, PieItem} from '../../../../../app/src/db/data/PieItem';
-import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
 import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
+import {DBService} from '../db/db.service';
 
 /**
  * Service to load and save the pie menu state.
@@ -12,7 +12,9 @@ export class PieMenuService extends PieMenu {
   public readonly pieItems = new Map<number, IPieItem | undefined>();
   private loaded = false;
 
-  constructor() {
+  constructor(
+    private dbService: DBService,
+  ) {
     super();
   }
 
@@ -45,7 +47,7 @@ export class PieMenuService extends PieMenu {
 
   public async addEmptyPieItem() {
     const pieItem = new PieItem('');
-    pieItem.id = await PieletteDBHelper.pieItem.put(pieItem) as number;
+    pieItem.id = await this.dbService.pieItem.put(pieItem) as number;
 
     this.pieItems.set(pieItem.id, pieItem);
     this.pieItemIds.push(pieItem.id);
@@ -58,7 +60,7 @@ export class PieMenuService extends PieMenu {
     }
 
     this.id = pieMenuId;
-    const pieMenu = await PieletteDBHelper.pieMenu.get(pieMenuId);
+    const pieMenu = await this.dbService.pieMenu.get(pieMenuId);
     if (!pieMenu) {
       window.log.error('Pie Menu not found');
       return;
@@ -75,7 +77,7 @@ export class PieMenuService extends PieMenu {
     }
 
     this.pieItems.clear();
-    const pieItems = await PieletteDBHelper.pieItem.bulkGet(pieMenu.pieItemIds);
+    const pieItems = await this.dbService.pieItem.bulkGet(pieMenu.pieItemIds);
     for (let i = 0; i < pieItems.length; i++) {
       if (pieItems[i] === undefined) {
         window.log.warn('Trying to load work area but pie Item of id ' + pieMenu.pieItemIds[i] + ' not found');
@@ -116,7 +118,7 @@ export class PieMenuService extends PieMenu {
     }
 
     window.log.debug('Saving pie menu state: ' + JSON.stringify(this.basePieMenu));
-    await PieletteDBHelper.pieMenu.update(this.id ?? -1, this.basePieMenu);
+    await this.dbService.pieMenu.update(this.id ?? -1, this.basePieMenu);
 
     const nonEmptyPieItems: PieItem[] = [];
     for (const pieItem of this.pieItems.values()) {
@@ -124,7 +126,7 @@ export class PieMenuService extends PieMenu {
         nonEmptyPieItems.push(pieItem);
       }
     }
-    await PieletteDBHelper.pieItem.bulkPut(nonEmptyPieItems);
+    await this.dbService.pieItem.bulkPut(nonEmptyPieItems);
 
   }
 

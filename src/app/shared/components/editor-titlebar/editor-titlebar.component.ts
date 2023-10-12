@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PieletteDBHelper} from '../../../../../app/src/db/PieletteDB';
+import {DBService} from '../../../core/services/db/db.service';
 
 @Component({
   selector: 'app-editor-titlebar',
@@ -11,10 +11,16 @@ export class EditorTitlebarComponent implements OnInit {
 
   pieMenuName = '';
 
+  constructor(
+    private dbService: DBService,
+  ) {
+
+  }
+
   ngOnInit() {
     window.log.debug('Retrieving Pie Menu Name of pie menu id: ' + this.pieMenuId);
 
-    PieletteDBHelper.pieMenu.get(this.pieMenuId).then(pieMenu => {
+    this.dbService.pieMenu.get(this.pieMenuId).then(pieMenu => {
       this.pieMenuName = pieMenu?.name ?? '';
       window.log.debug('Retrieved Pie Menu Name: ' + pieMenu?.name);
     });
