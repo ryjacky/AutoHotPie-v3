@@ -31,9 +31,9 @@
       style="width: 100%; display: flex; flex-direction: row; flex-wrap: nowrap; align-content: center; justify-content: center; align-items: center;">
       <ngx-colors
         ngx-colors-trigger
-        [ngModel]="profileService.pieMenus.get(pieMenuId)?.mainColor ?? '#000000'"
-        (ngModelChange)="profileService.setPieMenuMainColor(pieMenuId, $event)"
-        (input)="updatePieMenu()"></ngx-colors>
+        [style.pointer-events]="'none'"
+        [ngModel]="profileService.pieMenus.get(pieMenuId)?.mainColor ?? '#000000'">
+      </ngx-colors>
 
     </td>
     <td>

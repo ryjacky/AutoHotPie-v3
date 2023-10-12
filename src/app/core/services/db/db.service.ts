@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import {PieItem} from '../../../../../app/src/db/data/PieItem';
 import {PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {Profile} from '../../../../../app/src/db/data/Profile';
-import Dexie, {Table} from 'dexie';
+import Dexie, {ObservabilitySet, Table} from 'dexie';
 
 @Injectable({
   providedIn: 'platform'
 })
 export class DBService extends Dexie {
+
   pieItem!: Table<PieItem>;
   pieMenu!: Table<PieMenu>;
   profile!: Table<Profile>;
@@ -23,11 +24,27 @@ export class DBService extends Dexie {
       profile: '++id, name, enabled, *pieMenuIds, *exes, iconBase64',
     });
 
-    Dexie.on('storagemutated', () => {
-      window.dbAPI.possibleHotkeyChange(['lskdjf']);
+    // Let IPC Main know that the database has changed
+    Dexie.on('storagemutated', async (changedParts: ObservabilitySet) => {
+      const changedPartsString = JSON.stringify(changedParts);
+      if (changedPartsString.includes(`/hotkey`) || changedPartsString.includes(`/profile/pieMenuIds`)){
+        window.log.debug('Hotkey changed, sending IPC message to main process');
+
+        const activePieMenuIds = [];
+        for (const profile of await this.profile.toArray()) {
+          if (profile.enabled) {
+            activePieMenuIds.push(...profile.pieMenuIds);
+          }
+        }
+
+        window.dbAPI.possibleHotkeyChange(JSON.stringify(await this.pieMenu.bulkGet(activePieMenuIds)));
+      }
     });
   }
 
+  /**
+   * Initializes the database with default values if no data is present.
+   */
   async init() {
     window.log.info('Initializing/Loading app data');
 
@@ -58,10 +75,6 @@ export class DBService extends Dexie {
       ));
 
     }
-
-    this.pieMenu.each((pieMenu) => {
-      window.electronAPI.addHotkey(pieMenu.hotkey, pieMenu.id ?? -1);
-    });
 
     window.log.info('App data loaded');
   }

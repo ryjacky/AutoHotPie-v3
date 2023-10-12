@@ -8,7 +8,7 @@ console.log("preload.js is loaded")
 contextBridge.exposeInMainWorld('dbAPI', {
   // ---------------------- Invoke ----------------------
   // hotkeys: string[]
-  possibleHotkeyChange: (hotkeys) => ipcRenderer.invoke('db.possibleHotkeyChange', hotkeys),
+  possibleHotkeyChange: (pieMenuArrayJson) => ipcRenderer.invoke('db.possibleHotkeyChange', pieMenuArrayJson),
 
   // ---------------------- On ----------------------
 

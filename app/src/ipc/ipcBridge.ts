@@ -9,6 +9,7 @@ import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
 import {disablePieMenu, enablePieMenu, hidePieMenu, pieMenuWindow} from "../../main";
 import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
+import {PieMenu} from "../db/data/PieMenu";
 
 /**
  * Sets up IPC listeners for the main process,
@@ -17,8 +18,13 @@ import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 
 export function initIPC() {
   // -------------------------- IPCEvents relating to the DB --------------------------
-  ipcMain.handle('db.possibleHotkeyChange', (event, hotkeys) => {
-    Log.main.debug(hotkeys)
+  ipcMain.handle('db.possibleHotkeyChange', (event, pieMenuArrayJson: string) => {
+    Log.main.debug("Updating hotkeys for pie menu window");
+    Log.main.debug("pieMenuJson: " + pieMenuArrayJson)
+    pieMenuWindow?.clearListeningHotkeys();
+    for (const pieMenu of JSON.parse(pieMenuArrayJson) as PieMenu[]) {
+      pieMenuWindow?.addListeningHotkeys(pieMenu);
+    }
   });
 
 
@@ -114,7 +120,8 @@ export function initIPC() {
   ipcMain.handle('addHotkey', (event, args) => {
     // args[0] = hotkey string
     // args[1] = pieMenuId
-    pieMenuWindow?.addListeningHotkeys(args[0], args[1]);
+    // pieMenuWindow?.addListeningHotkeys(args[0], args[1]);
+    Log.main.warn("addHotkey() is deprecated");
   });
   ipcMain.handle('setSetting', (event, args) => {
     Log.main.info("Setting " + args[0] + " to " + args[1] + "");

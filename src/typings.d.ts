@@ -10,7 +10,7 @@ interface Window {
   process: any;
   require: any;
   dbAPI: {
-    possibleHotkeyChange: (hotkeys: string[]) => void;
+    possibleHotkeyChange: (pieMenuArrayJson: string) => void;
   };
   log: {
     trace: (message: string) => void;
