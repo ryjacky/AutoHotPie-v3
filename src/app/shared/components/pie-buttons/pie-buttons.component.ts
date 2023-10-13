@@ -12,10 +12,13 @@ import {
 import {PieMenuService} from '../../../core/services/pieMenu/pie-menu.service';
 import {IPieItem, PieItem} from '../../../../../app/src/db/data/PieItem';
 
+// TODO: The whole pie button component is needed to be review, it's a mess, better separated it into
+//  app-pie-button and app-pie-button-preview
+
 @Component({
   selector: 'app-pie-buttons',
   templateUrl: './pie-buttons.component.html',
-  styleUrls: ['./pie-buttons.component.scss']
+  styleUrls: ['./pie-buttons.component.scss'],
 })
 export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() pieMenuId = 1;
@@ -48,7 +51,6 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
       window.log.debug(`Pie menu window resized, updating center position`);
     });
-
   }
 
   ngAfterViewInit() {
@@ -82,25 +84,36 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.updatePieItem();
   }
 
   onButtonClicked(index: number) {
     if (!this.editorMode) {
-      this.runPieTasks();
+      this.setPieTasks();
     } else {
       this.activeBtnIndex = index;
       this.activePieItemId.emit(this.pieItemArray[index]?.id);
     }
   }
 
-  runPieTasks() {
-    window.electronAPI.runPieTasks(JSON.stringify(this.pieItemArray[this.activeBtnIndex]?.pieTaskContexts ?? []));
+  setPieTasks() {
+    window.log.debug(`Request to run pie tasks`);
+    window.electronAPI.setPieTasks(JSON.stringify(this.pieItemArray[this.activeBtnIndex]?.pieTaskContexts ?? []));
   }
 
   onPointerMove(event: PointerEvent) {
     if (this.editorMode) {
       return;
+    }
+
+    this.setPieTasks();
+
+    if (
+      this.pieMenuService.escapeRadius !== 0 &&
+      Math.sqrt(
+        Math.pow(event.clientY - this.centerY, 2) + Math.pow(event.clientX - this.centerX, 2)
+      ) > this.pieMenuService.escapeRadius
+    ){
+      this.onPointerLeave();
     }
 
     // Note: You NEED basic trigonometry and knowledge of math notations for the following code to make sense
@@ -124,13 +137,9 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
       ) + this.pieItemArray.length) % this.pieItemArray.length;     // Map to [0, pieItems.length)
   }
 
-  async updatePieItem(pieMenuId?: number) {
-    if (pieMenuId !== undefined) {
-      this.pieMenuId = pieMenuId;
-    }
+  async updatePieItem() {
+
     if (!this.editorMode) {
-      // Reloading in editor mode will stash unsaved changes
-      await this.pieMenuService.load(this.pieMenuId, true);
       window.log.debug(JSON.stringify(this.pieMenuService.pieItems.size));
     }
 
@@ -201,7 +210,8 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
   onPointerLeave() {
     if (!this.editorMode){
-      this.runPieTasks();
+      window.log.debug(`Pointer leaved`);
+      this.setPieTasks();
     }
   }
 }

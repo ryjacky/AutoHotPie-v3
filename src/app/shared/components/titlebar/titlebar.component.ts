@@ -19,6 +19,9 @@ export class TitlebarComponent implements OnInit {
       window.log.info('Global hotkey service exited as notified by the main process');
       this.serviceActive = false;
     });
+    window.electronAPI.getVersion().then((version) => {
+      this.version = version;
+    });
   }
 
   toggleService() {

@@ -12,28 +12,52 @@ export class PieletteAddonManager {
   private static readonly pieTasks: Map<string, PieTaskAddon> = new Map<string, PieTaskAddon>();
   private static readonly header: Map<string, IAddonHeader> = new Map<string, IAddonHeader>();
 
-  static runPieTasks(context: PieSingleTaskContext): void {
-    // So somehow if you put a breakpoint here, the get result is empty, but it actually contains the object.
-    const pieTask = PieletteAddonManager.pieTasks.get(context.addonId);
-    if (pieTask) {
-      let i = 0;
+  private static nextPieTasks: PieSingleTaskContext[] = [];
 
-      // Repeat and delay are possibly undefined when updating from old version
-      context.repeat ??= 1;
-      context.delay ??= 1000;
+  private static inExecution: boolean = false;
 
-      const executor = setInterval(() => {
-        if (i >= context.repeat) {
-          clearInterval(executor);
-          return;
-        }
+  static get isExecuting(): boolean { return this.inExecution; }
 
-        Log.main.debug(`i: ${i}, repeat: ${context.repeat}, delay: ${context.delay}`);
+  static setPieTasks(contexts: PieSingleTaskContext[]){
+    this.nextPieTasks = contexts;
+  }
 
-        pieTask.onExecuted(context.args);
-        i++;
-      }, context.delay);
+  static async runAllPieTasks(){
+    this.inExecution = true;
+    while (true){
+      const context = this.nextPieTasks.shift();
+      if (!context){ break; }
+
+      await this.runPieTasks(context);
     }
+    this.inExecution = false;
+  }
+
+  static async runPieTasks(context: PieSingleTaskContext) {
+    return await new Promise<boolean>(resolve => {
+      // So somehow if you put a breakpoint here, the get result is empty, but it actually contains the object.
+      const pieTask = PieletteAddonManager.pieTasks.get(context.addonId);
+      if (pieTask) {
+        let i = 0;
+
+        // Repeat and delay are possibly undefined when updating from old version
+        context.repeat ??= 1;
+        context.delay ??= 1000;
+
+        const executor = setInterval(() => {
+          if (i >= context.repeat) {
+            clearInterval(executor);
+            resolve(true);
+            return;
+          }
+
+          Log.main.debug(`i: ${i}, repeat: ${context.repeat}, delay: ${context.delay}`);
+
+          pieTask.onExecuted(context.args);
+          i++;
+        }, context.delay);
+      }
+    });
   }
 
   static get headerObject(): AugmentedAddonHeader[] {

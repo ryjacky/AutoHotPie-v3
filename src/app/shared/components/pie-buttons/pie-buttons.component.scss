@@ -1,0 +1,14 @@
+.circle {
+  border: solid black;
+  background-color: #0000005e;
+  border-radius: 50%;
+  display: inline-block;
+}
+.fade-in { animation: fadeIn 0.5s; }
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.invisible { opacity: 0; }

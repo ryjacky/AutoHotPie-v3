@@ -12,6 +12,13 @@ contextBridge.exposeInMainWorld('dbAPI', {
 
   // ---------------------- On ----------------------
 
+});
+
+contextBridge.exposeInMainWorld('pieMenuAPI', {
+  // ---------------------- Invoke ----------------------
+  cancel: () => ipcRenderer.invoke('pieMenu.cancel'),
+
+  // ---------------------- On ----------------------
 
 });
 
@@ -31,7 +38,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openDialogForResult: (defaultPath, filter) => ipcRenderer.invoke('openDialogForResult', [defaultPath, filter]),
   getPieTaskAddonHeaders: () => ipcRenderer.invoke('getPieTaskAddonHeaders'),
   getFileIconBase64: (path) => ipcRenderer.invoke('getFileIconBase64', [path]),
-  runPieTasks: (pieTasksJSON) => ipcRenderer.invoke('runPieTasks', [pieTasksJSON]),
+  setPieTasks: (pieTasksJSON) => ipcRenderer.invoke('setPieTasks', [pieTasksJSON]),
   openPieMenuEditor: (pieMenuId) => ipcRenderer.invoke('openPieMenuEditor', [pieMenuId]),
   addHotkey: (hotkeyString, pieMenuId) => ipcRenderer.invoke('addHotkey', [hotkeyString, pieMenuId]),
 })

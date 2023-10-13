@@ -28,6 +28,12 @@ export function initIPC() {
   });
 
 
+  // -------------------------- IPCEvents relating to the PieMenu --------------------------
+  ipcMain.handle('pieMenu.cancel', () => {
+    pieMenuWindow?.cancel();
+  });
+
+
 
 
 
@@ -94,16 +100,12 @@ export function initIPC() {
     //   return true;
     // }
   });
-  ipcMain.handle('runPieTasks', (event, args) => {
+  ipcMain.handle('setPieTasks', async (event, args) => {
     // args[0] = actionListJson
     if (pieMenuWindow?.isCancelled) {return;}
 
     let contexts = JSON.parse(args[0]) as PieSingleTaskContext[];
-    for (let i = contexts.length - 1; i >= 0; i--) {
-      Log.main.debug(`Running action ${contexts[i].addonId} with parameters ${JSON.stringify(contexts[i].args)}`)
-
-      PieletteAddonManager.runPieTasks(contexts[i]);
-    }
+    PieletteAddonManager.setPieTasks(contexts);
   });
   ipcMain.handle('getVersion', () => {
     Log.main.info("Retrieving app version, current app version is " + app.getVersion() + "");

@@ -13,8 +13,6 @@ import {DBService} from './core/services/db/db.service';
 export class AppComponent {
   @ViewChild('icon') icon: any;
 
-  version = '0.0.0';
-
   constructor(
     private router: Router,
     private electronService: ElectronService,
@@ -22,10 +20,6 @@ export class AppComponent {
     private dbService: DBService,
   ) {
     this.initAppdata();
-
-    window.electronAPI.getVersion().then((version) => {
-      this.version = version;
-    });
 
     this.translate.setDefaultLang('en');
 

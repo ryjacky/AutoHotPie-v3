@@ -12,6 +12,7 @@ export class PieMenuService extends PieMenu {
   // <PieItemId, PieItem>
   public readonly pieItems = new Map<number, IPieItem | undefined>();
   private loaded = false;
+  private loading = false;
 
   constructor(
     private dbService: DBService,
@@ -55,10 +56,16 @@ export class PieMenuService extends PieMenu {
   }
 
   public async load(pieMenuId: number, reload = false){
+    if (this.loading) {
+      window.log.error('Pie Menu Service locked, loading in progress');
+      return;
+    }
     if (this.loaded && !reload) {
       window.log.error('Pie Menu Service already loaded');
       return;
     }
+
+    this.loading = true;
 
     this.id = pieMenuId;
     const pieMenu = await this.dbService.pieMenu.get(pieMenuId);
@@ -78,8 +85,11 @@ export class PieMenuService extends PieMenu {
     }
 
     this.pieItems.clear();
+    window.log.debug(`${this.pieItems.size} pie items loaded`);
+
     const pieItems = await this.dbService.pieItem.bulkGet(pieMenu.pieItemIds);
     for (let i = 0; i < pieItems.length; i++) {
+      window.log.debug('Loading pie item ' + pieMenu.pieItemIds[i]);
       if (pieItems[i] === undefined) {
         window.log.warn('Trying to load work area but pie Item of id ' + pieMenu.pieItemIds[i] + ' not found');
         continue;
@@ -88,6 +98,9 @@ export class PieMenuService extends PieMenu {
       this.pieItems.set(pieMenu.pieItemIds[i], pieItems[i]);
     }
 
+    window.log.debug(`${this.pieItems.size} pie items loaded`);
+
+    this.loading = false;
     this.loaded = true;
   }
 

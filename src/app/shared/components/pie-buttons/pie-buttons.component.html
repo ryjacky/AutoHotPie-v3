@@ -1,11 +1,18 @@
 <div
   #pieMenuContainer
-  style="position: relative; width: 100%; height: 100%; overflow: hidden"
+  style="position: relative; width: 100%; height: 100%; overflow: hidden;"
   (pointerenter)="updatePieItem()"
   (pointermove)="onPointerMove($event)"
   (pointerleave)="onPointerLeave()"
 >
-
+  <span
+    *ngIf="editorMode"
+    class="circle"
+    [style.position]="'absolute'"
+    [style.left.px]="centerX - pieMenuService.escapeRadius"
+    [style.top.px]="centerY - pieMenuService.escapeRadius"
+    [style.width.px]="pieMenuService.escapeRadius * 2"
+    [style.height.px]="pieMenuService.escapeRadius * 2"></span>
   <canvas
     #pieCenter
     [style.position]="'absolute'"
@@ -44,7 +51,7 @@
       <button
         [style.rotate]="getComputedSelfRotation(i)"
         [style.background]="activeBtnIndex === i ? pieMenuService.mainColor : pieMenuService.secondaryColor"
-        [style.border-radius.px]="7"
+        [style.border-radius.px]="pieMenuService.pieItemRoundness"
         [style.max-width.px]="pieMenuService.pieItemWidth"
         [style.border-width.px]="0"
         [style.padding.px]="6"

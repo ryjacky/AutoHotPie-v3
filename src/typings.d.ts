@@ -12,6 +12,10 @@ interface Window {
   dbAPI: {
     possibleHotkeyChange: (profileArrayJson: string) => void;
   };
+  pieMenuAPI: {
+    done: () => void;
+    onForceRun: (callback: () => void) => void;
+  };
   log: {
     trace: (message: string) => void;
     debug: (message: string) => void;
@@ -22,7 +26,7 @@ interface Window {
   };
   electronAPI: {
     openPieMenuEditor: (pieMenuId: number) => void;
-    runPieTasks: (pieTasksJSON: string) => void;
+    setPieTasks: (pieTasksJSON: string) => void;
     getPieTaskAddonHeaders: () => Promise<string[]>;
     openInBrowser: (url: string) => void;
     isUpdateAvailable: () => Promise<boolean>;
