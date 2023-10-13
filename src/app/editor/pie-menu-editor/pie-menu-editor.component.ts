@@ -1,17 +1,21 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {PieSingleTaskContext} from '../../../../app/src/actions/PieSingleTaskContext';
 import {ToastrService} from 'ngx-toastr';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
-import {PieletteEnv} from 'pielette-core/lib/PieletteEnv';
 
+/**
+ * TODO: This class is giving errors when loaded, and optimization is needed, it does not affect UX.
+ */
 @Component({
   selector: 'app-pie-menu-editor',
   templateUrl: './pie-menu-editor.component.html',
   styleUrls: ['./pie-menu-editor.component.scss'],
   providers: [PieMenuService]
 })
-export class PieMenuEditorComponent {
+export class PieMenuEditorComponent implements OnInit {
   @Input() pieMenuId: number;
+
+  @ViewChild('pieButtons') pieButtons: any;
 
   activePieItemId: number | undefined;
   pieMenuService: PieMenuService;
@@ -22,22 +26,24 @@ export class PieMenuEditorComponent {
 
     window.log.debug('Pie Menu Editor is opening pie menu of id: ' + this.pieMenuId);
 
+  }
+
+  ngOnInit() {
     this.loadWorkArea(this.pieMenuId);
+
   }
 
   async loadWorkArea(pieMenuId: number) {
-
-    await this.pieMenuService.load(pieMenuId);
+    await this.pieMenuService.load(pieMenuId, true);
+    this.activePieItemId = this.pieMenuService.pieItemIds[0];
 
     window.log.warn('Map objects (pieItems) cannot be serialized to JSON');
     window.log.warn('Pie menu state: ' + JSON.stringify(this.pieMenuService));
-
-    this.activePieItemId = this.pieMenuService.pieItemIds[0];
     // this.pieMenuStateLoaded = Promise.resolve(true);
   }
 
   moveUp(i: number) {
-    const actions = this.pieMenuService.getPieItemActions(this.activePieItemId ?? -1);
+    const actions = this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1);
     if (i > 0) {
       const temp = actions[i - 1];
       actions[i - 1] = actions[i];
@@ -48,7 +54,7 @@ export class PieMenuEditorComponent {
   }
 
   moveDown(i: number) {
-    const actions = this.pieMenuService.getPieItemActions(this.activePieItemId ?? -1);
+    const actions = this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1);
 
     if (i < actions.length - 1) {
       const temp = actions[i + 1];
@@ -60,13 +66,17 @@ export class PieMenuEditorComponent {
   }
 
   deleteAction(i: number) {
-    if (this.pieMenuService.getPieItemActions(this.activePieItemId ?? -1).length ?? 0 > 0) {
-      this.pieMenuService.getPieItemActions(this.activePieItemId ?? -1).splice(i, 1);
+    if (this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).length ?? 0 > 0) {
+      this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).splice(i, 1);
     }
   }
 
-  addAction() {
-    this.pieMenuService.getPieItemActions(this.activePieItemId ?? -1).push(new PieSingleTaskContext('ahp-send-key', {}));
+  addPieItemContext() {
+    this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).push(
+      new PieSingleTaskContext(
+        'ahp-send-key',
+        {}
+      ));
   }
 
   save() {
@@ -75,28 +85,30 @@ export class PieMenuEditorComponent {
   }
 
   addPieItem() {
-    this.pieMenuService.addEmptyPieItem();
+    this.pieMenuService.addEmptyPieItem().then(() => {
+      this.pieButtons?.ngOnChanges();
+    });
   }
 
-  removePieItem() {
+  removePieItem(pieItemId: number) {
     if (this.pieMenuService.pieItemIds.length <= 1) {
       this.toastr.error('', 'No! Don\'t remove the last one!', {timeOut: 1000, positionClass: 'toast-bottom-right'});
       return;
     }
-    this.pieMenuService.removePieItem(this.activePieItemId ?? -1);
+    this.pieMenuService.removePieItem(pieItemId ?? -1);
     this.activePieItemId = this.pieMenuService.pieItemIds[0];
   }
 
-  setPieItemName(event: Event) {
-    const pieItem = this.pieMenuService.pieItems.get(this.activePieItemId ?? -1);
+  setPieItemName(event: Event, pieItemId: number) {
+    const pieItem = this.pieMenuService.pieItems.get(pieItemId);
     if (pieItem === undefined) { return; }
 
     pieItem.name = (event.target as HTMLInputElement).value;
   }
 
-  setPieItemIcon(event: Event) {
+  setPieItemIcon(event: Event, pieItemId: number) {
     if ((event as MouseEvent).altKey){
-      this.pieMenuService.removeIconAtPieItem(this.activePieItemId ?? 0);
+      this.pieMenuService.removeIconAtPieItem(pieItemId);
     } else {
       this.openIconSelector();
     }
@@ -120,10 +132,9 @@ export class PieMenuEditorComponent {
     }
 
     const pieItem = this.pieMenuService.pieItems.get(this.activePieItemId ?? -1);
-    if (pieItem !== undefined){
+    if (pieItem !== undefined) {
       pieItem.iconBase64 = icon;
     }
 
   }
-
 }

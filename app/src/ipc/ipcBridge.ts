@@ -1,21 +1,48 @@
 import {app, ipcMain, dialog, nativeImage} from "electron";
 import * as child_process from "child_process";
-import {PieletteSettings} from "./settings/PieletteSettings";
+import {PieletteSettings} from "../settings/PieletteSettings";
 import * as activeWindow from "active-win";
-import {getGHotkeyServiceInstance, isGHotkeyServiceRunning, KeyEvent, RespondType} from "mousekeyhook.js";
-import {ReadonlyWindowDetails} from "./appWindow/WindowDetails";
+import {ReadonlyWindowDetails} from "../appWindow/WindowDetails";
 import {Log} from "pielette-core";
-import {PieletteAddonManager} from "./plugin/PieletteAddonManager";
-import {PieSingleTaskContext} from "./actions/PieSingleTaskContext";
-import {disablePieMenu, enablePieMenu, hidePieMenu, initGlobalHotkeyService} from "../main";
-import {PieEditorWindow} from "./pieletteWindows/PieEditorWindow";
+import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
+import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
+import {disablePieMenu, enablePieMenu, pieMenuWindow} from "../../main";
+import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
+import { Profile } from "../db/data/Profile";
 
 /**
  * Sets up IPC listeners for the main process,
  * see typings.d.ts for the list of available listeners and its documentation
  * */
-export function initElectronAPI() {
+
+export function initIPC() {
+  // -------------------------- IPCEvents relating to the DB --------------------------
+  ipcMain.handle('db.possibleHotkeyChange', (event, profileArrayJson: string) => {
+    Log.main.debug("Updating hotkeys for pie menu window");
+    Log.main.debug("profileArrayJson: " + profileArrayJson)
+    pieMenuWindow?.clearListeningHotkeys();
+    for (const profile of JSON.parse(profileArrayJson) as Profile[]) {
+      pieMenuWindow?.addListeningHotkeys(profile);
+    }
+  });
+
+
+  // -------------------------- IPCEvents relating to the PieMenu --------------------------
+  ipcMain.handle('pieMenu.cancel', () => {
+    pieMenuWindow?.cancel();
+  });
+
+
+
+
+
+
+
+
+
+
+
   ipcMain.handle('openPieMenuEditor', (event, args) => {
     // args[0] = pieMenuId
     Log.main.info("Opening pie menu editor for pie menu " + args[0] + "");
@@ -64,24 +91,21 @@ export function initElectronAPI() {
     Log.main.info("Toggling Global Hotkey Service. Turning it " + (!args[0] ? "on" : "off") + "");
     // args[0] = serviceActive
 
-    if (isGHotkeyServiceRunning()) {
-      getGHotkeyServiceInstance().exitProcess();
-      return false;
-    } else {
-      initGlobalHotkeyService();
-      return true;
-    }
+    Log.main.error("toggleService() is not implemented yet");
+    // if (isGHotkeyServiceRunning()) {
+    //   getGHotkeyServiceInstance().exitProcess();
+    //   return false;
+    // } else {
+    //   initGlobalHotkeyService();
+    //   return true;
+    // }
   });
-  ipcMain.handle('runPieTasks', (event, args) => {
-    hidePieMenu();
-
+  ipcMain.handle('setPieTasks', async (event, args) => {
     // args[0] = actionListJson
-    let contexts = JSON.parse(args[0]) as PieSingleTaskContext[];
-    for (let context of contexts) {
-      Log.main.debug(`Running action ${context.addonId} with parameters ${JSON.stringify(context.args)}`)
+    if (pieMenuWindow?.isCancelled) {return;}
 
-      PieletteAddonManager.runPieTasks(context);
-    }
+    let contexts = JSON.parse(args[0]) as PieSingleTaskContext[];
+    PieletteAddonManager.setPieTasks(contexts);
   });
   ipcMain.handle('getVersion', () => {
     Log.main.info("Retrieving app version, current app version is " + app.getVersion() + "");
@@ -89,14 +113,34 @@ export function initElectronAPI() {
   });
   ipcMain.handle('getSetting', (event, args) => {
     // args[0] = settingKey
+    if (args[0] === "runOnStartup") {
+      return app.getLoginItemSettings().openAtLogin;
+    }
+
     const value = PieletteSettings.get(args[0]);
 
     Log.main.info("Retrieving setting " + args[0] + ", value is " + value + "");
 
     return value;
   });
+  ipcMain.handle('addHotkey', (event, args) => {
+    // args[0] = hotkey string
+    // args[1] = pieMenuId
+    // pieMenuWindow?.addListeningHotkeys(args[0], args[1]);
+    Log.main.warn("addHotkey() is deprecated");
+  });
   ipcMain.handle('setSetting', (event, args) => {
     Log.main.info("Setting " + args[0] + " to " + args[1] + "");
+
+    if (args[0] === "runOnStartup") {
+      app.setLoginItemSettings({
+        openAtLogin: args[1] as boolean,
+        openAsHidden: true
+      })
+
+      return;
+    }
+
     return PieletteSettings.set(args[0], args[1]);
   });
   ipcMain.handle('openDialogForResult', (event, args) => {
@@ -124,29 +168,30 @@ export function initElectronAPI() {
     return pieTaskAddonHeaderJSONArr;
   });
   ipcMain.handle('listenKeyForResult', (event, args) => {
+    Log.main.error("listenKeyForResult() is not implemented yet");
     // args[0] = ignoredKeys
-    if (!isGHotkeyServiceRunning()) {
-      return;
-    }
-
-    return new Promise(resolve => {
-      Log.main.info("Listening for valid hotkey once");
-      disablePieMenu();
-
-      const listener = (event: KeyEvent) => {
-        if (event.type === RespondType.KEY_DOWN
-          && !args[0].includes((event.value.split('+').pop() ?? 'PLACEHOLDER').trim())) {
-
-          getGHotkeyServiceInstance().removeTempKeyListener();
-          Log.main.info("Hotkey " + event.value + " is pressed");
-          enablePieMenu();
-          resolve(event.value);
-        }
-      }
-
-      getGHotkeyServiceInstance().addTempKeyListener(listener);
-
-    });
+    // if (!isGHotkeyServiceRunning()) {
+    //   return;
+    // }
+    //
+    // return new Promise(resolve => {
+    //   Log.main.info("Listening for valid hotkey once");
+    //   disablePieMenu();
+    //
+    //   const listener = (event: KeyEvent) => {
+    //     if (event.type === RespondType.KEY_DOWN
+    //       && !args[0].includes((event.value.split('+').pop() ?? 'PLACEHOLDER').trim())) {
+    //
+    //       getGHotkeyServiceInstance().removeTempKeyListener();
+    //       Log.main.info("Hotkey " + event.value + " is pressed");
+    //       enablePieMenu();
+    //       resolve(event.value);
+    //     }
+    //   }
+    //
+    //   getGHotkeyServiceInstance().addTempKeyListener(listener);
+    //
+    // });
 
   });
 }

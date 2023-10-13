@@ -9,6 +9,13 @@ interface NodeModule {
 interface Window {
   process: any;
   require: any;
+  dbAPI: {
+    possibleHotkeyChange: (profileArrayJson: string) => void;
+  };
+  pieMenuAPI: {
+    done: () => void;
+    onForceRun: (callback: () => void) => void;
+  };
   log: {
     trace: (message: string) => void;
     debug: (message: string) => void;
@@ -19,10 +26,9 @@ interface Window {
   };
   electronAPI: {
     openPieMenuEditor: (pieMenuId: number) => void;
-    runPieTasks: (pieTasksJSON: string) => void;
+    setPieTasks: (pieTasksJSON: string) => void;
     getPieTaskAddonHeaders: () => Promise<string[]>;
     openInBrowser: (url: string) => void;
-    closePieMenuRequested: (callback: () => void) => void;
     isUpdateAvailable: () => Promise<boolean>;
     openDialogForResult: (defaultPath: string, filter: [{name: string; extensions: string[]}]) => Promise<string>;
     getFileIconBase64: (path: string) => Promise<string>;
@@ -44,10 +50,12 @@ interface Window {
     listenKeyForResult: (ignoredKeys: string[]) => Promise<string> | undefined;
 
     globalHotkeyServiceExited: (callback: () => void) => void;
+    openPieMenu: (callback: (pieMenuId: number) => void) => void;
 
     getVersion: () => Promise<string>;
 
     getSetting: (settingName: string) => Promise<any>;
+    addHotkey: (hotkeyString: string, pieMenuId: number) => void;
     setSetting: (settingName: string, value: any) => any;
     disablePieMenu: () => void;
     enablePieMenu: () => void;

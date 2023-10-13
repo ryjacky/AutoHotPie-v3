@@ -26,5 +26,7 @@ export class ActionCardComponent implements OnInit {
     this.pieTaskContext.args[argName] = event.target.value;
   }
 
-  protected readonly Number = Number;
+  getHotkey(param: any) {
+    return this.pieTaskContext.args[param.argName] as string;
+  }
 }

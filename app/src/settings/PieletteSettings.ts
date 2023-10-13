@@ -1,28 +1,19 @@
 import {Schema} from "electron-store";
 import {app} from "electron";
 import * as Store from "electron-store";
-import {KeyEvent, RespondType} from "mousekeyhook.js";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 
 interface IPieletteSettingSchema {
   pieMenuCancelKey: string;
-  runOnStartup: boolean;
-  runOnAppQuit: boolean;
+  // uses app.setLoginItemSettings now
+  // runOnStartup: boolean;
   plugins: string[];
 }
 
 const PieletteSettingSchema: Schema<IPieletteSettingSchema> = {
   pieMenuCancelKey: {
     type: 'string',
-    default: JSON.stringify(new KeyEvent(RespondType.MOUSE_DOWN, 'Escape'))
-  },
-  runOnStartup: {
-    type: 'boolean',
-    default: true
-  },
-  runOnAppQuit: {
-    type: 'boolean',
-    default: true
+    default: 'Escape'
   },
   plugins: {
     type: 'array',
@@ -51,7 +42,7 @@ app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);
 export const PieletteSettings = new Store<IPieletteSettingSchema>({
   schema: PieletteSettingSchema, migrations: {
     '3.0.2': (store) => {
-      store.set('pieMenuCancelKey', JSON.stringify(new KeyEvent(RespondType.KEY_DOWN, 'Escape')));
+      store.set('pieMenuCancelKey', 'Escape');
     }
   }
 });

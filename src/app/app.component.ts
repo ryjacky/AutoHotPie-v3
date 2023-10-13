@@ -2,12 +2,8 @@ import {Component, ViewChild} from '@angular/core';
 import {ElectronService} from './core/services';
 import {TranslateService} from '@ngx-translate/core';
 import {APP_CONFIG} from '../environments/environment';
-import {PieletteDBHelper} from '../../app/src/db/PieletteDB';
 import {Router} from '@angular/router';
-import {NbPosition} from '@nebular/theme';
-import {PieMenu, PieMenuActivationMode} from '../../app/src/db/data/PieMenu';
-import {Profile} from '../../app/src/db/data/Profile';
-import {PieItem} from '../../app/src/db/data/PieItem';
+import {DBService} from './core/services/db/db.service';
 
 @Component({
   selector: 'app-root',
@@ -17,18 +13,13 @@ import {PieItem} from '../../app/src/db/data/PieItem';
 export class AppComponent {
   @ViewChild('icon') icon: any;
 
-  version = '0.0.0';
-
   constructor(
     private router: Router,
     private electronService: ElectronService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private dbService: DBService,
   ) {
     this.initAppdata();
-
-    window.electronAPI.getVersion().then((version) => {
-      this.version = version;
-    });
 
     this.translate.setDefaultLang('en');
 
@@ -50,37 +41,7 @@ export class AppComponent {
 
   async initAppdata() {
     //TODO: Should be put in welcome guide
-    window.log.info('Initializing/Loading app data');
-
-    if ((await PieletteDBHelper.profile.count()) === 0) {
-      window.log.info('No profile found, creating default profile');
-
-      await PieletteDBHelper.pieItem.bulkPut([
-        new PieItem('', 'PieItem 1'),
-        new PieItem('', 'PieItem 2'),
-        new PieItem('', 'PieItem 3'),
-        new PieItem('', 'PieItem 4'),
-        new PieItem('', 'PieItem 5'),
-      ]);
-
-      const defaultPieMenu = new PieMenu();
-      defaultPieMenu.name = 'Default Pie Menu';
-      defaultPieMenu.id = 1;
-      defaultPieMenu.pieItemIds = [1, 2, 3, 4, 5];
-      const pieMenuId = await PieletteDBHelper.pieMenu.put(defaultPieMenu);
-
-      await PieletteDBHelper.profile.put(new Profile(
-        'Default Profile',
-        [pieMenuId as number],
-        [],
-        undefined,
-        true,
-        1
-      ));
-
-    }
-
-    window.log.info('App data loaded');
+    await this.dbService.init();
   }
 
   isPieMenuEditor() {

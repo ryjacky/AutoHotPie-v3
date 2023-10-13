@@ -12,7 +12,7 @@
         <nb-icon icon="plus" pack="eva"></nb-icon>
       </button>
     </div>
-    <app-pie-buttons [editorMode]="true" (activePieItemId)="activePieItemId = $event" [pieMenuId]="pieMenuId"></app-pie-buttons>
+    <app-pie-buttons #pieButtons [editorMode]="true" (activePieItemId)="activePieItemId = $event" [pieMenuId]="pieMenuId"></app-pie-buttons>
   </div>
 
   <div class="growM">
@@ -25,39 +25,8 @@
       {{ 'PAGES.EDITOR.SAVE' | translate }}
     </button>
     <nb-tabset [style.width.%]="100">
-      <nb-tab tabTitle="Pie Item Details" style="margin-top: 1em;">
-        <div style="display: flex; margin: 1em">
-          <button
-            nbTooltip="Click to add/Alt+Click to remove icon." nbTooltipPlacement="top"
-            nbButton
-            ghost
-            size="small"
-            style="border: dashed 2px;min-width: 42px;min-height: 42px;padding: 7px;max-width: 42px;max-height: 42px;"
-            (click)="setPieItemIcon($event)">
-            <nb-icon
-              *ngIf="pieMenuService.isIconAtPieItemNative(activePieItemId ?? 0)"
-              [icon]="pieMenuService.getPieItemIconAt(activePieItemId ?? 0)">
-            </nb-icon>
-            <img
-              *ngIf="!pieMenuService.isIconAtPieItemNative(activePieItemId ?? 0)"
-              [src]="pieMenuService.getPieItemIconAt(activePieItemId ?? 0)"
-              style="max-width: 25px; max-height: 25px;">
-          </button>
-          <input
-            type="text"
-            style="margin: 0 10px"
-            nbInput
-            fullWidth
-            status="basic"
-            (input)="setPieItemName($event)"
-            [value]="pieMenuService.getPieItemNameAt(activePieItemId ?? 0)"
-          >
-          <button nbButton ghost size="small" nbTooltip="Double click to remove." nbTooltipPlacement="top" nbTooltipStatus="warning" (dblclick)="removePieItem()">
-            <nb-icon icon="trash-outline"/>
-          </button>
-        </div>
+      <nb-tab tabTitle="Actions" style="margin-top: 1em;">
         <div style="height: 72vh; padding-right: 5px; display: flex; flex-direction: column; align-items: center;">
-
           <div *ngFor="let pieTaskContexts of pieMenuService.getPieTaskContext(this.activePieItemId ?? -1); let i = index"
                style="display: flex; flex-direction: column; flex-wrap: nowrap; align-content: flex-start; justify-content: flex-start; align-items: center; ">
             <div style="display: flex">
@@ -70,7 +39,7 @@
                 </button>
                 <button
                   (click)="moveDown(i)"
-                  *ngIf="i !== pieMenuService.getPieItemActions(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
+                  *ngIf="i !== pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
                   style="margin-bottom: 2px;">
                   <nb-icon icon="arrow-downward-outline"/>
                 </button>
@@ -83,12 +52,64 @@
             <nb-icon style="min-height: 32px" icon="arrow-downward-outline"></nb-icon>
           </div>
           <button nbButton ghost style="height: 64px; width: 64px; border: solid;margin-bottom: 3em;"
-                  (click)="addAction()">
+                  (click)="addPieItemContext()">
             <nb-icon icon="plus-outline" style="min-width: 32px; height: 32px"></nb-icon>
           </button>
         </div>
       </nb-tab>
-
+      <nb-tab tabTitle="Pie Items" style="margin-top: 1em;">
+        <div *ngFor="let pieItemId of pieMenuService.pieItemIds; let i = index" style="display: flex; margin: 1em">
+          <button
+            nbTooltip="Click to add/Alt+Click to remove icon." nbTooltipPlacement="top"
+            nbButton
+            ghost
+            size="small"
+            style="border: dashed 2px;min-width: 42px;min-height: 42px;padding: 7px;max-width: 42px;max-height: 42px;"
+            (click)="setPieItemIcon($event, pieItemId)">
+            <nb-icon
+              *ngIf="pieMenuService.isIconAtPieItemNative(pieItemId ?? 0)"
+              [icon]="pieMenuService.getPieItemIconAt(pieItemId ?? 0)">
+            </nb-icon>
+            <img
+              *ngIf="!pieMenuService.isIconAtPieItemNative(pieItemId ?? 0)"
+              [src]="pieMenuService.getPieItemIconAt(pieItemId ?? 0)"
+              style="max-width: 25px; max-height: 25px;">
+          </button>
+          <input
+            type="text"
+            style="margin: 0 10px"
+            nbInput
+            fullWidth
+            status="basic"
+            (input)="setPieItemName($event, pieItemId)"
+            [value]="pieMenuService.getPieItemNameAt(pieItemId ?? 0)"
+          >
+          <button
+            (click)="pieMenuService.movePieItemUp(i)"
+            [disabled]="i === 0"
+            nbButton fullWidth ghost size="tiny" style="width: 64px;">
+            <nb-icon icon="arrow-upward-outline"/>
+          </button>
+          <button
+            (click)="pieMenuService.movePieItemDown(i)"
+            [disabled]="i === pieMenuService.pieItems.size - 1"
+            nbButton fullWidth ghost size="tiny"
+            style="width: 64px;">
+            <nb-icon icon="arrow-downward-outline"/>
+          </button>
+          <button
+            nbButton
+            ghost
+            size="tiny"
+            nbTooltip="Double click to remove."
+            nbTooltipPlacement="top"
+            nbTooltipStatus="warning"
+            style="width: 64px;"
+            (dblclick)="removePieItem(pieItemId)">
+            <nb-icon icon="trash-outline"/>
+          </button>
+        </div>
+      </nb-tab>
       <nb-tab tabTitle="Settings" style="width: 100%">
         <app-settings-tab/>
 

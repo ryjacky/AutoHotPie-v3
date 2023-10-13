@@ -9,7 +9,6 @@ export interface IPieMenu {
   name: string;
   enabled: boolean;
   activationMode: PieMenuActivationMode;
-  hotkey: string;
   escapeRadius: number;
   openInScreenCenter: boolean;
   mainColor: string;
@@ -30,7 +29,6 @@ export class PieMenu implements IPieMenu {
     public name = "New Pie Menu",
     public enabled = true,
     public activationMode = PieMenuActivationMode.HOVER_OVER_THEN_RELEASE,
-    public hotkey = '',
     public escapeRadius = 0,
     public openInScreenCenter = false,
     public mainColor = '#1DAEAA',
@@ -47,7 +45,6 @@ export class PieMenu implements IPieMenu {
   ) {
     // We cannot use name parameter due to the limitation of dexie.js
   }
-
 
 
 }

@@ -19,6 +19,9 @@ export class TitlebarComponent implements OnInit {
       window.log.info('Global hotkey service exited as notified by the main process');
       this.serviceActive = false;
     });
+    window.electronAPI.getVersion().then((version) => {
+      this.version = version;
+    });
   }
 
   toggleService() {
@@ -30,14 +33,10 @@ export class TitlebarComponent implements OnInit {
   openInBrowser(emitter: string) {
     switch (emitter) {
       case 'github':
-        window.electronAPI.openInBrowser('https://github.com/dumbeau/AutoHotPie');
-        break;
-      case 'paypal':
-        window.electronAPI.openInBrowser(
-          'https://www.paypal.com/donate?business=RBTDTCUBK4Z8S&no_recurring=1&item_name=Support+Pie+Menus+Development&currency_code=USD');
+        window.electronAPI.openInBrowser('https://github.com/ryjacky/Pielette');
         break;
       case 'bug':
-        window.electronAPI.openInBrowser('https://github.com/dumbeau/AutoHotPie/issues/new');
+        window.electronAPI.openInBrowser('https://github.com/ryjacky/Pielette/issues/new');
         break;
     }
   }

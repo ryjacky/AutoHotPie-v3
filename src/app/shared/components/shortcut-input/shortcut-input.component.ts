@@ -1,73 +1,37 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, ViewChild} from '@angular/core';
+import {MouseKeyEventHelper} from '../../../../../app/src/mouseKeyEvent/MouseKeyEventHelper';
 
 @Component({
   selector: 'app-shortcut-input',
   templateUrl: './shortcut-input.component.html',
   styleUrls: ['./shortcut-input.component.scss']
 })
-export class ShortcutInputComponent {
-  @Input() hotkey = '';
+export class ShortcutInputComponent implements OnChanges {
+  @Input() hotkeyString = '';
   @Input() isSingleKey = false;
   @Output() hotkeyChange = new EventEmitter<string>();
   @ViewChild('shortcutInput') shortcutInput: any;
 
-  listenShortcut() {
-    if (this.isSingleKey) {
-      this.listenSingleKeyShortcut();
-    } else {
-      this.listenShortcutCombination();
-    }
+  displayString = '';
+
+  ngOnChanges() {
+    const hotkey = this.hotkeyString.split(':');
+    this.displayString =
+      (hotkey[3] === 'true' ? 'Ctrl+' : '') +
+      (hotkey[2] === 'true' ? 'Shift+' : '') +
+      (hotkey[4] === 'true' ? 'Alt+' : '') +
+      ((hotkey[1] ?? '').toUpperCase());
+
+    console.log('this.displayString: ' + this.displayString);
   }
 
-  listenSingleKeyShortcut() {
-    window.electronAPI.listenKeyForResult([])?.then((key: string) => {
-      this.hotkey = key;
-      window.log.info('Updating hotkey to ' + this.hotkey);
-      this.hotkeyChange.emit(this.hotkey);
+  onKeyDown(event: KeyboardEvent) {
+    if (!this.isSingleKey && (event.key === 'Control' || event.key === 'Alt' || event.key === 'Shift')) { return; }
+    this.hotkeyString = MouseKeyEventHelper.KeyboardEventToString(event);
+    this.hotkeyChange.emit(this.hotkeyString);
 
-      // Un-focus the element at the very last to make sure
-      // hotkey is updated/sent to the parent component before the element is blurred
-      this.shortcutInput.nativeElement.blur();
-    });
-  }
-
-  listenShortcutCombination() {
-    window.electronAPI.listenKeyForResult(['Alt',
-      'Control',
-      'Modifiers',
-      'LMenu',
-      'RMenu',
-      'Capital',
-      'Tab',
-      'Shift',
-      'Escape',
-      'LShiftKey',
-      'RShiftKey',
-      'LControlKey',
-      'RControlKey',
-      'ControlKey'])?.then((key: string) => {
-
-      if (key.trim() === 'None+Back' || key.trim() === 'None+Delete') {
-        this.hotkey = '';
-      } else {
-        this.hotkey = key;
-      }
-
-      window.log.info('Updating hotkey to ' + this.hotkey);
-
-      this.hotkeyChange.emit(this.hotkey);
-
-      // Un-focus the element at the very last to make sure
-      // hotkey is updated/sent to the parent component before the element is blurred
-      this.shortcutInput.nativeElement.blur();
-    });
-  }
-
-  stopListeningShortcut() {
-    try {
-      window.electronAPI.listenKeyForResult([]);
-    } catch (e) {
-
-    }
+    // Un-focus the element at the very last to make sure
+    // hotkey is updated/sent to the parent component before the element is blurred
+    this.shortcutInput.nativeElement.blur();
   }
 }

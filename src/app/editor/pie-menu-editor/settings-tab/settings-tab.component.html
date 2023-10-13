@@ -2,11 +2,11 @@
   <nb-list-item style="display: flex; flex-direction: column;">
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.ESCAPE_RADIUS" | translate }}
-      <app-number-slider-field [min]="0" [max]="16384" [(value)]="pieMenuService.escapeRadius"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [(value)]="pieMenuService.escapeRadius"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.ICON_SIZE" | translate }}
-      <app-number-slider-field [min]="0" [max]="64" [(value)]="pieMenuService.iconSize"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="32" [(value)]="pieMenuService.iconSize"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.CENTER_RADIUS" | translate }}
@@ -18,7 +18,7 @@
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.PIE_ITEM_SPREAD" | translate }}
-      <app-number-slider-field [min]="0" [max]="1024" [(value)]="pieMenuService.pieItemSpread"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="350" [(value)]="pieMenuService.pieItemSpread"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.PIE_ITEM_ROUNDNESS" | translate }}

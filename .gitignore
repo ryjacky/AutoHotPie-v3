@@ -100,3 +100,8 @@ Thumbs.db
 /app/src/pieletteWindows/PieEditorWindow.js
 /app/src/actions/PieTaskContext.js
 /app/src/actions/PieSingleTaskContext.js
+/app/src/mouseKeyEvent/MouseKeyEventObject.js
+/app/src/db/data/PieMenu.js
+/app/src/ipc/ipcBridge.js
+/app/src/mouseKeyEvent/MouseKeyEventHelper.js
+/app/src/db/data/Profile.js
