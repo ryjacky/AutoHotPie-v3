@@ -100,7 +100,7 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
 
     // We don't want to keep updating the pie menu
     if (this.hidden) this.webContents.send('openPieMenu', pieMenuId);
-    this.show();
+    this.showInactive();
   }
 
   onKeyUp(event: string): void {
@@ -143,12 +143,11 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     if (!this.hidden) {
       this.hidden = true;
 
-      this.minimize();
       super.hide();
     }
   }
 
-  show() {
+  showInactive() {
     if (this.disabled) {
       return;
     }
@@ -163,15 +162,15 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
       const display = screen.getDisplayNearestPoint(screenPoint);
 
       Log.main.debug(`screenPoint: ${JSON.stringify(screenPoint)}`)
-
-      super.show();
+      Log.main.debug(`display: ${screenPoint.x - display.bounds.width / 2}, ${screenPoint.y - display.bounds.height / 2}`)
+      // YES, why do I need to do this, the window just offsets when it restore so I just spam set the bounds
       this.setBounds({
         width: display.bounds.width,
         height: display.bounds.height,
         x: screenPoint.x - display.bounds.width / 2,
         y: screenPoint.y - display.bounds.height / 2,
       });
-      this.restore();
+      super.showInactive();
     }
   }
 
