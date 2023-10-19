@@ -1,7 +1,7 @@
 import {BrowserWindow, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
-import {GlobalHotkeyService, MouseKeyEventListener} from "pielette-mouse-key-hook";
+import {GlobalHotkeyService, GlobalHotkeyServiceListener, MouseKeyEventListener} from "pielette-mouse-key-hook";
 import {Log} from "pielette-core";
 import {Profile} from "../db/data/Profile";
 import {PieletteSettings} from "../settings/PieletteSettings";
@@ -9,10 +9,9 @@ import * as activeWindow from "active-win";
 import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
 
 // TODO: Need review
-export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener {
+export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener, GlobalHotkeyServiceListener {
   public isCancelled: boolean = false;
 
-  private hidden: boolean = false;
   private disabled: boolean = false;
   private readonly prefix = '../../';
 
@@ -39,6 +38,11 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     this.preventClose();
     this.hide();
     this.loadPieMenuURL();
+    GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
+  }
+
+  onProcessExit(): void {
+    Log.main.debug("PieMenuWindow.onProcessExit(), reinitializing GlobalHotkeyService");
     GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
   }
 
@@ -77,29 +81,38 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
 
   onKeyDown(event: string): void {
     // Filters ---------------------------------
+    if (this.prevKey === event) {return;}
+    this.prevKey = event;
+
     if (event.split(':')[1] === PieletteSettings.get('pieMenuCancelKey').split(':')[1]) {
       this.cancel();
+      Log.main.debug(`Cancel key pressed: ${event}`);
     }
+
+    if (PieletteAddonManager.isExecuting){
+      Log.main.debug(`PieletteAddonManager.isExecuting: ${PieletteAddonManager.isExecuting}`);
+      return;
+    }
+
     // Search for the pie menu id related to the hotkey
     const pieMenuId = this.listeningHotkeys.get(event);
 
-    if (!pieMenuId || PieletteAddonManager.isExecuting || this.prevKey === event) {
+    if (!pieMenuId) {
+      Log.main.debug(`this.prevKey === event: ${this.prevKey === event}, this.prevKey: ${this.prevKey}, event: ${event}`);
       return;
     }
 
     // 1 is the id of the global pie menu
     if (!this.menuExeBindingMap.get(pieMenuId)?.includes(activeWindow.sync()?.owner.path ?? "global")
       && !this.menuExeBindingMap.get(pieMenuId)?.includes("global")) {
+      Log.main.debug(`Cannot open pie menu id: ${pieMenuId} because the exe is not in the list and it is not a global list`);
       Log.main.debug(JSON.stringify(Array.from(this.menuExeBindingMap.entries())))
       return;
     }
 
 
     // Filters end -----------------------------
-    this.prevKey = event;
-
-    // We don't want to keep updating the pie menu
-    if (this.hidden) this.webContents.send('openPieMenu', pieMenuId);
+    this.webContents.send('openPieMenu', pieMenuId);
     this.showInactive();
   }
 
@@ -135,16 +148,8 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     });
   }
 
-  isHidden() {
-    return this.hidden;
-  }
-
   hide() {
-    if (!this.hidden) {
-      this.hidden = true;
-
-      super.hide();
-    }
+    super.hide();
   }
 
   showInactive() {
@@ -154,24 +159,21 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
 
     this.isCancelled = false;
 
-    if (this.hidden) {
-      this.hidden = false;
 
-      // Show the window at cursor position, centered
-      const screenPoint = screen.getCursorScreenPoint();
-      const display = screen.getDisplayNearestPoint(screenPoint);
+    // Show the window at cursor position, centered
+    const screenPoint = screen.getCursorScreenPoint();
+    const display = screen.getDisplayNearestPoint(screenPoint);
 
-      Log.main.debug(`screenPoint: ${JSON.stringify(screenPoint)}`)
-      Log.main.debug(`display: ${screenPoint.x - display.bounds.width / 2}, ${screenPoint.y - display.bounds.height / 2}`)
-      // YES, why do I need to do this, the window just offsets when it restore so I just spam set the bounds
-      this.setBounds({
-        width: display.bounds.width,
-        height: display.bounds.height,
-        x: screenPoint.x - display.bounds.width / 2,
-        y: screenPoint.y - display.bounds.height / 2,
-      });
-      super.showInactive();
-    }
+    Log.main.debug(`screenPoint: ${JSON.stringify(screenPoint)}`)
+    Log.main.debug(`display: ${screenPoint.x - display.bounds.width / 2}, ${screenPoint.y - display.bounds.height / 2}`)
+    // YES, why do I need to do this, the window just offsets when it restore so I just spam set the bounds
+    this.setBounds({
+      width: display.bounds.width,
+      height: display.bounds.height,
+      x: screenPoint.x - display.bounds.width / 2,
+      y: screenPoint.y - display.bounds.height / 2,
+    });
+    super.showInactive();
   }
 
   disable() {
