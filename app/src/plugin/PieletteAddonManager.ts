@@ -6,8 +6,8 @@ import {AugmentedAddonHeader} from "./AugmentedAddonHeader";
 import {clearInterval} from "timers";
 
 export class PieletteAddonManager {
-  // TODO: Make this configurable at user end
-  private static readonly pluginManager = new PluginManager({npmInstallMode: "noCache"});
+  // TODO: Make this configurable at user end: {npmInstallMode: "noCache"}
+  private static readonly pluginManager = new PluginManager();
 
   private static readonly pieTasks: Map<string, PieTaskAddon> = new Map<string, PieTaskAddon>();
   private static readonly header: Map<string, IAddonHeader> = new Map<string, IAddonHeader>();
