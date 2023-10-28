@@ -35,6 +35,7 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
       },
     });
 
+    this.setAlwaysOnTop(true, "screen-saver", 1);
     this.preventClose();
     this.hide();
     this.loadPieMenuURL();
@@ -166,7 +167,6 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
 
     Log.main.debug(`screenPoint: ${JSON.stringify(screenPoint)}`)
     Log.main.debug(`display: ${screenPoint.x - display.bounds.width / 2}, ${screenPoint.y - display.bounds.height / 2}`)
-    // YES, why do I need to do this, the window just offsets when it restore so I just spam set the bounds
     this.setBounds({
       width: display.bounds.width,
       height: display.bounds.height,

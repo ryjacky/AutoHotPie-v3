@@ -2,6 +2,8 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {PieSingleTaskContext} from '../../../../app/src/actions/PieSingleTaskContext';
 import {ToastrService} from 'ngx-toastr';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
+import {NbDialogService} from '@nebular/theme';
+import {NbIconPickerComponent} from '../../shared/components/nb-icon-picker/nb-icon-picker.component';
 
 /**
  * TODO: This class is giving errors when loaded, and optimization is needed, it does not affect UX.
@@ -20,7 +22,10 @@ export class PieMenuEditorComponent implements OnInit {
   activePieItemId: number | undefined;
   pieMenuService: PieMenuService;
 
-  constructor(private toastr: ToastrService, pieMenuService: PieMenuService) {
+  constructor(
+    private toastr: ToastrService,
+    private dialogService: NbDialogService,
+    pieMenuService: PieMenuService) {
     this.pieMenuService = pieMenuService;
     this.pieMenuId = parseInt(new URL(window.location.href.replace('#/', '')).searchParams.get('pieMenuId') ?? '0', 10);
 
@@ -110,31 +115,22 @@ export class PieMenuEditorComponent implements OnInit {
     if ((event as MouseEvent).altKey){
       this.pieMenuService.removeIconAtPieItem(pieItemId);
     } else {
-      this.openIconSelector();
+      this.openIconSelector(pieItemId);
     }
   }
 
-  async openIconSelector() {
-    const filePath = String(await window.electronAPI.openDialogForResult(
-      '%appdata%\\Pielette\\Icons',
-      [{name: 'All', extensions: ['*']}]));
+  async openIconSelector(pieItemId: number) {
+    this.dialogService.open(NbIconPickerComponent, {
+    }).onClose.subscribe(icon => {
+      window.log.debug('Icon selected: ' + icon);
 
-    const fileName = filePath.split('\\').pop()?.split('/').pop() ?? '';
-    let icon;
+      if (icon === undefined) { return; }
 
-    if (fileName.startsWith('[eva]') && fileName.endsWith('.png')) {
-      window.log.debug('Icon is native');
-      icon = fileName.replace('.png', '');
-    } else {
-      // Seems like the file path is not a string (or maybe a "fake" string), we have to convert it to string manually
-      icon = await window.electronAPI.getFileIconBase64(filePath);
-      window.log.debug('Icon is not native');
-    }
-
-    const pieItem = this.pieMenuService.pieItems.get(this.activePieItemId ?? -1);
-    if (pieItem !== undefined) {
-      pieItem.iconBase64 = icon;
-    }
+      const pieItem = this.pieMenuService.pieItems.get(pieItemId ?? -1);
+      if (pieItem !== undefined) {
+        pieItem.iconBase64 = icon;
+      }
+    });
 
   }
 }
