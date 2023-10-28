@@ -7,12 +7,20 @@ import {PageNotFoundComponent} from './components/';
 import {WebviewDirective} from './directives/';
 import {FormsModule} from '@angular/forms';
 import {ShortcutInputComponent} from './components/shortcut-input/shortcut-input.component';
-import {NbButtonModule, NbFormFieldModule, NbIconModule, NbInputModule, NbPopoverModule} from '@nebular/theme';
+import {
+    NbButtonModule,
+    NbCardModule,
+    NbFormFieldModule,
+    NbIconModule,
+    NbInputModule,
+    NbPopoverModule
+} from '@nebular/theme';
 import {PieButtonsComponent} from './components/pie-buttons/pie-buttons.component';
 import {TitlebarComponent} from './components/titlebar/titlebar.component';
 import {RouterLink} from '@angular/router';
 import { EditorTitlebarComponent } from './components/editor-titlebar/editor-titlebar.component';
 import { NumberSliderFieldComponent } from './components/number-slider-field/number-slider-field.component';
+import { NbIconPickerComponent } from './components/nb-icon-picker/nb-icon-picker.component';
 
 @NgModule({
   declarations: [
@@ -24,19 +32,21 @@ import { NumberSliderFieldComponent } from './components/number-slider-field/num
     EditorTitlebarComponent,
     NumberSliderFieldComponent,
     NumberSliderFieldComponent,
+    NbIconPickerComponent,
   ],
-  imports: [
-    CommonModule,
-    TranslateModule,
-    FormsModule,
-    NbInputModule,
-    RouterLink,
-    NbPopoverModule,
-    NbButtonModule,
-    NbIconModule,
-    NgOptimizedImage,
-    NbFormFieldModule
-  ],
+    imports: [
+        CommonModule,
+        TranslateModule,
+        FormsModule,
+        NbInputModule,
+        RouterLink,
+        NbPopoverModule,
+        NbButtonModule,
+        NbIconModule,
+        NgOptimizedImage,
+        NbFormFieldModule,
+        NbCardModule
+    ],
   exports: [TranslateModule,
     WebviewDirective,
     FormsModule,

@@ -1,0 +1,36 @@
+<nb-card>
+  <nb-card-body style="padding: 1em">
+    <div style="display: flex; align-items: center; flex-direction: column">
+      <div style="width: 100%; display: flex; justify-content: space-between; flex-direction: row; margin-bottom: 1em">
+        <button
+          nbButton
+          size="small"
+          ghost
+          style="margin-right: 1em"
+          (click)="closeDialog()">
+          <nb-icon icon="undo"></nb-icon>
+        </button>
+        <input
+          nbInput
+          [(ngModel)]="searchWord"
+          [placeholder]="'SHARED.NB_ICON_PICKER.TYPE_TO_SEARCH_ICON' | translate">
+        <div style="flex-grow: 1"></div>
+        <button nbButton ghost (click)="pickIconFromFile()">{{ "SHARED.NB_ICON_PICKER.PICK_FROM_FILES" | translate }}</button>
+      </div>
+
+      <div style="width: 60vw; height: 70vh; overflow-y: scroll">
+        <button
+          nbButton
+          size="small"
+          *ngFor="let icon of icons"
+          ghost
+          [style.display]="icon.includes(searchWord) ? 'inline-flex' : 'none'"
+          (click)="closeDialog('[eva]' + icon)">
+          <nb-icon [icon]="icon"></nb-icon>
+        </button>
+      </div>
+    </div>
+
+  </nb-card-body>
+
+</nb-card>
