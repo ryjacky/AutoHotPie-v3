@@ -105,3 +105,4 @@ Thumbs.db
 /app/src/ipc/ipcBridge.js
 /app/src/mouseKeyEvent/MouseKeyEventHelper.js
 /app/src/db/data/Profile.js
+/app/src/binaryInfo/IBinaryInfo.js

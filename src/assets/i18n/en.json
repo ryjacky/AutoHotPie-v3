@@ -5,6 +5,45 @@
       "PICK_FROM_FILES": "Pick from files"
     }
   },
+  "PROFILE_PAGE": {
+    "NEW_PROF_BUTTON_TOOLTIP": "Click to create a new application profile",
+
+    "ADD_MISSING_EXE": "Add missing version...",
+    "ADD_MISSING_EXE_TOOLTIP": "Click to add a missing executable",
+
+    "EXECUTABLE_VERSIONS": "All executable versions",
+
+    "PROF_SETTINGS": "Profile Settings",
+    "ENABLED": "Enabled",
+    "ENABLED_DESC": "Enable/disable this profile, if disabled, the profile will not respond to any hotkeys",
+
+    "NEW_PIE_MENU": "New Pie Menu",
+    "ADD_FROM_EXISTING": "Add from existing",
+    "ADD_FROM_EXISTING_TOOLTIP": "Use pie menus from other profiles",
+    "ADD_PIE_MENU": "Add Pie Menu",
+    "AVAILABLE_PIE_MENUS": "Available Pie Menus",
+    "NO_EXISTING_PIE_MENUS": "You have not created any pie menus yet",
+
+    "EDIT_PROF_NAME_TOOLTIP": "Click to edit profile name",
+    "SELECT_PROFILE_TOOLTIP": "Click to select profile",
+
+    "TYPE_TO_SEARCH_EXE": "Type to search executable files",
+    "ERROR_CREATING_PROFILE": "Error creating profile",
+    "ERROR_CREATING_PROFILE_DESC": "The selected exe has already existed in your other profiles.",
+
+    "CANCEL": "Cancel",
+
+    "SETTINGS_TOOLTIP": "Click to show/hide profile settings"
+  },
+
+
+
+
+
+
+
+
+
   "DIALOG": {
     "HOTKEY_INUSE": "Hotkey is already in use",
     "HOTKEY_INUSE_DESC": "The hotkey you selected is already in use by another pie menu. Continuing will remove the hotkey from the other pie menus. Do you want to continue?"
@@ -105,7 +144,6 @@
       "TITLE": "App works !",
       "DELETE_CONFIRM": "Are you sure you want to delete this pie menu?",
       "GO_TO_DETAIL": "Go to Detail",
-      "ADD_PIE_MENU": "Add Pie Menu",
       "NEW_PIE_MENU": "New Pie Menu",
       "TABLE_EMPTY": "You haven't added any pie menus yet. Click the button below to add one. ฅ^ ̳• ·̫ • ̳^ฅ"
     },

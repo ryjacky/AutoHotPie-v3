@@ -4,10 +4,18 @@ import {PieItem} from '../../../../../app/src/db/data/PieItem';
 import {DBService} from '../db/db.service';
 import {Injectable} from '@angular/core';
 
+/**
+ * Profile service for a single profile
+ */
 @Injectable()
 export class ProfileService extends Profile {
   loaded = false;
   public readonly pieMenus = new Map<number, IPieMenu | undefined>();
+
+  /**
+   * Number of profiles that are using a pie menu,
+   * key is pie menu id, value is number of profiles
+   */
   public readonly nProfileConnected = new Map<number, number>();
 
   constructor(

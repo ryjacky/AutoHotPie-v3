@@ -16,6 +16,9 @@ interface Window {
     done: () => void;
     onForceRun: (callback: () => void) => void;
   };
+  system: {
+    getOpenWindows: () => Promise<string>;
+  };
   log: {
     trace: (message: string) => void;
     debug: (message: string) => void;
