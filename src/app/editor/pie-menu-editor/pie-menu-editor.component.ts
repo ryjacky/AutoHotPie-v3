@@ -5,9 +5,6 @@ import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
 import {NbDialogService} from '@nebular/theme';
 import {NbIconPickerComponent} from '../../shared/components/nb-icon-picker/nb-icon-picker.component';
 
-/**
- * TODO: This class is giving errors when loaded, and optimization is needed, it does not affect UX.
- */
 @Component({
   selector: 'app-pie-menu-editor',
   templateUrl: './pie-menu-editor.component.html',
@@ -20,13 +17,11 @@ export class PieMenuEditorComponent implements OnInit {
   @ViewChild('pieButtons') pieButtons: any;
 
   activePieItemId: number | undefined;
-  pieMenuService: PieMenuService;
 
   constructor(
     private toastr: ToastrService,
     private dialogService: NbDialogService,
-    pieMenuService: PieMenuService) {
-    this.pieMenuService = pieMenuService;
+    public pieMenuService: PieMenuService) {
     this.pieMenuId = parseInt(new URL(window.location.href.replace('#/', '')).searchParams.get('pieMenuId') ?? '0', 10);
 
     window.log.debug('Pie Menu Editor is opening pie menu of id: ' + this.pieMenuId);
@@ -43,8 +38,6 @@ export class PieMenuEditorComponent implements OnInit {
     this.activePieItemId = this.pieMenuService.pieItemIds[0];
 
     window.log.warn('Map objects (pieItems) cannot be serialized to JSON');
-    window.log.warn('Pie menu state: ' + JSON.stringify(this.pieMenuService));
-    // this.pieMenuStateLoaded = Promise.resolve(true);
   }
 
   moveUp(i: number) {

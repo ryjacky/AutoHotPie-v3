@@ -1,0 +1,42 @@
+<nb-card>
+  <nb-card-header style="
+      padding: 0.7em 1.5em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;">
+    <input
+      nbInput
+      fullWidth
+      style="margin-right: 1em;"
+      [(ngModel)]="searchWord"
+      placeholder="{{ 'PROFILE_PAGE.TYPE_TO_SEARCH_EXE' | translate }}"
+    >
+    <button
+      nbButton
+      ghost
+      size="small"
+      (click)="this.dialogRef.close()"
+    >
+      {{ "PROFILE_PAGE.CANCEL" | translate }}
+    </button>
+  </nb-card-header>
+  <nb-card-body style="width: 100vh">
+    <div
+      style="overflow-y: scroll; overflow-x: hidden; height: 60vh; display: flex; flex-direction: column; align-items: center;"
+    >
+      <button
+        nbButton
+        *ngFor="let exe of exes"
+        [style.display]="existsExe(exe) ? 'flex' : 'none'"
+        style="margin-bottom: 1em; width: 80%; flex-direction: row; align-items: center; justify-content: flex-start;"
+        (click)="this.dialogRef.close(exe)"
+      >
+        <img [src]="exe.iconBase64" style="margin-right: 1em">
+        <div style="display: flex; flex-direction: column; width: 90%; align-items: flex-start">
+          <div>{{ exe.name }}</div>
+          <div style="text-align: start; text-overflow: ellipsis; overflow: hidden; width: 100%">{{ exe.path }}</div>
+        </div>
+      </button>
+    </div>
+  </nb-card-body>
+</nb-card>

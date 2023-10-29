@@ -40,7 +40,6 @@ export class AppComponent {
   }
 
   async initAppdata() {
-    //TODO: Should be put in welcome guide
     await this.dbService.init();
   }
 

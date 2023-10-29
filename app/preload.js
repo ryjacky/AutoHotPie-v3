@@ -22,6 +22,14 @@ contextBridge.exposeInMainWorld('pieMenuAPI', {
 
 });
 
+contextBridge.exposeInMainWorld('system', {
+  // ---------------------- Invoke ----------------------
+  getOpenWindows: () => ipcRenderer.invoke('system.getOpenWindows'),
+
+  // ---------------------- On ----------------------
+
+});
+
 contextBridge.exposeInMainWorld('electronAPI', {
   disablePieMenu: () => ipcRenderer.invoke('disablePieMenu'),
   enablePieMenu: () => ipcRenderer.invoke('enablePieMenu'),

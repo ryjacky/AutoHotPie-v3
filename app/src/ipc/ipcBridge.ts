@@ -10,6 +10,7 @@ import {disablePieMenu, enablePieMenu, pieMenuWindow} from "../../main";
 import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 import { Profile } from "../db/data/Profile";
+import {IBinaryInfo} from "../binaryInfo/IBinaryInfo";
 
 /**
  * Sets up IPC listeners for the main process,
@@ -33,9 +34,27 @@ export function initIPC() {
     pieMenuWindow?.cancel();
   });
 
+  // -------------------------- IPCEvents relating to GlobalHotKey --------------------------
 
 
+  // -------------------------- IPCEvents relating to the system --------------------------
+  ipcMain.handle('system.getOpenWindows', async () => {
+    const results = await activeWindow.getOpenWindows();
 
+    let binaryInfo: Map<string, IBinaryInfo> = new Map<string, IBinaryInfo>();
+    for (const result of results) {
+      if (result.owner.name && result.owner.path) {
+        binaryInfo.set(
+          result.owner.path,
+          {
+            name: result.owner.name,
+            path: result.owner.path,
+            iconBase64: (await app.getFileIcon(result.owner.path)).toDataURL(),
+          });
+      }
+    }
+    return JSON.stringify(Array.from(binaryInfo.values()));
+  });
 
 
 

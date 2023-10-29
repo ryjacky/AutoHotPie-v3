@@ -29,10 +29,17 @@ export class ProfileEditorComponent {
 
   async addMissingExeClicked() {
     window.log.info('Waiting for user to select exe');
-    const path: string = await window.electronAPI.openDialogForResult(this.profileService.exes[0], [{
-      name: 'Executables',
-      extensions: ['exe']
-    }]);
+    const path: string = await window.electronAPI.openDialogForResult(
+        this.profileService.exes[0], [{
+        name: 'Executables',
+        extensions: ['exe']
+      }]
+    );
+
+    if (!path) {
+      window.log.info('User cancelled exe selection');
+      return;
+    }
 
     window.log.info('User selected exe ' + path);
 
