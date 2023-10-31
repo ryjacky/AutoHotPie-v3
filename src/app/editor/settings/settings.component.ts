@@ -11,7 +11,7 @@ export class SettingsComponent implements OnInit {
 
   runOnAppQuit = false;
   runOnStartup = false;
-  pieMenuCancelKey = '';
+  pieMenuCancelKey = new KeyboardEvent('keydown');
 
   ngOnInit() {
     window.electronAPI.getSetting('runOnAppQuit').then((value) => {
@@ -29,15 +29,10 @@ export class SettingsComponent implements OnInit {
     window.electronAPI.getSetting('pieMenuCancelKey').then((value) => {
       window.log.info('Retrieved pieMenuCancelKey from settings: ' + value);
 
-      this.pieMenuCancelKey = value;
+      this.pieMenuCancelKey = new KeyboardEvent('keydown', {key: value});
 
       window.log.info('The value is: ' + this.pieMenuCancelKey);
     });
-  }
-
-  setRunOnAppQuit($event: boolean) {
-    this.runOnAppQuit = $event;
-    window.electronAPI.setSetting('runOnAppQuit', $event);
   }
 
   setRunOnStartup($event: boolean) {
@@ -45,7 +40,7 @@ export class SettingsComponent implements OnInit {
     window.electronAPI.setSetting('runOnStartup', $event);
   }
 
-  setPieMenuCancelKey($event: string) {
+  setPieMenuCancelKey($event: KeyboardEvent) {
     this.pieMenuCancelKey = $event;
     window.electronAPI.setSetting('pieMenuCancelKey', $event);
   }

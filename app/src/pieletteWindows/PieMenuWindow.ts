@@ -1,24 +1,26 @@
 import {BrowserWindow, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
-import {GlobalHotkeyService, GlobalHotkeyServiceListener, MouseKeyEventListener} from "pielette-mouse-key-hook";
 import {Log} from "pielette-core";
 import {Profile} from "../db/data/Profile";
-import {PieletteSettings} from "../settings/PieletteSettings";
-import * as activeWindow from "active-win";
+import {globalHotkeyService} from "../../main";
+import {IGlobalKeyDownMap, IGlobalKeyEvent} from "node-global-key-listener";
 import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
+import {PieletteSettings} from "../settings/PieletteSettings";
+import {MouseKeyEventHelper} from "../mouseKeyEvent/MouseKeyEventHelper";
+import * as activeWindow from "active-win";
+import {IProfilePieMenuData} from "../db/data/ProfilePieMenuData";
+import {HotkeyToPieMenuIdMap} from "../hotkeyMap/HotkeyMap";
 
 // TODO: Need review
-export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener, GlobalHotkeyServiceListener {
+export class PieMenuWindow extends BrowserWindow {
   public isCancelled: boolean = false;
 
   private disabled: boolean = false;
   private readonly prefix = '../../';
 
-  private listeningHotkeys: Map<string, number> = new Map<string, number>();
-  private menuExeBindingMap: Map<number, string[]> = new Map<number, string[]>();
-
-  private prevKey: string = "";
+  private exeToProfileIdMap = new Map<string, number>();
+  private hotkeyToPieMenuIdMap = new HotkeyToPieMenuIdMap();
 
   constructor() {
     super({
@@ -39,86 +41,60 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     this.preventClose();
     this.hide();
     this.loadPieMenuURL();
-    GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
-  }
 
-  onProcessExit(): void {
-    Log.main.debug("PieMenuWindow.onProcessExit(), reinitializing GlobalHotkeyService");
-    GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
+    globalHotkeyService.addListener((e: IGlobalKeyEvent, down: IGlobalKeyDownMap) => {
+      switch (e.state) {
+        case "DOWN":
+          this.onKeyDown(e, down)
+          break;
+        case "UP":
+          this.onKeyUp(e, down);
+          break;
+      }
+    });
   }
 
   clearListeningHotkeys() {
-    this.listeningHotkeys.clear();
   }
 
   addListeningHotkeys(profile: Profile) {
-    for (const hotkey of profile.pieMenuHotkeys) {
-      // idAndHotkey[0] is the hotkey, idAndHotkey[1] is the pie menu id
-      const idAndHotkey = hotkey.split('-');
-      Log.main.debug(`Adding hotkey ${idAndHotkey[0]}`)
-
-      this.menuExeBindingMap.set(Number(idAndHotkey[1]), [
-        ...(this.menuExeBindingMap.get(Number(idAndHotkey[1])) ?? []),
-        ...(profile.id === 1 ? ["global"] : (profile.exes))
-      ]);
-      this.listeningHotkeys.set(idAndHotkey[0], Number(idAndHotkey[1]));
+    if (!profile.enabled) {
+      return;
     }
-  }
 
-  onDoubleClick(event: string): void {
-    this.prevKey = event;
 
   }
 
-  onDragStarted(event: string): void {
-    this.prevKey = event;
-
-  }
-
-  onDragFinished(event: string): void {
-    this.prevKey = event;
-
-  }
-
-  onKeyDown(event: string): void {
+  onKeyDown(event: IGlobalKeyEvent, down: IGlobalKeyDownMap): void {
     // Filters ---------------------------------
-    if (this.prevKey === event) {return;}
-    this.prevKey = event;
-
-    if (event.split(':')[1] === PieletteSettings.get('pieMenuCancelKey').split(':')[1]) {
+    if (event.name === PieletteSettings.get('pieMenuCancelKey').split(':')[1]) {
       this.cancel();
       Log.main.debug(`Cancel key pressed: ${event}`);
     }
 
-    if (PieletteAddonManager.isExecuting){
+    if (PieletteAddonManager.isExecuting) {
       Log.main.debug(`PieletteAddonManager.isExecuting: ${PieletteAddonManager.isExecuting}`);
       return;
     }
 
-    // Search for the pie menu id related to the hotkey
-    const pieMenuId = this.listeningHotkeys.get(event);
+    // Use default profile if no profile matches the active window
+    const profId = this.exeToProfileIdMap.get(activeWindow.sync()?.owner.path ?? '') ?? 1;
 
-    if (!pieMenuId) {
-      Log.main.debug(`this.prevKey === event: ${this.prevKey === event}, this.prevKey: ${this.prevKey}, event: ${event}`);
-      return;
-    }
-
-    // 1 is the id of the global pie menu
-    if (!this.menuExeBindingMap.get(pieMenuId)?.includes(activeWindow.sync()?.owner.path ?? "global")
-      && !this.menuExeBindingMap.get(pieMenuId)?.includes("global")) {
-      Log.main.debug(`Cannot open pie menu id: ${pieMenuId} because the exe is not in the list and it is not a global list`);
-      Log.main.debug(JSON.stringify(Array.from(this.menuExeBindingMap.entries())))
-      return;
-    }
-
+    const pieMenuId = this.hotkeyToPieMenuIdMap.getPieMenuId(
+      (down["RIGHT CTRL"] || down["LEFT CTRL"]) ?? false,
+      (down["RIGHT SHIFT"] || down["LEFT SHIFT"]) ?? false,
+      (down["RIGHT SHIFT"] || down["LEFT SHIFT"]) ?? false,
+      event.name ?? '',
+      profId
+    );
+    if (!pieMenuId) { return; }
 
     // Filters end -----------------------------
     this.webContents.send('openPieMenu', pieMenuId);
     this.showInactive();
   }
 
-  onKeyUp(event: string): void {
-    this.prevKey = event;
+  onKeyUp(event: IGlobalKeyEvent, down: IGlobalKeyDownMap): void {
     PieletteAddonManager.runAllPieTasks();
     this.hide();
   }

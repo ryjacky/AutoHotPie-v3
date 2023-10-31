@@ -78,7 +78,7 @@
         <nb-list-item
           *ngFor="let exe of profileService.exes; let i = index"
           [style.background]="i % 2 !== 0 ? 'var(--border-basic-color-2)' : 'var(--accordion-header-border-color)'"
-          style="padding: 5px 20px; display: flex; flex-direction: row; place-content: center; align-items: center; height: 100%; justify-content: space-between;"
+          style="padding: 5px 20px; display: flex; flex-direction: row; place-content: center; align-items: center; height: 60vw; justify-content: space-between;"
         >
           <div style="text-overflow: ellipsis; max-width: 90%; overflow: hidden">
             {{ exe }}
@@ -98,7 +98,7 @@
             nbButton
             size="tiny"
             fullWidth
-            nbTooltip="{{ 'ADD_MISSING_EXE_TOOLTIP' | translate }}"
+            nbTooltip="{{ 'PROFILE_PAGE.ADD_MISSING_EXE_TOOLTIP' | translate }}"
             (click)="addMissingExeClicked()"
           >
             {{ "PROFILE_PAGE.ADD_MISSING_EXE" | translate }}

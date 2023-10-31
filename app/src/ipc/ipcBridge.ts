@@ -1,4 +1,4 @@
-import {app, ipcMain, dialog, nativeImage} from "electron";
+import {app, dialog, ipcMain, nativeImage} from "electron";
 import * as child_process from "child_process";
 import {PieletteSettings} from "../settings/PieletteSettings";
 import * as activeWindow from "active-win";
@@ -9,7 +9,7 @@ import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
 import {disablePieMenu, enablePieMenu, pieMenuWindow} from "../../main";
 import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
-import { Profile } from "../db/data/Profile";
+import {Profile} from "../db/data/Profile";
 import {IBinaryInfo} from "../binaryInfo/IBinaryInfo";
 
 /**
@@ -33,9 +33,6 @@ export function initIPC() {
   ipcMain.handle('pieMenu.cancel', () => {
     pieMenuWindow?.cancel();
   });
-
-  // -------------------------- IPCEvents relating to GlobalHotKey --------------------------
-
 
   // -------------------------- IPCEvents relating to the system --------------------------
   ipcMain.handle('system.getOpenWindows', async () => {

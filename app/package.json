@@ -13,11 +13,11 @@
   "private": true,
   "dependencies": {
     "live-plugin-manager": "0.18.1",
-    "pielette-mouse-key-hook": "0.1.21",
     "active-win": "8.1.0",
     "electron-store": "8.1.0",
     "pielette-core": "0.0.51",
-    "@nut-tree/nut-js": "3.1.2"
+    "@nut-tree/nut-js": "3.1.2",
+    "node-global-key-listener": "0.1.1"
   }
 
 }

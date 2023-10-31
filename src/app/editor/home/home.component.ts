@@ -62,8 +62,6 @@ export class HomeComponent implements OnInit, OnChanges {
 
           const newProf = new Profile(
             result.name,
-            undefined,
-            [],
             [result.path],
             result.iconBase64
           );
