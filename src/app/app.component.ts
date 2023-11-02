@@ -12,7 +12,6 @@ import {DBService} from './core/services/db/db.service';
 })
 export class AppComponent {
   @ViewChild('icon') icon: any;
-
   constructor(
     private router: Router,
     private electronService: ElectronService,

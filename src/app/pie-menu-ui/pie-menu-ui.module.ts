@@ -6,11 +6,13 @@ import {RouterOutlet} from '@angular/router';
 import {PieMenuUIRoutingModule} from './pie-menu-ui-routing-module';
 import { PieGuidingLineComponent } from './pie-guiding-line/pie-guiding-line.component';
 import {SharedModule} from '../shared/shared.module';
+import { PieMenuComponent } from './pie-menu/pie-menu.component';
 
 @NgModule({
   declarations: [
     PieMenuUIComponent,
     PieGuidingLineComponent,
+    PieMenuComponent,
   ],
   exports: [
     PieMenuUIComponent,

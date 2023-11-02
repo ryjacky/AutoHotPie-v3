@@ -2,43 +2,43 @@
   <nb-list-item style="display: flex; flex-direction: column;">
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.ESCAPE_RADIUS" | translate }}
-      <app-number-slider-field [min]="0" [max]="1000" [(value)]="pieMenuService.escapeRadius"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [value]="pieMenuService.escapeRadius" (valueChange)="pieMenuService.setEscapeRadius($event)"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.ICON_SIZE" | translate }}
-      <app-number-slider-field [min]="0" [max]="32" [(value)]="pieMenuService.iconSize"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [value]="pieMenuService.iconSize" (valueChange)="pieMenuService.setIconSize($event)"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.CENTER_RADIUS" | translate }}
-      <app-number-slider-field [min]="0" [max]="128" [(value)]="pieMenuService.centerRadius"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [value]="pieMenuService.centerRadius" (valueChange)="pieMenuService.setCenterRadius($event)"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.CENTER_THICKNESS" | translate }}
-      <app-number-slider-field [min]="2" [max]="32" [(value)]="pieMenuService.centerThickness"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [value]="pieMenuService.centerThickness" (valueChange)="pieMenuService.setCenterThickness($event)"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.PIE_ITEM_SPREAD" | translate }}
-      <app-number-slider-field [min]="0" [max]="350" [(value)]="pieMenuService.pieItemSpread"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [value]="pieMenuService.pieItemSpread" (valueChange)="pieMenuService.setPieItemSpread($event)"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.PIE_ITEM_ROUNDNESS" | translate }}
-      <app-number-slider-field [min]="0" [max]="255" [(value)]="pieMenuService.pieItemRoundness"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [value]="pieMenuService.pieItemRoundness" (valueChange)="pieMenuService.setPieItemRoundness($event)"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.PIE_ITEM_WIDTH" | translate }}
-      <app-number-slider-field [min]="pieMenuService.iconSize" [max]="255" [(value)]="pieMenuService.pieItemWidth"></app-number-slider-field>
+      <app-number-slider-field [min]="0" [max]="1000" [value]="pieMenuService.pieItemWidth" (valueChange)="pieMenuService.setPieItemWidth($event)"></app-number-slider-field>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.MAIN_COLOR" | translate }}
-      <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenuService.mainColor"></ngx-colors>
+      <ngx-colors ngx-colors-trigger [ngModel]="pieMenuService.mainColor" (ngModelChange)="pieMenuService.setMainColor($event)"></ngx-colors>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.SECONDARY_COLOR" | translate }}
-      <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenuService.secondaryColor"></ngx-colors>
+      <ngx-colors ngx-colors-trigger [ngModel]="pieMenuService.secondaryColor" (ngModelChange)="pieMenuService.setSecondaryColor($event)"></ngx-colors>
     </div>
     <div class="setting-row" style="width: 100%">
       {{ "PAGES.EDITOR.ICON_COLOR" | translate }}
-      <ngx-colors ngx-colors-trigger [(ngModel)]="pieMenuService.iconColor"></ngx-colors>
+      <ngx-colors ngx-colors-trigger [ngModel]="pieMenuService.iconColor" (ngModelChange)="pieMenuService.setIconColor($event)"></ngx-colors>
     </div>
   </nb-list-item>
 </nb-list>

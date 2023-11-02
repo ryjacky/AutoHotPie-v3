@@ -8,12 +8,12 @@ import {WebviewDirective} from './directives/';
 import {FormsModule} from '@angular/forms';
 import {ShortcutInputComponent} from './components/shortcut-input/shortcut-input.component';
 import {
-    NbButtonModule,
-    NbCardModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbInputModule,
-    NbPopoverModule
+  NbButtonModule,
+  NbCardModule,
+  NbFormFieldModule,
+  NbIconModule,
+  NbInputModule,
+  NbPopoverModule, NbTooltipModule
 } from '@nebular/theme';
 import {PieButtonsComponent} from './components/pie-buttons/pie-buttons.component';
 import {TitlebarComponent} from './components/titlebar/titlebar.component';
@@ -34,19 +34,20 @@ import { NbIconPickerComponent } from './components/nb-icon-picker/nb-icon-picke
     NumberSliderFieldComponent,
     NbIconPickerComponent,
   ],
-    imports: [
-        CommonModule,
-        TranslateModule,
-        FormsModule,
-        NbInputModule,
-        RouterLink,
-        NbPopoverModule,
-        NbButtonModule,
-        NbIconModule,
-        NgOptimizedImage,
-        NbFormFieldModule,
-        NbCardModule
-    ],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    FormsModule,
+    NbInputModule,
+    RouterLink,
+    NbPopoverModule,
+    NbButtonModule,
+    NbIconModule,
+    NgOptimizedImage,
+    NbFormFieldModule,
+    NbCardModule,
+    NbTooltipModule
+  ],
   exports: [TranslateModule,
     WebviewDirective,
     FormsModule,

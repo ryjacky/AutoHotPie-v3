@@ -2,15 +2,8 @@ import {BrowserWindow, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
 import {Log} from "pielette-core";
-import {Profile} from "../db/data/Profile";
 import {globalHotkeyService} from "../../main";
 import {IGlobalKeyDownMap, IGlobalKeyEvent} from "node-global-key-listener";
-import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
-import {PieletteSettings} from "../settings/PieletteSettings";
-import {MouseKeyEventHelper} from "../mouseKeyEvent/MouseKeyEventHelper";
-import * as activeWindow from "active-win";
-import {IProfilePieMenuData} from "../db/data/ProfilePieMenuData";
-import {HotkeyToPieMenuIdMap} from "../hotkeyMap/HotkeyMap";
 
 // TODO: Need review
 export class PieMenuWindow extends BrowserWindow {
@@ -18,9 +11,6 @@ export class PieMenuWindow extends BrowserWindow {
 
   private disabled: boolean = false;
   private readonly prefix = '../../';
-
-  private exeToProfileIdMap = new Map<string, number>();
-  private hotkeyToPieMenuIdMap = new HotkeyToPieMenuIdMap();
 
   constructor() {
     super({
@@ -45,63 +35,19 @@ export class PieMenuWindow extends BrowserWindow {
     globalHotkeyService.addListener((e: IGlobalKeyEvent, down: IGlobalKeyDownMap) => {
       switch (e.state) {
         case "DOWN":
-          this.onKeyDown(e, down)
+          // TODO:
+          this.webContents.send(
+            'pieMenu.onKeyDown',
+            '',
+            down["LEFT CTRL"] || down["RIGHT CTRL"],
+            down["LEFT ALT"] || down["RIGHT ALT"],
+            down["LEFT SHIFT"] || down["RIGHT SHIFT"],
+            e.name);
           break;
         case "UP":
-          this.onKeyUp(e, down);
           break;
       }
     });
-  }
-
-  clearListeningHotkeys() {
-  }
-
-  addListeningHotkeys(profile: Profile) {
-    if (!profile.enabled) {
-      return;
-    }
-
-
-  }
-
-  onKeyDown(event: IGlobalKeyEvent, down: IGlobalKeyDownMap): void {
-    // Filters ---------------------------------
-    if (event.name === PieletteSettings.get('pieMenuCancelKey').split(':')[1]) {
-      this.cancel();
-      Log.main.debug(`Cancel key pressed: ${event}`);
-    }
-
-    if (PieletteAddonManager.isExecuting) {
-      Log.main.debug(`PieletteAddonManager.isExecuting: ${PieletteAddonManager.isExecuting}`);
-      return;
-    }
-
-    // Use default profile if no profile matches the active window
-    const profId = this.exeToProfileIdMap.get(activeWindow.sync()?.owner.path ?? '') ?? 1;
-
-    const pieMenuId = this.hotkeyToPieMenuIdMap.getPieMenuId(
-      (down["RIGHT CTRL"] || down["LEFT CTRL"]) ?? false,
-      (down["RIGHT SHIFT"] || down["LEFT SHIFT"]) ?? false,
-      (down["RIGHT SHIFT"] || down["LEFT SHIFT"]) ?? false,
-      event.name ?? '',
-      profId
-    );
-    if (!pieMenuId) { return; }
-
-    // Filters end -----------------------------
-    this.webContents.send('openPieMenu', pieMenuId);
-    this.showInactive();
-  }
-
-  onKeyUp(event: IGlobalKeyEvent, down: IGlobalKeyDownMap): void {
-    PieletteAddonManager.runAllPieTasks();
-    this.hide();
-  }
-
-  cancel() {
-    this.isCancelled = true;
-    this.hide();
   }
 
   loadPieMenuURL() {
@@ -125,10 +71,6 @@ export class PieMenuWindow extends BrowserWindow {
     });
   }
 
-  hide() {
-    super.hide();
-  }
-
   showInactive() {
     if (this.disabled) {
       return;
@@ -150,15 +92,6 @@ export class PieMenuWindow extends BrowserWindow {
       y: screenPoint.y - display.bounds.height / 2,
     });
     super.showInactive();
-  }
-
-  disable() {
-    this.disabled = true;
-    this.hide();
-  }
-
-  enable() {
-    this.disabled = false;
   }
 
 

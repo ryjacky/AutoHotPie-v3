@@ -47,3 +47,11 @@ li {
   border-bottom: none;
   color: var(--accordion-header-disabled-text-color) !important;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+}
+
+.animate-flicker {
+  animation: fadeIn 2s infinite alternate;
+}

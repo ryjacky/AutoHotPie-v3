@@ -6,8 +6,17 @@
         display: flex;
         align-items: center;
         justify-content: space-between;">
+      <div
+        class="animate-flicker"
+        style="border-radius: 100vw; width: 0.5em; height: 0.5em"
+        [style.background-color]="pieMenuService.changesSaved ? 'mediumseagreen' : 'orange'"
+        nbTooltip="{{ (pieMenuService.changesSaved ? 'EDITOR_PAGE.CHANGES_SAVED' : 'EDITOR_PAGE.SAVING_CHANGES') | translate}}"
+        nbTooltipPlacement="bottom"
+      ></div>
       <label
-        style="margin: 0; color: var(--button-ghost-basic-text-color);">{{"PAGES.EDITOR.PREVIEW" | translate}}</label>
+        style="margin: 0; color: var(--button-ghost-basic-text-color); font-weight: bold">
+        {{"PAGES.EDITOR.PREVIEW" | translate}}
+      </label>
       <button nbButton size="small" (click)="addPieItem()">
         <nb-icon icon="plus" pack="eva"></nb-icon>
       </button>
@@ -16,14 +25,6 @@
   </div>
 
   <div class="growM">
-    <button
-      nbButton
-      size="small"
-      status="success"
-      style="position: absolute; align-self: flex-end;"
-      (click)="save()">
-      {{ 'PAGES.EDITOR.SAVE' | translate }}
-    </button>
     <nb-tabset [style.width.%]="100">
       <nb-tab tabTitle="Actions" style="margin-top: 1em;">
         <div style="height: 72vh; padding-right: 5px; display: flex; flex-direction: column; align-items: center;">
@@ -39,7 +40,7 @@
                 </button>
                 <button
                   (click)="moveDown(i)"
-                  *ngIf="i !== pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
+                  *ngIf="i !== pieMenuService.getReadonlyPieItemTaskContexts(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
                   style="margin-bottom: 2px;">
                   <nb-icon icon="arrow-downward-outline"/>
                 </button>

@@ -13,6 +13,16 @@
     align-content: center">
   <img #icon ngSrc="./assets/icons/favicon.ico" style="padding-right: 16px;" height="24px" width="auto" alt="favicon"/>
 
+  <button
+    nbButton
+    ghost
+    size="small"
+    routerLink="/home"
+    nbTooltip="{{ 'EDITOR_PAGE.BACK_TO_HOME' | translate }}"
+    [style.margin-right.em]="1"
+  >
+    <nb-icon icon="undo-outline"></nb-icon>
+  </button>
   <label [style.color]="'gray'">{{ 'PAGES.EDITOR.CURRENTLY_EDITING' | translate }}{{ pieMenuName }}</label>
 
   <div style="flex-grow: 1; -webkit-app-region: drag; height: 100%"></div>

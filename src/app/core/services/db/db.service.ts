@@ -26,16 +26,6 @@ export class DBService extends Dexie {
       profile: '++id, name, enabled, *pieMenuIds, *exes, iconBase64',
       profilePieMenuData: '++id, [profileId+key], [profileId+pieMenuId], pieMenuId',
     });
-
-    // Let IPC Main know that the database has changed
-    Dexie.on('storagemutated', async (changedParts: ObservabilitySet) => {
-      const changedPartsString = JSON.stringify(changedParts);
-      if (changedPartsString.includes(`/pieMenuHotkeyMeta`) || changedPartsString.includes(`/profile/pieMenuIds`)){
-        window.log.debug('Hotkey changed, sending IPC message to main process');
-
-        window.dbAPI.possibleHotkeyChange(JSON.stringify(await this.profile.toArray()));
-      }
-    });
   }
 
   /**

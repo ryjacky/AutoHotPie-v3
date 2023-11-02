@@ -84,8 +84,6 @@ function initSystemTray() {
 
 
 export function disablePieMenu() {
-  pieMenuWindow?.disable();
 }
 export function enablePieMenu() {
-  pieMenuWindow?.enable();
 }

@@ -11,13 +11,11 @@ import {PieMenuService} from '../core/services/pieMenu/pie-menu.service';
 export class PieMenuUIComponent {
   @ViewChild('appPieButtons') appPieButtons!: ElementRef<HTMLElement>;
 
-  pieMenuId = 1;
+  pieMenuId = 19;
 
   constructor(pieMenuService: PieMenuService) {
-    window.electronAPI.openPieMenu((pieMenuId: number) => {
-      pieMenuService.load(pieMenuId, true).then(() => {
-        this.pieMenuId = pieMenuId;
-      });
+    pieMenuService.load(19, true).then(() => {
+      this.pieMenuId = 19;
     });
   }
 }

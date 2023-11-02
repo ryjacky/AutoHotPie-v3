@@ -2,14 +2,12 @@ import {app, dialog, ipcMain, nativeImage} from "electron";
 import * as child_process from "child_process";
 import {PieletteSettings} from "../settings/PieletteSettings";
 import * as activeWindow from "active-win";
-import {ReadonlyWindowDetails} from "../appWindow/WindowDetails";
 import {Log} from "pielette-core";
 import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
 import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
-import {disablePieMenu, enablePieMenu, pieMenuWindow} from "../../main";
+import {pieMenuWindow} from "../../main";
 import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
-import {Profile} from "../db/data/Profile";
 import {IBinaryInfo} from "../binaryInfo/IBinaryInfo";
 
 /**
@@ -18,31 +16,15 @@ import {IBinaryInfo} from "../binaryInfo/IBinaryInfo";
  * */
 
 export function initIPC() {
-  // -------------------------- IPCEvents relating to the DB --------------------------
-  ipcMain.handle('db.possibleHotkeyChange', (event, profileArrayJson: string) => {
-    Log.main.debug("Updating hotkeys for pie menu window");
-    Log.main.debug("profileArrayJson: " + profileArrayJson)
-    pieMenuWindow?.clearListeningHotkeys();
-    for (const profile of JSON.parse(profileArrayJson) as Profile[]) {
-      pieMenuWindow?.addListeningHotkeys(profile);
-    }
-  });
-
-
-  // -------------------------- IPCEvents relating to the PieMenu --------------------------
-  ipcMain.handle('pieMenu.cancel', () => {
-    pieMenuWindow?.cancel();
-  });
-
   // -------------------------- IPCEvents relating to the system --------------------------
   ipcMain.handle('system.getOpenWindows', async () => {
     const results = await activeWindow.getOpenWindows();
 
-    let binaryInfo: Map<string, IBinaryInfo> = new Map<string, IBinaryInfo>();
+    // Restructure the data to the common interface between renderer and main process
+    let binaryInfo: IBinaryInfo[] = [];
     for (const result of results) {
       if (result.owner.name && result.owner.path) {
-        binaryInfo.set(
-          result.owner.path,
+        binaryInfo.push(
           {
             name: result.owner.name,
             path: result.owner.path,
@@ -50,7 +32,7 @@ export function initIPC() {
           });
       }
     }
-    return JSON.stringify(Array.from(binaryInfo.values()));
+    return JSON.stringify(binaryInfo.values());
   });
 
 
@@ -69,31 +51,6 @@ export function initIPC() {
     child_process.execSync('start ' + args[0]);
   });
 
-  ipcMain.handle('isUpdateAvailable', async () => {
-    Log.main.info("Checking for updates");
-    Log.main.warn("isUpdateAvailable() is not implemented yet");
-    // TODO: Implement isUpdateAvailable
-    return true;
-  });
-  ipcMain.handle('getForegroundApplication', async () => {
-    Log.main.info("Retrieving information about the foreground application");
-
-    const result = activeWindow.sync();
-
-    if (result === undefined) return "";
-
-    const base64Icon = (await app.getFileIcon(result.owner.path)).toDataURL();
-
-    return JSON.stringify(new ReadonlyWindowDetails(
-      result.title,
-      result.id,
-      result.bounds,
-      result.owner,
-      result.memoryUsage,
-      base64Icon,
-    ))
-  });
-
   ipcMain.handle('getFileIconBase64', async (event, args) => {
     const filePath = args[0];
     try {
@@ -103,19 +60,6 @@ export function initIPC() {
     }
   });
 
-  ipcMain.handle('toggleService', (event, args) => {
-    Log.main.info("Toggling Global Hotkey Service. Turning it " + (!args[0] ? "on" : "off") + "");
-    // args[0] = serviceActive
-
-    Log.main.error("toggleService() is not implemented yet");
-    // if (isGHotkeyServiceRunning()) {
-    //   getGHotkeyServiceInstance().exitProcess();
-    //   return false;
-    // } else {
-    //   initGlobalHotkeyService();
-    //   return true;
-    // }
-  });
   ipcMain.handle('setPieTasks', async (event, args) => {
     // args[0] = actionListJson
     if (pieMenuWindow?.isCancelled) {return;}
@@ -138,12 +82,6 @@ export function initIPC() {
     Log.main.info("Retrieving setting " + args[0] + ", value is " + value + "");
 
     return value;
-  });
-  ipcMain.handle('addHotkey', (event, args) => {
-    // args[0] = hotkey string
-    // args[1] = pieMenuId
-    // pieMenuWindow?.addListeningHotkeys(args[0], args[1]);
-    Log.main.warn("addHotkey() is deprecated");
   });
   ipcMain.handle('setSetting', (event, args) => {
     Log.main.info("Setting " + args[0] + " to " + args[1] + "");
@@ -172,8 +110,6 @@ export function initIPC() {
       properties: ['openFile']
     })
   });
-  ipcMain.handle('disablePieMenu', () => disablePieMenu());
-  ipcMain.handle('enablePieMenu', () => enablePieMenu());
   ipcMain.handle('getPieTaskAddonHeaders', () => {
 
     const pieTaskAddonHeaderJSONArr: string[] = [];
@@ -182,33 +118,6 @@ export function initIPC() {
     }
 
     return pieTaskAddonHeaderJSONArr;
-  });
-  ipcMain.handle('listenKeyForResult', (event, args) => {
-    Log.main.error("listenKeyForResult() is not implemented yet");
-    // args[0] = ignoredKeys
-    // if (!isGHotkeyServiceRunning()) {
-    //   return;
-    // }
-    //
-    // return new Promise(resolve => {
-    //   Log.main.info("Listening for valid hotkey once");
-    //   disablePieMenu();
-    //
-    //   const listener = (event: KeyEvent) => {
-    //     if (event.type === RespondType.KEY_DOWN
-    //       && !args[0].includes((event.value.split('+').pop() ?? 'PLACEHOLDER').trim())) {
-    //
-    //       getGHotkeyServiceInstance().removeTempKeyListener();
-    //       Log.main.info("Hotkey " + event.value + " is pressed");
-    //       enablePieMenu();
-    //       resolve(event.value);
-    //     }
-    //   }
-    //
-    //   getGHotkeyServiceInstance().addTempKeyListener(listener);
-    //
-    // });
-
   });
 }
 

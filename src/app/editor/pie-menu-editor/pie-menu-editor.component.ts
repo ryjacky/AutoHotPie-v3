@@ -4,6 +4,7 @@ import {ToastrService} from 'ngx-toastr';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
 import {NbDialogService} from '@nebular/theme';
 import {NbIconPickerComponent} from '../../shared/components/nb-icon-picker/nb-icon-picker.component';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-pie-menu-editor',
@@ -19,10 +20,11 @@ export class PieMenuEditorComponent implements OnInit {
   activePieItemId: number | undefined;
 
   constructor(
+    private route: ActivatedRoute,
     private toastr: ToastrService,
     private dialogService: NbDialogService,
     public pieMenuService: PieMenuService) {
-    this.pieMenuId = parseInt(new URL(window.location.href.replace('#/', '')).searchParams.get('pieMenuId') ?? '0', 10);
+    this.pieMenuId = Number(route.snapshot.paramMap.get('pieMenuId'));
 
     window.log.debug('Pie Menu Editor is opening pie menu of id: ' + this.pieMenuId);
 
@@ -41,45 +43,24 @@ export class PieMenuEditorComponent implements OnInit {
   }
 
   moveUp(i: number) {
-    const actions = this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1);
-    if (i > 0) {
-      const temp = actions[i - 1];
-      actions[i - 1] = actions[i];
-      actions[i] = temp;
-    }
-
-    this.pieMenuService.setPieItemActions(this.activePieItemId ?? -1, actions);
+    this.pieMenuService.movePieTaskUp(this.activePieItemId ?? -1, i);
   }
 
   moveDown(i: number) {
-    const actions = this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1);
-
-    if (i < actions.length - 1) {
-      const temp = actions[i + 1];
-      actions[i + 1] = actions[i];
-      actions[i] = temp;
-    }
-
-    this.pieMenuService.setPieItemActions(this.activePieItemId ?? -1, actions);
+    this.pieMenuService.movePieTaskDown(this.activePieItemId ?? -1, i);
   }
 
   deleteAction(i: number) {
-    if (this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).length ?? 0 > 0) {
-      this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).splice(i, 1);
-    }
+    this.pieMenuService.deletePieTask(this.activePieItemId ?? -1, i);
   }
 
   addPieItemContext() {
-    this.pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).push(
+    this.pieMenuService.addPieItemTaskContext(
+      this.activePieItemId ?? -1,
       new PieSingleTaskContext(
         'ahp-send-key',
         {}
       ));
-  }
-
-  save() {
-    this.pieMenuService.save();
-    this.toastr.success('', 'Saved!', {timeOut: 1000, positionClass: 'toast-bottom-right'});
   }
 
   addPieItem() {

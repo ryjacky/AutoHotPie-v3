@@ -46,8 +46,12 @@
 
     <!--  Edit/Remove buttons  -->
     <td style="text-align: center;">
-      <button nbButton ghost (click)="openPieMenuEditor(pieMenuId)" status="primary"
-              style="
+      <button
+        nbButton
+        ghost
+        [routerLink]="['/pie-menu-editor', pieMenuId]"
+        status="primary"
+        style="
                     border: 1px solid var(--button-filled-basic-disabled-background-color);
                     padding: 10px">
         <nb-icon icon="edit-2-outline"/>
