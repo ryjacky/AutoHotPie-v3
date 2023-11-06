@@ -1,1 +1,84 @@
-<p>pie-menu works!</p>
+<div
+  #pieMenuContainer
+  style="position: relative; width: 100%; height: 100%; overflow: hidden;"
+  (pointerenter)="draw()"
+  (pointermove)="onPointerMove($event)"
+  (pointerleave)="onPointerLeave()"
+>
+  <canvas
+    #pieCenter
+    [style.position]="'absolute'"
+    [style.transform]="'translate(-50%, -50%) translate(50vw, 50vh)'"
+    [width]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
+    [height]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"></canvas>
+  <canvas
+    #pieCenterSector
+    [style.position]="'absolute'"
+    [style.transform-origin]="'center'"
+    [style.transform]="'translate(-50%, -50%) translate(50vw, 50vh) rotate(' + centerRotation + 'rad)'"
+    [width]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
+    [height]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
+  ></canvas>
+
+  <div
+    *ngFor="let pieItemId of pieMenuService.pieItemIds; let i = index"
+    [style.left.%]="50"
+    [style.top.%]="50"
+    [style.width.px]="pieMenuService.pieItemSpread"
+    [style.height.px]="0"
+    [style.rotate]="-90 + i * 360 / pieMenuService.pieItemIds.length + 'deg'"
+    [style.display]="'flex'"
+    [style.align-items]="'center'"
+    [style.transform-origin]="'center left'"
+    [style.justify-content]="'center'"
+    [style.position]="'absolute'">
+    <div
+      style="width: 0;"
+      [style.display]="i % (this.pieMenuService.pieItemIds.length/2) === 0 ? 'contents' : 'block'"
+      [style.rotate]="+90 - i * 360 / this.pieMenuService.pieItemIds.length + 'deg'"
+      [style.transform]="i > pieMenuService.pieItemIds.length/2 ? 'scaleX(-1)' : 'scaleX(1)'"
+    >
+      <button
+        [style.rotate]="getComputedSelfRotation(i)"
+        [style.background]="activeBtnIndex === i ? pieMenuService.mainColor : pieMenuService.secondaryColor"
+        [style.border-radius.px]="pieMenuService.pieItemRoundness"
+        [style.max-width.px]="pieMenuService.pieItemWidth"
+        [style.border-width.px]="0"
+        [style.padding.px]="6"
+        [style.color]="'white'"
+        [style.transform]="i > pieMenuService.pieItemIds.length/2 ? 'scaleX(-1)' : 'scaleX(1)'"
+        style="display: flex; align-items: center; justify-content: center;"
+        (click)="onButtonClicked()"
+      >
+        <nb-icon
+          *ngIf="pieMenuService.isIconAtPieItemNative(pieItemId ?? 0)"
+          [style.color]="pieMenuService.iconColor"
+          [icon]="pieMenuService.getPieItemIconAt(pieItemId ?? 0)"
+          [style.min-width.px]="pieMenuService.iconSize"
+          [style.min-height.px]="pieMenuService.iconSize"
+          [style.max-width.px]="pieMenuService.iconSize"
+          [style.max-height.px]="pieMenuService.iconSize"
+        ></nb-icon>
+        <img
+          *ngIf="!pieMenuService.isIconAtPieItemNative(pieItemId ?? 0) && iconExists(pieMenuService.pieItems.get(pieItemId))"
+          alt="Custom icon for pie item"
+          [src]="pieMenuService.getPieItemIconAt(pieItemId ?? 0)"
+          [style.min-width.px]="pieMenuService.iconSize"
+          [style.min-height.px]="pieMenuService.iconSize"
+          [style.max-width.px]="pieMenuService.iconSize"
+          [style.max-height.px]="pieMenuService.iconSize"
+          style="object-fit: contain"
+        >
+        <div
+          [style.margin-left.px]="iconExists(pieMenuService.pieItems.get(pieItemId)) ? 5 : 0"
+          style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap"
+        >
+          {{pieMenuService.pieItems.get(pieItemId)?.name ?? 'Error'}}
+        </div>
+      </button>
+
+    </div>
+  </div>
+
+
+</div>

@@ -36,7 +36,7 @@ export class PieMenuEditorComponent implements OnInit {
   }
 
   async loadWorkArea(pieMenuId: number) {
-    await this.pieMenuService.load(pieMenuId, true);
+    await this.pieMenuService.forceLoad(pieMenuId);
     this.activePieItemId = this.pieMenuService.pieItemIds[0];
 
     window.log.warn('Map objects (pieItems) cannot be serialized to JSON');

@@ -2,6 +2,23 @@
 
 }
 
+.sidebar-title-row {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.add-profile-button {
+  align-self: center;
+  margin-left: 1em;
+}
+
+.profile-box-list {
+  max-height: 70vh;
+  overflow-y: scroll;
+  padding-right: 0.5em;
+}
+
 .layout {
   width: 100%;
   display: grid;
@@ -16,6 +33,7 @@
   padding: 25px;
   background-color: var(--color-basic-900);
 }
+
 .body {
   grid-area: body;
   height: fit-content;
@@ -26,11 +44,12 @@
   height: 20em;
   margin-top: 1em;
 }
-.two-side{
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
+
+.two-side {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
 }
 
 

@@ -31,7 +31,11 @@
         style="margin-bottom: 1em; width: 80%; flex-direction: row; align-items: center; justify-content: flex-start;"
         (click)="this.dialogRef.close(exe)"
       >
-        <img [src]="exe.iconBase64" style="margin-right: 1em">
+        <img
+          [src]="exe.iconBase64"
+          style="margin-right: 1em; width: 32px; height: 32px"
+          alt="Exe Icon"
+        >
         <div style="display: flex; flex-direction: column; width: 90%; align-items: flex-start">
           <div>{{ exe.name }}</div>
           <div style="text-align: start; text-overflow: ellipsis; overflow: hidden; width: 100%">{{ exe.path }}</div>

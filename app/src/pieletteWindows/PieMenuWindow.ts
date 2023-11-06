@@ -1,4 +1,4 @@
-import {BrowserWindow, screen} from "electron";
+import {BrowserWindow, ipcMain, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
 import {Log} from "pielette-core";
@@ -12,6 +12,8 @@ export class PieMenuWindow extends BrowserWindow {
   private disabled: boolean = false;
   private readonly prefix = '../../';
 
+  private hidden: boolean = true;
+
   constructor() {
     super({
       transparent: true,
@@ -24,6 +26,7 @@ export class PieMenuWindow extends BrowserWindow {
         // Maker sure the second argument contains the prefix at the beginning
         preload: path.join(__dirname, '../../preload.js'),
         contextIsolation: true,  // false if you want to run e2e test with Spectron
+
       },
     });
 
@@ -35,7 +38,7 @@ export class PieMenuWindow extends BrowserWindow {
     globalHotkeyService.addListener((e: IGlobalKeyEvent, down: IGlobalKeyDownMap) => {
       switch (e.state) {
         case "DOWN":
-          // TODO:
+          if (!this.hidden) { break; }
           this.webContents.send(
             'pieMenu.onKeyDown',
             '',
@@ -45,8 +48,13 @@ export class PieMenuWindow extends BrowserWindow {
             e.name);
           break;
         case "UP":
+          this.webContents.send('pieMenu.onKeyUp')
           break;
       }
+    });
+
+    ipcMain.handle('pieMenu.ready', () => {
+      this.showInactive();
     });
   }
 
@@ -71,13 +79,18 @@ export class PieMenuWindow extends BrowserWindow {
     });
   }
 
+  hide() {
+    super.hide();
+    this.hidden = true;
+  }
+
   showInactive() {
     if (this.disabled) {
       return;
     }
 
     this.isCancelled = false;
-
+    this.hidden = false;
 
     // Show the window at cursor position, centered
     const screenPoint = screen.getCursorScreenPoint();

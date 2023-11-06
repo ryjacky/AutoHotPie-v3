@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WelcomePageComponent } from './welcome-page.component';
+import { PieMenuManagerComponent } from './pie-menu-manager.component';
 
-describe('WelcomePageComponent', () => {
-  let component: WelcomePageComponent;
-  let fixture: ComponentFixture<WelcomePageComponent>;
+describe('PieMenuUIComponent', () => {
+  let component: PieMenuManagerComponent;
+  let fixture: ComponentFixture<PieMenuManagerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WelcomePageComponent ]
+      declarations: [ PieMenuManagerComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(WelcomePageComponent);
+    fixture = TestBed.createComponent(PieMenuManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

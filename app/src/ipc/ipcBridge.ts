@@ -19,12 +19,15 @@ export function initIPC() {
   // -------------------------- IPCEvents relating to the system --------------------------
   ipcMain.handle('system.getOpenWindows', async () => {
     const results = await activeWindow.getOpenWindows();
+    Log.main.info("Retrieving open windows, found " + results.length + " windows");
 
     // Restructure the data to the common interface between renderer and main process
-    let binaryInfo: IBinaryInfo[] = [];
+    // Using Map to remove duplicates
+    let binaryInfo: Map<string, IBinaryInfo> = new Map<string, IBinaryInfo>();
     for (const result of results) {
       if (result.owner.name && result.owner.path) {
-        binaryInfo.push(
+        binaryInfo.set(
+          result.owner.path,
           {
             name: result.owner.name,
             path: result.owner.path,
@@ -32,13 +35,8 @@ export function initIPC() {
           });
       }
     }
-    return JSON.stringify(binaryInfo.values());
+    return JSON.stringify(Array.from(binaryInfo.values()));
   });
-
-
-
-
-
 
 
   ipcMain.handle('openPieMenuEditor', (event, args) => {
@@ -58,6 +56,12 @@ export function initIPC() {
     } catch (e) {
       return (await app.getFileIcon(filePath)).toDataURL();
     }
+  });
+
+
+  ipcMain.handle('pieMenu.execute', (event, args) => {
+    Log.main.debug("Executing pie menu " + args[0] + "");
+    pieMenuWindow?.hide();
   });
 
   ipcMain.handle('setPieTasks', async (event, args) => {

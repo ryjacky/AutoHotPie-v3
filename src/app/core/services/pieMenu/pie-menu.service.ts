@@ -4,6 +4,13 @@ import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
 import {DBService} from '../db/db.service';
 
+enum PieMenuServiceState { loading, loaded, unloaded }
+
+export class PieMenuStateError extends Error {}
+export class PieMenuNotFoundError extends Error {}
+export class PieItemNotFoundError extends Error {}
+class PieMenuUnloadedError extends Error {}
+
 /**
  * Service to load and save the pie menu state.
  */
@@ -13,82 +20,78 @@ export class PieMenuService extends PieMenu {
   public readonly pieItems = new Map<number, IPieItem | undefined>();
   public changesSaved = true;
 
-  private loaded = false;
-  private loading = false;
+  private state = PieMenuServiceState.unloaded;
 
-  constructor(
-    private dbService: DBService,
-  ) {
-    super();
+  constructor(private dbService: DBService) {super();}
+
+  /**
+   * Get the PieMenu object from the service.
+   */
+  public get pieMenu(): IPieMenu {
+    const pieMenu = new PieMenu();
+    Object.assign(pieMenu, this);
+    return pieMenu;
   }
 
-  public get basePieMenu(): IPieMenu {
-    const basePieMenu = new PieMenu();
-    for (const pieMenuKey in basePieMenu) {
-      if (pieMenuKey in this) {
-        // @ts-ignore
-        basePieMenu[pieMenuKey] = this[pieMenuKey];
-      }
-    }
-    return basePieMenu;
+  /**
+   * Same as load, but will load the pie menu again even if it is already loaded.
+   * @param pieMenuId
+   */
+  public async forceLoad(pieMenuId: number) {
+    return this.load(pieMenuId);
   }
 
-  public async load(pieMenuId: number, reload = false) {
-    if (this.loading) {
-      window.log.error('Pie Menu Service locked, loading in progress');
-      return;
+  /**
+   * Load the pie menu from the database.
+   * If the service is already loading a pie menu, the request will be ignored.
+   *
+   * @param pieMenuId The id of the pie menu to load.
+   */
+  public async load(pieMenuId: number) {
+    if (this.state === PieMenuServiceState.loading) {
+      throw new PieMenuStateError('Pie Menu Service locked, loading in progress');
     }
-    if (this.loaded && !reload) {
-      window.log.error('Pie Menu Service already loaded');
-      return;
+    if (this.state === PieMenuServiceState.loaded) {
+      throw new PieMenuStateError('Pie Menu is already loaded, use forceLoad to reload and overwrite changes');
     }
 
-    this.loading = true;
-
-    this.id = pieMenuId;
+    this.state = PieMenuServiceState.loading;
     const pieMenu = await this.dbService.pieMenu.get(pieMenuId);
-    if (!pieMenu) {
-      window.log.error('Pie Menu not found');
-      return;
-    }
 
-    // Not using Object.assign(this, pieMenu); because we cannot guarantee
-    // that the database object has the same properties as the class,
-    // e.g. a structure change due to program update.
-    for (const pieMenuKey in pieMenu) {
-      if (pieMenuKey in this) {
-        // @ts-ignore
-        this[pieMenuKey] = pieMenu[pieMenuKey];
-      }
-    }
+    if (!pieMenu) { throw new PieMenuNotFoundError('Pie Menu not found'); }
+
+    Object.assign(this, pieMenu);
 
     this.pieItems.clear();
-    window.log.debug(`${this.pieItems.size} pie items loaded`);
 
     const pieItems = await this.dbService.pieItem.bulkGet(pieMenu.pieItemIds);
     for (let i = 0; i < pieItems.length; i++) {
-      window.log.debug('Loading pie item ' + pieMenu.pieItemIds[i]);
       if (pieItems[i] === undefined) {
-        window.log.warn('Trying to load work area but pie Item of id ' + pieMenu.pieItemIds[i] + ' not found');
-        continue;
+        throw new PieItemNotFoundError(`Pie Item of id ${pieMenu.pieItemIds[i]} not found`);
       }
-
       this.pieItems.set(pieMenu.pieItemIds[i], pieItems[i]);
     }
 
     window.log.debug(`${this.pieItems.size} pie items loaded`);
-
-    this.loading = false;
-    this.loaded = true;
+    this.state = PieMenuServiceState.loaded;
   }
 
+  /**
+   * Get the displayed name of a pie item.
+   * @param pieItemId
+   */
   public getPieItemNameAt(pieItemId: number): string {
     return this.pieItems.get(pieItemId)?.name ?? '';
   }
 
+  /**
+   * Whether the icon of a pie item is a native Eva icon or an icon in base64.
+   * @param pieItemId
+   */
   public isIconAtPieItemNative(pieItemId: number): boolean {
     return (this.pieItems.get(pieItemId ?? -1)?.iconBase64 ?? '').startsWith('[eva]');
   }
+
 
   public getPieItemIconAt(pieItemId: number): string {
     if (this.isIconAtPieItemNative(pieItemId)) {
@@ -251,15 +254,11 @@ export class PieMenuService extends PieMenu {
   }
 
   public async save() {
-    if (!this.loaded) {
-      window.log.warn('Cannot save pie menu state, not loaded');
-      return;
-    }
+    if (this.state === PieMenuServiceState.unloaded) { throw new PieMenuUnloadedError(); }
 
     this.changesSaved = false;
 
-    window.log.debug('Saving pie menu state: ' + JSON.stringify(this.basePieMenu));
-    await this.dbService.pieMenu.update(this.id ?? -1, this.basePieMenu);
+    await this.dbService.pieMenu.update(this.id ?? -1, this.pieMenu);
 
     const nonEmptyPieItems: PieItem[] = [];
     for (const pieItem of this.pieItems.values()) {
@@ -285,35 +284,6 @@ export class PieMenuService extends PieMenu {
       pieItem.iconBase64 = '';
     }
     this.save();
-  }
-
-  async checkConditions(
-    exePath: string,
-    ctrl = false,
-    alt = false,
-    shift = false,
-    key: string) {
-
-    window.log.debug('Checking pie menu conditions for ' + exePath + ' ' + ctrl + ' ' + alt + ' ' + shift + ' ' + key);
-
-    let profId = (await this.dbService.profile.where('exes').equals(exePath).first())?.id;
-    profId ??= 1;
-
-    window.log.debug('Checking pie menu conditions with profile id ' + profId);
-
-    const firstProfilePieMenuData = await this.dbService.profilePieMenuData
-      .where('[profileId+key]')
-      .equals([profId ?? -1, key])
-      .and(profilePieMenuData =>
-        profilePieMenuData.ctrl === ctrl &&
-        profilePieMenuData.alt === alt &&
-        profilePieMenuData.shift === shift
-      ).first();
-
-    window.log.debug('First profile pie menu data: ' + JSON.stringify(firstProfilePieMenuData));
-    window.log.debug('Pie menu id: ' + this.id);
-
-    return firstProfilePieMenuData?.pieMenuId === this.id;
   }
 
   private getPieItemTaskContexts(id: number): PieSingleTaskContext[] {

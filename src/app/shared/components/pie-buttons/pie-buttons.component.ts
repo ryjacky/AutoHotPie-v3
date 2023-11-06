@@ -41,14 +41,6 @@ export class PieButtonsComponent implements OnInit, OnChanges, AfterViewInit {
 
   constructor(pieMenuService: PieMenuService) {
     this.pieMenuService = pieMenuService;
-
-    window.pieMenu.onKeyDown(async (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => {
-      const conditionMet = await pieMenuService.checkConditions(exePath, ctrl, alt, shift, key);
-      if (conditionMet) {
-        window.log.debug('Pie menu condition met, ');
-        window.pieMenu.ready();
-      }
-    });
   }
 
   ngOnInit() {

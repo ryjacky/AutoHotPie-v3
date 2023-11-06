@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProfileListItemComponent } from './profile-list-item.component';
+import { ProfileBoxComponent } from './profile-box.component';
 
 describe('ProfileListItemComponent', () => {
-  let component: ProfileListItemComponent;
-  let fixture: ComponentFixture<ProfileListItemComponent>;
+  let component: ProfileBoxComponent;
+  let fixture: ComponentFixture<ProfileBoxComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProfileListItemComponent ]
+      declarations: [ ProfileBoxComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ProfileListItemComponent);
+    fixture = TestBed.createComponent(ProfileBoxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

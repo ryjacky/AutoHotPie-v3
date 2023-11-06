@@ -1,32 +1,30 @@
-<div class="offset">
-  <section class="layout">
-    <div class="sidebar">
-      <!-- The left side bar that displays all profile info -->
+<section class="layout">
+  <div class="sidebar">
+    <!-- The left side bar that displays all profile info -->
 
-      <div style="display: flex; align-items: center; flex-direction: row;">
-        <h4>{{ 'PAGES.HOME.SIDEBAR_TITLE' | translate }}</h4>
-        <button
-          nbButton
-          nbTooltip="{{ 'PROFILE_PAGE.NEW_PROF_BUTTON_TOOLTIP' | translate }}"
-          status="primary"
-          style="align-self: center; margin-left: 1em"
-          (click)="openNewProfileDialog()"
-        >
-          <nb-icon icon="plus-outline"/>
-        </button>
+    <div class="sidebar-title-row">
+      <h4>{{ 'PAGES.HOME.SIDEBAR_TITLE' | translate }}</h4>
+      <button
+        nbButton
+        class="add-profile-button"
+        nbTooltip="{{ 'PROFILE_PAGE.NEW_PROF_BUTTON_TOOLTIP' | translate }}"
+        status="primary"
+        (click)="openNewProfileDialog()"
+      >
+        <nb-icon icon="plus-outline"/>
+      </button>
 
-      </div>
-      <div style="max-height: 70vh; overflow-y: scroll; padding-right: 0.5em;">
-        <app-profile-list-item
-          #profileListItemComponent
-          *ngFor="let prof of profiles;"
-          [profile]="prof"
-        />
-      </div>
     </div>
+    <div class="profile-box-list">
+      <app-profile-box
+        #profileListItemComponent
+        *ngFor="let prof of profiles;"
+        [profile]="prof"
+      />
+    </div>
+  </div>
 
-    <!-- The right panel that is used to edit the profile and its pie menus -->
-    <app-profile-editor #profileEditorComponent/>
+  <!-- The right panel that is used to edit the profile and its pie menus -->
+  <app-profile-editor #profileEditorComponent/>
 
-  </section>
-</div>
+</section>

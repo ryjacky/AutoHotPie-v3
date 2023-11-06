@@ -19,6 +19,30 @@
   overflow: hidden;
 }
 
+.preview-panel {
+  border: var(--accordion-header-disabled-text-color) dashed 2px;
+  border-radius: 1em;
+  padding: 0.5em 1em;
+}
+
+.preview-panel-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preview-panel-title-font {
+  margin: 0;
+  color: var(--button-ghost-basic-text-color);
+  font-weight: bold;
+}
+
+.sync-status {
+  border-radius: 100vw;
+  width: 0.5em;
+  height: 0.5em;
+}
+
 .growR {
   width: 20vw;
 }
@@ -26,8 +50,6 @@
 .growL {
   width: 40vw;
   flex-grow: 3;
-  border-left: 2px solid var(--color-basic-1000);
-  border-right: 2px solid var(--color-basic-1000);
 }
 
 li {
@@ -49,7 +71,9 @@ li {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
+  from {
+    opacity: 0;
+  }
 }
 
 .animate-flicker {

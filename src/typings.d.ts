@@ -16,6 +16,7 @@ interface Window {
     onKeyDown: (callback: (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => void) => void;
     onKeyUp: (callback: () => void) => void;
     ready: () => void;
+    execute: (pieTask: string) => void;
   };
   log: {
     trace: (message: string) => void;

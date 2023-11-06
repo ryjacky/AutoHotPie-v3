@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import {PieMenuUIComponent} from './pie-menu-ui.component';
+import {PieMenuManagerComponent} from './pie-menu-manager.component';
 
 const routes: Routes = [
   {
     path: 'pieMenuUI',
-    component: PieMenuUIComponent
+    component: PieMenuManagerComponent
   }
 ];
 

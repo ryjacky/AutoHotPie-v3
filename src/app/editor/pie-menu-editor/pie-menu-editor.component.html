@@ -1,27 +1,26 @@
 <section class="layout" style="height: 100%">
-  <div class="growL"
-       style=" background: var(--accordion-header-disabled-text-color); border-radius: 1em; padding: 0.5em 1em;">
-    <div
-      style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;">
+  <div class="growL preview-panel">
+    <div class="preview-panel-title-bar">
       <div
-        class="animate-flicker"
-        style="border-radius: 100vw; width: 0.5em; height: 0.5em"
+        class="animate-flicker sync-status"
         [style.background-color]="pieMenuService.changesSaved ? 'mediumseagreen' : 'orange'"
         nbTooltip="{{ (pieMenuService.changesSaved ? 'EDITOR_PAGE.CHANGES_SAVED' : 'EDITOR_PAGE.SAVING_CHANGES') | translate}}"
         nbTooltipPlacement="bottom"
       ></div>
       <label
-        style="margin: 0; color: var(--button-ghost-basic-text-color); font-weight: bold">
+        class="preview-panel-title-font">
         {{"PAGES.EDITOR.PREVIEW" | translate}}
       </label>
       <button nbButton size="small" (click)="addPieItem()">
         <nb-icon icon="plus" pack="eva"></nb-icon>
       </button>
     </div>
-    <app-pie-buttons #pieButtons [editorMode]="true" (activePieItemId)="activePieItemId = $event" [pieMenuId]="pieMenuId"></app-pie-buttons>
+    <app-pie-buttons
+      #pieButtons
+      [editorMode]="true"
+      (activePieItemId)="activePieItemId = $event"
+      [pieMenuId]="pieMenuId">
+    </app-pie-buttons>
   </div>
 
   <div class="growM">
@@ -73,6 +72,7 @@
             </nb-icon>
             <img
               *ngIf="!pieMenuService.isIconAtPieItemNative(pieItemId ?? 0)"
+              alt="Custom pie item icon"
               [src]="pieMenuService.getPieItemIconAt(pieItemId ?? 0)"
               style="max-width: 25px; max-height: 25px;">
           </button>

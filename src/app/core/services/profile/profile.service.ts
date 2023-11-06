@@ -78,14 +78,14 @@ export class ProfileService extends Profile {
     this.loaded = true;
   }
 
-  async isHotkeyAvailable(ctrl: boolean, alt: boolean, shift: boolean, key: string): Promise<boolean> {
+  async isHotkeyAvailable(ctrl: boolean, shift: boolean, alt: boolean, key: string): Promise<boolean> {
     return await this.dbService.profilePieMenuData
       .where('[profileId+key]').equals([this.id ?? -1, key])
       .and((data) =>
         data.ctrl === ctrl &&
         data.alt === alt &&
         data.shift === shift
-      ).first() === undefined;
+      ).count() === 0;
   }
 
   setName(name: string) {

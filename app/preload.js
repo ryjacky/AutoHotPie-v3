@@ -16,10 +16,11 @@ contextBridge.exposeInMainWorld('system', {
 contextBridge.exposeInMainWorld('pieMenu', {
   // ---------------------- Invoke ----------------------
   ready: () => ipcRenderer.invoke('pieMenu.ready'),
+  execute: (pieTask) => ipcRenderer.invoke('pieMenu.execute', pieTask),
 
   // ---------------------- On ----------------------
   onKeyDown: (callback) => ipcRenderer.on('pieMenu.onKeyDown', (event, exePath, ctrl, alt, shift, key) => {callback(exePath, ctrl, alt, shift, key)}),
-  onKeyUp: (callback) => ipcRenderer.on('pieMenu.onKeyUp', (event) => {callback()}),
+  onKeyUp: (callback) => ipcRenderer.on('pieMenu.onKeyUp', () => {callback()}),
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
