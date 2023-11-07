@@ -16,8 +16,9 @@ import {RouterLink} from '@angular/router';
 import { ActionCardComponent } from './action-card/action-card.component';
 import {SharedModule} from '../../shared/shared.module';
 import {CdkDrag, CdkDropList} from '@angular/cdk/drag-drop';
-import {PieMenuUIModule} from '../../pie-menu-ui/pie-menu-ui.module';
-import {NgxColorsModule} from "ngx-colors";
+import {PieMenuManagerModule} from '../../pie-menu-ui/pie-menu-manager.module';
+import {NgxColorsModule} from 'ngx-colors';
+import {DragulaModule} from 'ng2-dragula';
 
 @NgModule({
   declarations: [
@@ -45,9 +46,10 @@ import {NgxColorsModule} from "ngx-colors";
     CdkDropList,
     CdkDrag,
     NbTagModule,
-    PieMenuUIModule,
+    PieMenuManagerModule,
     NgxColorsModule,
-    NbTooltipModule
+    NbTooltipModule,
+    DragulaModule
   ]
 })
 export class PieMenuEditorModule { }

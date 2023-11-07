@@ -3,6 +3,7 @@ import {PieItem} from '../../../../../app/src/db/data/PieItem';
 import {PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {Profile} from '../../../../../app/src/db/data/Profile';
 import Dexie, {ObservabilitySet, Table} from 'dexie';
+import {ProfilePieMenuData} from '../../../../../app/src/db/data/ProfilePieMenuData';
 
 @Injectable({
   providedIn: 'platform'
@@ -12,6 +13,7 @@ export class DBService extends Dexie {
   pieItem!: Table<PieItem>;
   pieMenu!: Table<PieMenu>;
   profile!: Table<Profile>;
+  profilePieMenuData!: Table<ProfilePieMenuData>;
 
   constructor() {
     super('myDatabase');
@@ -22,16 +24,7 @@ export class DBService extends Dexie {
       // eslint-disable-next-line max-len
       pieMenu: '++id, name, enabled, activationMode, escapeRadius, openInScreenCenter, mainColor, secondaryColor, *pieItemIds, centerRadius, centerThickness, iconSize, pieItemRoundness, pieItemSpread',
       profile: '++id, name, enabled, *pieMenuIds, *exes, iconBase64',
-    });
-
-    // Let IPC Main know that the database has changed
-    Dexie.on('storagemutated', async (changedParts: ObservabilitySet) => {
-      const changedPartsString = JSON.stringify(changedParts);
-      if (changedPartsString.includes(`/pieMenuHotkeys`) || changedPartsString.includes(`/profile/pieMenuIds`)){
-        window.log.debug('Hotkey changed, sending IPC message to main process');
-
-        window.dbAPI.possibleHotkeyChange(JSON.stringify(await this.profile.toArray()));
-      }
+      profilePieMenuData: '++id, [profileId+key], [profileId+pieMenuId], pieMenuId',
     });
   }
 
@@ -56,21 +49,22 @@ export class DBService extends Dexie {
       defaultPieMenu.name = 'Default Pie Menu';
       defaultPieMenu.id = 1;
       defaultPieMenu.pieItemIds = [1, 2, 3, 4, 5];
-      const pieMenuId = await this.pieMenu.put(defaultPieMenu);
+      await this.pieMenu.put(defaultPieMenu);
 
       await this.profile.put(new Profile(
         'Default Profile',
-        [pieMenuId as number],
-        [],
         [],
         undefined,
         true,
         1
       ));
 
-    }
+      await this.profilePieMenuData.put(new ProfilePieMenuData(
+        1,
+        1,
+      ));
 
-    window.dbAPI.possibleHotkeyChange(JSON.stringify(await this.profile.toArray()));
+    }
 
     window.log.info('App data loaded');
   }

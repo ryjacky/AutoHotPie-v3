@@ -4,6 +4,13 @@ import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
 import {DBService} from '../db/db.service';
 
+enum PieMenuServiceState { loading, loaded, unloaded }
+
+export class PieMenuStateError extends Error {}
+export class PieMenuNotFoundError extends Error {}
+export class PieItemNotFoundError extends Error {}
+class PieMenuUnloadedError extends Error {}
+
 /**
  * Service to load and save the pie menu state.
  */
@@ -11,8 +18,7 @@ import {DBService} from '../db/db.service';
 export class PieMenuService extends PieMenu {
   // <PieItemId, PieItem>
   public readonly pieItems = new Map<number, IPieItem | undefined>();
-  private loaded = false;
-  private loading = false;
+  private state = PieMenuServiceState.unloaded;
 
   constructor(
     private dbService: DBService,
@@ -46,7 +52,10 @@ export class PieMenuService extends PieMenu {
 
     return this.pieItems.get(pieItemId ?? -1)?.iconBase64 ?? '';
   }
-
+  public addPieItemTaskContext(pieItemId: number, pieSingleTaskContext: PieSingleTaskContext): void {
+    this.getPieItemTaskContexts(pieItemId).push(pieSingleTaskContext);
+    this.save();
+  }
   public async addEmptyPieItem() {
     const pieItem = new PieItem('');
     pieItem.id = await this.dbService.pieItem.put(pieItem) as number;
@@ -55,23 +64,30 @@ export class PieMenuService extends PieMenu {
     this.pieItemIds.push(pieItem.id);
   }
 
+  /**
+   * Same as load, but will load the pie menu again even if it is already loaded.
+   * @param pieMenuId
+   */
+  public async forceLoad(pieMenuId: number) {
+    this.state = PieMenuServiceState.unloaded;
+    return this.load(pieMenuId);
+  }
+
   public async load(pieMenuId: number, reload = false){
-    if (this.loading) {
-      window.log.error('Pie Menu Service locked, loading in progress');
-      return;
+    if (this.state === PieMenuServiceState.loading) {
+      throw new PieMenuStateError('Pie Menu Service locked, loading in progress');
     }
-    if (this.loaded && !reload) {
-      window.log.error('Pie Menu Service already loaded');
-      return;
+    if (this.state === PieMenuServiceState.loaded) {
+      throw new PieMenuStateError('Pie Menu is already loaded, use forceLoad to reload and overwrite changes');
     }
 
-    this.loading = true;
+    this.state = PieMenuServiceState.loading;
 
     this.id = pieMenuId;
     const pieMenu = await this.dbService.pieMenu.get(pieMenuId);
     if (!pieMenu) {
-      window.log.error('Pie Menu not found');
-      return;
+      this.state = PieMenuServiceState.unloaded;
+      throw new PieMenuNotFoundError();
     }
 
     // Not using Object.assign(this, pieMenu); because we cannot guarantee
@@ -100,8 +116,7 @@ export class PieMenuService extends PieMenu {
 
     window.log.debug(`${this.pieItems.size} pie items loaded`);
 
-    this.loading = false;
-    this.loaded = true;
+    this.state = PieMenuServiceState.loaded;
   }
 
   public getPieTaskContext(pieItemId: number): PieSingleTaskContext[] | undefined {
@@ -149,8 +164,41 @@ export class PieMenuService extends PieMenu {
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     this.pieItems.get(id)!.pieTaskContexts = actions;
   }
+  public movePieTaskUp(pieItemId: number, pieTaskIndex: number) {
+    const actions = this.getPieItemTaskContexts(pieItemId);
+    if (pieTaskIndex > 0) {
+      const temp = actions[pieTaskIndex - 1];
+      actions[pieTaskIndex - 1] = actions[pieTaskIndex];
+      actions[pieTaskIndex] = temp;
+    }
+
+    this.setPieItemActions(pieItemId, actions);
+
+    this.save();
+  }
+
+  public movePieTaskDown(pieItemId: number, pieTaskIndex: number) {
+    const actions = this.getPieItemTaskContexts(pieItemId);
+
+    if (pieTaskIndex < actions.length - 1) {
+      const temp = actions[pieTaskIndex + 1];
+      actions[pieTaskIndex + 1] = actions[pieTaskIndex];
+      actions[pieTaskIndex] = temp;
+    }
+
+    this.setPieItemActions(pieItemId, actions);
+
+    this.save();
+  }
+
+  public deletePieTask(pieItemId: number, pieTaskIndex: number) {
+    if (this.getPieItemTaskContexts(pieItemId).length ?? 0 > 0) {
+      this.getPieItemTaskContexts(pieItemId).splice(pieTaskIndex, 1);
+    }
+    this.save();
+  }
   public async save() {
-    if (!this.loaded) {
+    if (this.state !== PieMenuServiceState.loaded) {
       window.log.warn('Cannot save pie menu state, not loaded');
       return;
     }

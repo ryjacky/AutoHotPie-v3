@@ -6,14 +6,14 @@ import {HomeRoutingModule} from './home-routing.module';
 import {HomeComponent} from './home.component';
 import {SharedModule} from '../../shared/shared.module';
 import {
-    NbButtonModule,
-    NbCardModule, NbDialogModule,
-    NbFormFieldModule,
-    NbIconModule,
-    NbInputModule,
-    NbLayoutModule, NbListModule, NbPopoverModule, NbSelectModule, NbToggleModule, NbTooltipModule
+  NbButtonModule,
+  NbCardModule, NbDialogModule,
+  NbFormFieldModule,
+  NbIconModule,
+  NbInputModule,
+  NbLayoutModule, NbListModule, NbPopoverModule, NbSelectModule, NbSidebarModule, NbToggleModule, NbTooltipModule
 } from '@nebular/theme';
-import {ProfileListItemComponent} from './profile-list-item/profile-list-item.component';
+import {ProfileBoxComponent} from './profile-box/profile-box.component';
 import {PieMenuListComponent} from './pie-menu-list/pie-menu-list.component';
 import {NgxColorsModule} from 'ngx-colors';
 import { ProfileEditorComponent } from './profile-editor/profile-editor.component';
@@ -21,26 +21,33 @@ import { PieMenuListRowComponent } from './pie-menu-list/pie-menu-list-row/pie-m
 import { NewProfileDialogComponent } from './new-profile-dialog/new-profile-dialog.component';
 
 @NgModule({
-  declarations: [HomeComponent, ProfileListItemComponent, PieMenuListComponent, ProfileEditorComponent, PieMenuListRowComponent, NewProfileDialogComponent],
-    imports: [
-        CommonModule,
-        SharedModule,
-        HomeRoutingModule,
-        NbButtonModule,
-        NbLayoutModule,
-        NgOptimizedImage,
-        NbInputModule,
-        NbIconModule,
-        NbFormFieldModule,
-        NgxColorsModule,
-        NbCardModule,
-        NbPopoverModule,
-        NbSelectModule,
-        NbToggleModule,
-        NbDialogModule.forChild({}),
-        NbTooltipModule,
-        NbListModule
-    ]
+  declarations: [
+    HomeComponent,
+    ProfileBoxComponent,
+    PieMenuListComponent,
+    ProfileEditorComponent,
+    PieMenuListRowComponent,
+    NewProfileDialogComponent],
+  imports: [
+    CommonModule,
+    SharedModule,
+    HomeRoutingModule,
+    NbButtonModule,
+    NbLayoutModule,
+    NgOptimizedImage,
+    NbInputModule,
+    NbIconModule,
+    NbFormFieldModule,
+    NgxColorsModule,
+    NbCardModule,
+    NbPopoverModule,
+    NbSelectModule,
+    NbToggleModule,
+    NbDialogModule.forChild({}),
+    NbTooltipModule,
+    NbListModule,
+    NbSidebarModule
+  ]
 })
 export class HomeModule {
 }

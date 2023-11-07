@@ -6,9 +6,11 @@ import {PieMenuWindow} from "./src/pieletteWindows/PieMenuWindow";
 import {EditorWindow} from "./src/pieletteWindows/EditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
 import {SplashScreenWindow} from "./src/pieletteWindows/SplashScreenWindow";
+import {GlobalKeyboardListener} from "node-global-key-listener";
 
 // ------------------------------- Global Variables -------------------------------
 export let pieMenuWindow: PieMenuWindow | undefined;
+export const globalHotkeyService = new GlobalKeyboardListener();
 let editorWindow: EditorWindow | undefined;
 let splashScreenWindow: SplashScreenWindow | undefined;
 app.setPath("userData", PieletteEnv.DEFAULT_DATA_PATH);
@@ -82,8 +84,6 @@ function initSystemTray() {
 
 
 export function disablePieMenu() {
-  pieMenuWindow?.disable();
 }
 export function enablePieMenu() {
-  pieMenuWindow?.enable();
 }

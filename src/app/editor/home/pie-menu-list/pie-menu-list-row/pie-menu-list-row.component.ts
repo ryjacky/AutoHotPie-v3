@@ -12,8 +12,8 @@ export class PieMenuListRowComponent implements OnInit {
   @ViewChild('shortcutInput') shortcutInput: any;
   @ViewChild('nameInput') nameInput: any;
   @ViewChild('hotkeyAcquisitionDialog') confirmReplaceDialog: any;
-  newHotkey = '';
-  currentHotkey = '';
+  newHotkey: KeyboardEvent = new KeyboardEvent('keydown');
+  currentHotkey: KeyboardEvent = new KeyboardEvent('keydown');
 
   protected readonly nbPosition = NbPosition;
 
@@ -29,8 +29,8 @@ export class PieMenuListRowComponent implements OnInit {
     this.profileService.setPieMenuName(this.pieMenuId, this.nameInput.nativeElement.value);
   }
 
-  ngOnInit(): void {
-    this.currentHotkey = this.profileService.getHotkey(this.pieMenuId);
+  async ngOnInit() {
+    this.currentHotkey = await this.profileService.getHotkey(this.pieMenuId);
     window.log.debug('Current hotkey of pie menu ' + this.pieMenuId + ' is ' + this.currentHotkey);
   }
 
@@ -40,19 +40,35 @@ export class PieMenuListRowComponent implements OnInit {
     if (!success) {
       return;
     }
-    this.profileService.setPieMenuHotkey(this.pieMenuId, this.newHotkey, true)
+
+    this.profileService.setPieMenuHotkey(
+      this.pieMenuId,
+      this.newHotkey.ctrlKey,
+      this.newHotkey.shiftKey,
+      this.newHotkey.altKey,
+      this.newHotkey.key)
       .then(() => {this.currentHotkey = this.newHotkey;});
   }
 
-  async shortcutInputChanged(newHotkey: string) {
+  async shortcutInputChanged(newHotkey: KeyboardEvent) {
     window.log.info('Trying to change hotkey of pie menu to ' + newHotkey);
     this.newHotkey = newHotkey;
+    const newKey = newHotkey.key.toUpperCase();
 
-    if (!this.profileService.isHotkeyAvailable(newHotkey)) {
+    if (!await this.profileService.isHotkeyAvailable(
+      newHotkey.ctrlKey,
+      newHotkey.shiftKey,
+      newHotkey.altKey,
+      newKey)) {
       this.dialogService.open(this.confirmReplaceDialog);
     } else {
       this.currentHotkey = newHotkey;
-      this.profileService.setPieMenuHotkey(this.pieMenuId, newHotkey);
+      await this.profileService.setPieMenuHotkey(
+        this.pieMenuId,
+        newHotkey.ctrlKey,
+        newHotkey.shiftKey,
+        newHotkey.altKey,
+        newKey);
     }
   }
 

@@ -8,25 +8,14 @@ import {NbPosition} from '@nebular/theme';
 })
 export class TitlebarComponent implements OnInit {
   activePage = 'home';
-  serviceActive = true;
   version = '0.0.0';
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   protected readonly NbPosition = NbPosition;
 
   ngOnInit() {
-    window.electronAPI.globalHotkeyServiceExited(() => {
-      window.log.info('Global hotkey service exited as notified by the main process');
-      this.serviceActive = false;
-    });
     window.electronAPI.getVersion().then((version) => {
       this.version = version;
-    });
-  }
-
-  toggleService() {
-    window.electronAPI.toggleService(this.serviceActive).then((serviceActive) => {
-      this.serviceActive = serviceActive;
     });
   }
 

@@ -3,12 +3,12 @@ import {Profile} from '../../../../../app/src/db/data/Profile';
 import {ProfileService} from '../../../core/services/profile/profile.service';
 
 @Component({
-  selector: 'app-profile-list-item',
-  templateUrl: './profile-list-item.component.html',
-  styleUrls: ['./profile-list-item.component.scss']
+  selector: 'app-profile-box',
+  templateUrl: './profile-box.component.html',
+  styleUrls: ['./profile-box.component.scss']
 })
 
-export class ProfileListItemComponent {
+export class ProfileBoxComponent {
   @Input() profile: Profile = new Profile('');
 
   @ViewChild('profNameInput') profNameInput: any;

@@ -1,24 +1,18 @@
-import {BrowserWindow, screen} from "electron";
+import {BrowserWindow, ipcMain, screen} from "electron";
 import * as path from 'path';
 import * as fs from 'fs';
-import {GlobalHotkeyService, GlobalHotkeyServiceListener, MouseKeyEventListener} from "pielette-mouse-key-hook";
 import {Log} from "pielette-core";
-import {Profile} from "../db/data/Profile";
-import {PieletteSettings} from "../settings/PieletteSettings";
-import * as activeWindow from "active-win";
-import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
+import {globalHotkeyService} from "../../main";
+import {IGlobalKeyDownMap, IGlobalKeyEvent} from "node-global-key-listener";
 
 // TODO: Need review
-export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListener, GlobalHotkeyServiceListener {
+export class PieMenuWindow extends BrowserWindow {
   public isCancelled: boolean = false;
 
   private disabled: boolean = false;
   private readonly prefix = '../../';
 
-  private listeningHotkeys: Map<string, number> = new Map<string, number>();
-  private menuExeBindingMap: Map<number, string[]> = new Map<number, string[]>();
-
-  private prevKey: string = "";
+  private hidden: boolean = true;
 
   constructor() {
     super({
@@ -32,6 +26,7 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
         // Maker sure the second argument contains the prefix at the beginning
         preload: path.join(__dirname, '../../preload.js'),
         contextIsolation: true,  // false if you want to run e2e test with Spectron
+
       },
     });
 
@@ -39,93 +34,28 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     this.preventClose();
     this.hide();
     this.loadPieMenuURL();
-    GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
-  }
 
-  onProcessExit(): void {
-    Log.main.debug("PieMenuWindow.onProcessExit(), reinitializing GlobalHotkeyService");
-    GlobalHotkeyService.getInstance().addOnMouseKeyEvent(this);
-  }
+    globalHotkeyService.addListener((e: IGlobalKeyEvent, down: IGlobalKeyDownMap) => {
+      switch (e.state) {
+        case "DOWN":
+          if (!this.hidden) { break; }
+          this.webContents.send(
+            'pieMenu.onKeyDown',
+            '',
+            down["LEFT CTRL"] || down["RIGHT CTRL"],
+            down["LEFT ALT"] || down["RIGHT ALT"],
+            down["LEFT SHIFT"] || down["RIGHT SHIFT"],
+            e.name);
+          break;
+        case "UP":
+          this.webContents.send('pieMenu.onKeyUp')
+          break;
+      }
+    });
 
-  clearListeningHotkeys() {
-    this.listeningHotkeys.clear();
-  }
-
-  addListeningHotkeys(profile: Profile) {
-    for (const hotkey of profile.pieMenuHotkeys) {
-      // idAndHotkey[0] is the hotkey, idAndHotkey[1] is the pie menu id
-      const idAndHotkey = hotkey.split('-');
-      Log.main.debug(`Adding hotkey ${idAndHotkey[0]}`)
-
-      this.menuExeBindingMap.set(Number(idAndHotkey[1]), [
-        ...(this.menuExeBindingMap.get(Number(idAndHotkey[1])) ?? []),
-        ...(profile.id === 1 ? ["global"] : (profile.exes))
-      ]);
-      this.listeningHotkeys.set(idAndHotkey[0], Number(idAndHotkey[1]));
-    }
-  }
-
-  onDoubleClick(event: string): void {
-    this.prevKey = event;
-
-  }
-
-  onDragStarted(event: string): void {
-    this.prevKey = event;
-
-  }
-
-  onDragFinished(event: string): void {
-    this.prevKey = event;
-
-  }
-
-  onKeyDown(event: string): void {
-    // Filters ---------------------------------
-    if (this.prevKey === event) {return;}
-    this.prevKey = event;
-
-    if (event.split(':')[1] === PieletteSettings.get('pieMenuCancelKey').split(':')[1]) {
-      this.cancel();
-      Log.main.debug(`Cancel key pressed: ${event}`);
-    }
-
-    if (PieletteAddonManager.isExecuting){
-      Log.main.debug(`PieletteAddonManager.isExecuting: ${PieletteAddonManager.isExecuting}`);
-      return;
-    }
-
-    // Search for the pie menu id related to the hotkey
-    const pieMenuId = this.listeningHotkeys.get(event);
-
-    if (!pieMenuId) {
-      Log.main.debug(`this.prevKey === event: ${this.prevKey === event}, this.prevKey: ${this.prevKey}, event: ${event}`);
-      return;
-    }
-
-    // 1 is the id of the global pie menu
-    if (!this.menuExeBindingMap.get(pieMenuId)?.includes(activeWindow.sync()?.owner.path ?? "global")
-      && !this.menuExeBindingMap.get(pieMenuId)?.includes("global")) {
-      Log.main.debug(`Cannot open pie menu id: ${pieMenuId} because the exe is not in the list and it is not a global list`);
-      Log.main.debug(JSON.stringify(Array.from(this.menuExeBindingMap.entries())))
-      return;
-    }
-
-
-    // Filters end -----------------------------
-    this.webContents.send('openPieMenu', pieMenuId);
-    this.showInactive();
-  }
-
-  onKeyUp(event: string): void {
-    this.prevKey = event;
-    PieletteAddonManager.runAllPieTasks();
-    this.hide();
-  }
-
-  cancel() {
-    this.isCancelled = true;
-    this.hide();
+    ipcMain.handle('pieMenu.ready', () => {
+      this.showInactive();
+    });
   }
 
   loadPieMenuURL() {
@@ -151,6 +81,7 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
 
   hide() {
     super.hide();
+    this.hidden = true;
   }
 
   showInactive() {
@@ -159,7 +90,7 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
     }
 
     this.isCancelled = false;
-
+    this.hidden = false;
 
     // Show the window at cursor position, centered
     const screenPoint = screen.getCursorScreenPoint();
@@ -174,15 +105,6 @@ export class PieMenuWindow extends BrowserWindow implements MouseKeyEventListene
       y: screenPoint.y - display.bounds.height / 2,
     });
     super.showInactive();
-  }
-
-  disable() {
-    this.disabled = true;
-    this.hide();
-  }
-
-  enable() {
-    this.disabled = false;
   }
 
 

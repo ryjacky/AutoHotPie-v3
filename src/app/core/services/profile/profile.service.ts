@@ -3,6 +3,7 @@ import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
 import {PieItem} from '../../../../../app/src/db/data/PieItem';
 import {DBService} from '../db/db.service';
 import {Injectable} from '@angular/core';
+import {IProfilePieMenuData, ProfilePieMenuData} from '../../../../../app/src/db/data/ProfilePieMenuData';
 
 /**
  * Profile service for a single profile
@@ -18,10 +19,16 @@ export class ProfileService extends Profile {
    */
   public readonly nProfileConnected = new Map<number, number>();
 
+  private profilePieMenuData: IProfilePieMenuData[] = [];
+
   constructor(
     private dbService: DBService,
   ) {
     super();
+  }
+
+  get pieMenuIds(): number[] {
+    return Array.from(this.pieMenus.keys());
   }
 
   public async load(profileId: number, reload = false) {
@@ -37,6 +44,9 @@ export class ProfileService extends Profile {
       return;
     }
 
+    this.profilePieMenuData =
+      await this.dbService.profilePieMenuData.where('profileId').equals(this.id ?? -1).toArray();
+
     // Not using Object.assign(this, pieMenu); because we cannot guarantee
     // that the database object has the same properties as the class,
     // e.g. a structure change due to program update.
@@ -48,28 +58,34 @@ export class ProfileService extends Profile {
     }
 
     this.pieMenus.clear();
-    const pieMenu = await this.dbService.pieMenu.bulkGet(profile.pieMenuIds);
+
+    const pieMenuIds =
+      this.profilePieMenuData.map((profilePieMenuData) => profilePieMenuData.pieMenuId);
+
+    const pieMenu = await this.dbService.pieMenu.bulkGet(pieMenuIds);
     for (let i = 0; i < pieMenu.length; i++) {
       if (pieMenu[i] === undefined) {
-        window.log.warn('Trying to load profile but pie menu of id ' + profile.pieMenuIds[i] + ' not found');
+        window.log.warn('Trying to load profile but pie menu of id ' + pieMenuIds[i] + ' not found');
         continue;
       }
 
-      // Seems like .equals automatically does what Array.contains() do
       this.nProfileConnected.set(
-        profile.pieMenuIds[i],
-        await this.dbService.profile.where('pieMenuIds').equals(pieMenu[i]?.id ?? 0).count());
-      this.pieMenus.set(profile.pieMenuIds[i], pieMenu[i]);
+        pieMenuIds[i],
+        await this.dbService.profilePieMenuData.where('pieMenuId').equals(pieMenuIds[i]).count());
+      this.pieMenus.set(pieMenuIds[i], pieMenu[i]);
     }
 
     this.loaded = true;
   }
 
-  isHotkeyAvailable(hotkey: string) {
-    for (const pieMenuHotkey of this.pieMenuHotkeys) {
-      if (pieMenuHotkey.includes(hotkey)){ return false; }
-    }
-    return true;
+  async isHotkeyAvailable(ctrl: boolean, shift: boolean, alt: boolean, key: string): Promise<boolean> {
+    return await this.dbService.profilePieMenuData
+      .where('[profileId+key]').equals([this.id ?? -1, key])
+      .and((data) =>
+        data.ctrl === ctrl &&
+        data.alt === alt &&
+        data.shift === shift
+      ).count() === 0;
   }
 
   setName(name: string) {
@@ -89,70 +105,96 @@ export class ProfileService extends Profile {
    * @param pieMenuId
    */
   async makePieMenuUnique(pieMenuId: number) {
-    const pieMenu = this.pieMenus.get(pieMenuId);
-    if (!pieMenu) {
+    const fromPieMenu = this.pieMenus.get(pieMenuId);
+    if (!fromPieMenu) {
       window.log.error('Pie Menu not found, cannot make it unique');
       return;
     }
 
-    if (this.nProfileConnected.get(pieMenu.id ?? 0) ?? 0 > 1) {
-      window.log.info('Duplicating pie menu ' + pieMenu.id + ' (name: ' + pieMenu.name + ')');
+    if ((this.nProfileConnected.get(pieMenuId) ?? 0) > 1) {
+      window.log.info('Duplicating pie menu ' + fromPieMenu.id + ' (name: ' + fromPieMenu.name + ')');
 
-      await this.createAndAddPieMenu(pieMenu, pieMenu.id);
+      const newPieMenu = structuredClone(fromPieMenu);
+      newPieMenu.id = undefined;
+      newPieMenu.id = (await this.dbService.pieMenu.put(newPieMenu)) as number;
+
+      await this.addPieMenu(newPieMenu);
+      this.removePieMenu(fromPieMenu.id ?? -1);
     }
   }
 
   /**
    *
-   * @param fromPieMenu The original pie menu to be copied. If not provided, a new pie menu will be created.
-   * @param replacePieMenuId If provided, the new pie menu will replace the pie menu with this id.
    */
-  async createAndAddPieMenu(fromPieMenu?: IPieMenu, replacePieMenuId?: number) {
-    let newPieMenu: PieMenu;
-    if (fromPieMenu) {
-      newPieMenu = structuredClone(fromPieMenu);
-      newPieMenu.id = undefined;
-    } else {
-      newPieMenu = new PieMenu();
-      const pieItemId = await this.dbService.pieItem.add(new PieItem(''));
-      newPieMenu.pieItemIds = [pieItemId as number];
-    }
+  async createAndAddPieMenu() {
+    const newPieMenu = new PieMenu();
+    const pieItemId = await this.dbService.pieItem.add(new PieItem(''));
+    newPieMenu.pieItemIds = [pieItemId as number];
 
-    const newPieMenuId = await this.dbService.pieMenu.add(newPieMenu);
-    newPieMenu.id = newPieMenuId as number;
-    this.addPieMenu(newPieMenu, replacePieMenuId);
+    await this.dbService.pieMenu.put(newPieMenu);
+    await this.addPieMenu(newPieMenu);
   }
 
-  async addPieMenu(pieMenu: PieMenu, replacePieMenuId?: number) {
+  async addPieMenu(pieMenu: PieMenu) {
     window.log.debug('Adding pie menu ' + pieMenu.id + ' (name: ' + pieMenu.name + ')');
 
-    if (replacePieMenuId) {
-      this.pieMenuIds = this.pieMenuIds.map((id) => id === replacePieMenuId ? pieMenu.id ?? -1 : id);
-    } else {
-      this.pieMenuIds.push(pieMenu.id ?? -1);
-    }
-    this.pieMenus.set(pieMenu.id ?? -1, pieMenu);
+    this.dbService.profilePieMenuData.put(new ProfilePieMenuData(
+      this.id ?? -1,
+pieMenu.id ?? -1,
+      false,
+      false,
+      false,
+      '',
+      ));
 
-    await this.dbService.profile.update(this.id ?? 0, {pieMenuIds: this.pieMenuIds});
+    this.pieMenus.set(pieMenu.id ?? -1, pieMenu);
 
     this.nProfileConnected.set(
       pieMenu.id ?? -1,
-      await this.dbService.profile.where('pieMenuIds').equals(pieMenu.id ?? -1).count());
+      await this.dbService.profilePieMenuData.where('pieMenuId').equals(pieMenu.id ?? -1).count());
   }
 
-  async setPieMenuHotkey(pieMenuId: number, newHotkey: string, replace = false) {
-    if (!this.isHotkeyAvailable(newHotkey)) {
+  async setPieMenuHotkey(
+    pieMenuId: number,
+    ctrl: boolean,
+    shift: boolean,
+    alt: boolean,
+    key: string,
+    replace = false
+  ) {
+    let profilePieMenuData = await this.dbService.profilePieMenuData
+      .where('[profileId+key]').equals([this.id ?? -1, key])
+      .and((data) =>
+        data.ctrl === ctrl &&
+        data.alt === alt &&
+        data.shift === shift
+      ).first();
+
+    if (profilePieMenuData) {
       if (!replace) {
-        window.log.warn('Hotkey ' + newHotkey + ' already in use');
+        window.log.warn('Hotkey already in use');
         return;
       } else {
-        await this.removePieMenuHotkey(newHotkey);
+        this.dbService.profilePieMenuData.delete(profilePieMenuData.id ?? -1);
       }
     }
 
-    this.pieMenuHotkeys = this.pieMenuHotkeys.filter((hotkey) => !hotkey.endsWith(`-${pieMenuId}`));
-    this.pieMenuHotkeys.push(`${newHotkey}-${pieMenuId}`);
-    this.dbService.profile.update(this.id ?? 0, {pieMenuHotkeys: this.pieMenuHotkeys});
+    profilePieMenuData
+      = await this.dbService.profilePieMenuData
+      .where('[profileId+pieMenuId]').equals([this.id ?? -1, pieMenuId])
+      .first();
+
+    if (profilePieMenuData) {
+      profilePieMenuData.ctrl = ctrl;
+      profilePieMenuData.shift = shift;
+      profilePieMenuData.alt = alt;
+      profilePieMenuData.key = key;
+
+      this.dbService.profilePieMenuData.update(profilePieMenuData.id ?? -1, profilePieMenuData);
+    } else {
+      window.log.error('Pie menu not found, cannot add hotkey');
+    }
+
   }
 
   addExe(path: string) {
@@ -166,11 +208,17 @@ export class ProfileService extends Profile {
   }
 
   removePieMenu(pieMenuId: number) {
-    this.pieMenuHotkeys = this.pieMenuHotkeys.filter((hotkey) => !hotkey.endsWith(`-${pieMenuId}`));
-    this.pieMenuIds = this.pieMenuIds.filter((id) => id !== pieMenuId);
-    this.dbService.profile.update(
-      this.id ?? 0,
-      {pieMenuIds: this.pieMenuIds, pieMenuHotkeys: this.pieMenuHotkeys});
+    this.dbService.profilePieMenuData
+      .where('[profileId+pieMenuId]').equals([this.id ?? -1, pieMenuId])
+      .first()
+      .then((profilePieMenuData) => {
+        if (profilePieMenuData) {
+          this.dbService.profilePieMenuData.delete(profilePieMenuData.id ?? 0);
+          this.profilePieMenuData = this.profilePieMenuData.filter((data) => data.id !== profilePieMenuData.id);
+          this.pieMenus.delete(pieMenuId);
+          this.nProfileConnected.delete(pieMenuId);
+        }
+      });
   }
 
   setPieMenuMainColor(pieMenuId: number, color: string) {
@@ -193,13 +241,17 @@ export class ProfileService extends Profile {
     }
   }
 
-  getHotkey(pieMenuId: number) {
+  async getHotkey(pieMenuId: number) {
     window.log.debug('Getting hotkey for pie menu ' + pieMenuId);
-    return this.pieMenuHotkeys.find((pieMenuHotkey) => pieMenuHotkey.endsWith(`-${pieMenuId}`)) ?? '';
-  }
-
-  async removePieMenuHotkey(hotkey: string) {
-    this.pieMenuHotkeys = this.pieMenuHotkeys.filter((pieMenuHotkey) => !pieMenuHotkey.includes(hotkey));
-    await this.dbService.profile.update(this.id ?? 0, {pieMenuHotkeys: this.pieMenuHotkeys});
+    const profilePieMenuData
+      = await this.dbService.profilePieMenuData
+      .where('[profileId+pieMenuId]').equals([this.id ?? -1, pieMenuId])
+      .first();
+    return new KeyboardEvent('keydown', {
+      shiftKey: profilePieMenuData?.shift ?? false,
+      ctrlKey: profilePieMenuData?.ctrl ?? false,
+      altKey: profilePieMenuData?.alt ?? false,
+      key: profilePieMenuData?.key ?? ''
+    });
   }
 }

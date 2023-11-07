@@ -23,15 +23,15 @@ import {
 } from '@nebular/theme';
 import {NbEvaIconsModule} from '@nebular/eva-icons';
 import {NgOptimizedImage} from '@angular/common';
-import {PieMenuUIModule} from './pie-menu-ui/pie-menu-ui.module';
-import {WelcomePageComponent} from './welcome-page/welcome-page.component';
+import {PieMenuManagerModule} from './pie-menu-ui/pie-menu-manager.module';
 import {ToastrModule} from 'ngx-toastr';
+import {DragulaModule} from 'ng2-dragula';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
 
 @NgModule({
-  declarations: [AppComponent, WelcomePageComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -39,8 +39,9 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     CoreModule,
     SharedModule,
     HomeModule,
-    PieMenuUIModule,
+    PieMenuManagerModule,
     AppRoutingModule,
+    DragulaModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

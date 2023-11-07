@@ -35,6 +35,11 @@
 
     "SETTINGS_TOOLTIP": "Click to show/hide profile settings"
   },
+  "EDITOR_PAGE": {
+    "BACK_TO_HOME": "Back to home",
+    "CHANGES_SAVED": "Your changes are in sync with the pie menu!",
+    "SAVING_CHANGES": "Syncing..."
+  },
 
 
 

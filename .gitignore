@@ -106,3 +106,5 @@ Thumbs.db
 /app/src/mouseKeyEvent/MouseKeyEventHelper.js
 /app/src/db/data/Profile.js
 /app/src/binaryInfo/IBinaryInfo.js
+/app/src/hotkeyMap/HotkeyMap.js
+/app/src/db/data/ProfilePieMenuData.js
