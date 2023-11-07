@@ -25,6 +25,7 @@ import {NbEvaIconsModule} from '@nebular/eva-icons';
 import {NgOptimizedImage} from '@angular/common';
 import {PieMenuManagerModule} from './pie-menu-ui/pie-menu-manager.module';
 import {ToastrModule} from 'ngx-toastr';
+import {DragulaModule} from 'ng2-dragula';
 
 // AoT requires an exported function for factories
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -40,6 +41,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader => new Transla
     HomeModule,
     PieMenuManagerModule,
     AppRoutingModule,
+    DragulaModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

@@ -18,6 +18,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {CdkDrag, CdkDropList} from '@angular/cdk/drag-drop';
 import {PieMenuManagerModule} from '../../pie-menu-ui/pie-menu-manager.module';
 import {NgxColorsModule} from 'ngx-colors';
+import {DragulaModule} from 'ng2-dragula';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import {NgxColorsModule} from 'ngx-colors';
     NbTagModule,
     PieMenuManagerModule,
     NgxColorsModule,
-    NbTooltipModule
+    NbTooltipModule,
+    DragulaModule
   ]
 })
 export class PieMenuEditorModule { }
