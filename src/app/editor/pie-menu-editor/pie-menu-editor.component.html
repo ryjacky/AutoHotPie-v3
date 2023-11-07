@@ -1,7 +1,13 @@
 <section class="layout" style="height: 100%">
   <div class="growL preview-panel">
     <div class="preview-panel-title-bar">
-      <button nbButton status="success" (click)="pieMenuService.save()">Save</button>
+      <button
+        nbButton
+        status="success"
+        size="small"
+        (click)="pieMenuService.save()">
+        Save
+      </button>
       <label
         class="preview-panel-title-font">
         {{"PAGES.EDITOR.PREVIEW" | translate}}
@@ -34,7 +40,7 @@
                 </button>
                 <button
                   (click)="moveDown(i)"
-                  *ngIf="i !== pieMenuService.getReadonlyPieItemTaskContexts(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
+                  *ngIf="i !== pieMenuService.getPieItemTaskContexts(this.activePieItemId ?? -1).length - 1" nbButton fullWidth ghost size="tiny"
                   style="margin-bottom: 2px;">
                   <nb-icon icon="arrow-downward-outline"/>
                 </button>
