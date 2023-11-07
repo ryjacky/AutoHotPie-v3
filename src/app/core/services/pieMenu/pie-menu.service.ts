@@ -38,6 +38,7 @@ export class PieMenuService extends PieMenu {
    * @param pieMenuId
    */
   public async forceLoad(pieMenuId: number) {
+    this.state = PieMenuServiceState.unloaded;
     return this.load(pieMenuId);
   }
 
@@ -58,7 +59,10 @@ export class PieMenuService extends PieMenu {
     this.state = PieMenuServiceState.loading;
     const pieMenu = await this.dbService.pieMenu.get(pieMenuId);
 
-    if (!pieMenu) { throw new PieMenuNotFoundError('Pie Menu not found'); }
+    if (!pieMenu) {
+      this.state = PieMenuServiceState.unloaded;
+      throw new PieMenuNotFoundError('Pie Menu not found');
+    }
 
     Object.assign(this, pieMenu);
 
@@ -67,6 +71,7 @@ export class PieMenuService extends PieMenu {
     const pieItems = await this.dbService.pieItem.bulkGet(pieMenu.pieItemIds);
     for (let i = 0; i < pieItems.length; i++) {
       if (pieItems[i] === undefined) {
+        this.state = PieMenuServiceState.unloaded;
         throw new PieItemNotFoundError(`Pie Item of id ${pieMenu.pieItemIds[i]} not found`);
       }
       this.pieItems.set(pieMenu.pieItemIds[i], pieItems[i]);

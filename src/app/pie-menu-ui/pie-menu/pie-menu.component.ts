@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
 import {PieItem} from '../../../../app/src/db/data/PieItem';
 
@@ -6,12 +6,8 @@ import {PieItem} from '../../../../app/src/db/data/PieItem';
   selector: 'app-pie-menu',
   templateUrl: './pie-menu.component.html',
   styleUrls: ['./pie-menu.component.scss'],
-  providers: [PieMenuService]
 })
-export class PieMenuComponent implements OnInit, AfterViewInit {
-
-  @Input() pieMenuId = 1;
-
+export class PieMenuComponent implements AfterViewInit {
   @ViewChild('pieCenter') pieCenter: any;
   @ViewChild('pieCenterSector') pieCenterSector: any;
   @ViewChild('pieMenuContainer') pieMenuContainer: any;
@@ -22,9 +18,7 @@ export class PieMenuComponent implements OnInit, AfterViewInit {
   activeBtnIndex = 0;
   centerRotation = 0;
 
-  constructor(protected pieMenuService: PieMenuService) {}
-
-  ngOnInit() {
+  constructor(protected pieMenuService: PieMenuService) {
     // Reset the pie menu center position when the window is resized
     window.addEventListener('resize', () => {
       this.centerX = window.innerWidth / 2;
@@ -32,8 +26,6 @@ export class PieMenuComponent implements OnInit, AfterViewInit {
 
       window.log.debug(`Pie menu window resized, updating center position`);
     });
-
-    this.pieMenuService.forceLoad(this.pieMenuId);
   }
 
   ngAfterViewInit() {

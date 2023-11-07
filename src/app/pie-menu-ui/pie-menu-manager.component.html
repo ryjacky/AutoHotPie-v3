@@ -1,7 +1,5 @@
 <app-pie-menu
-  *ngFor="let pieMenuId of pieMenuIds"
-  [pieMenuId]="pieMenuId"
-  [hidden]="pieMenuId !== displayPieMenuId"
+  [hidden]="hidePieMenu"
 >
 </app-pie-menu>
 <!--  <app-pie-guiding-line [globalX]="1000" [globalY]="500" [strokeWidth]=1 />-->

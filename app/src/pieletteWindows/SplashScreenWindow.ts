@@ -9,7 +9,7 @@ export class SplashScreenWindow extends BrowserWindow {
       width: 720,
       height: 405,
       transparent: true,
-      alwaysOnTop: true,
+      alwaysOnTop: false,
       frame: false,
       resizable: false,
       webPreferences: {

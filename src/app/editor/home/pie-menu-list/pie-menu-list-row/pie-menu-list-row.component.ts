@@ -53,12 +53,13 @@ export class PieMenuListRowComponent implements OnInit {
   async shortcutInputChanged(newHotkey: KeyboardEvent) {
     window.log.info('Trying to change hotkey of pie menu to ' + newHotkey);
     this.newHotkey = newHotkey;
+    const newKey = newHotkey.key.toUpperCase();
 
     if (!await this.profileService.isHotkeyAvailable(
       newHotkey.ctrlKey,
       newHotkey.shiftKey,
       newHotkey.altKey,
-      newHotkey.key)) {
+      newKey)) {
       this.dialogService.open(this.confirmReplaceDialog);
     } else {
       this.currentHotkey = newHotkey;
@@ -67,7 +68,7 @@ export class PieMenuListRowComponent implements OnInit {
         newHotkey.ctrlKey,
         newHotkey.shiftKey,
         newHotkey.altKey,
-        newHotkey.key);
+        newKey);
     }
   }
 
