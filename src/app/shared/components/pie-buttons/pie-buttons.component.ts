@@ -12,8 +12,8 @@ import {
 import {PieMenuService} from '../../../core/services/pieMenu/pie-menu.service';
 import {IPieItem, PieItem} from '../../../../../app/src/db/data/PieItem';
 
-// TODO: The whole pie button component is needed to be review, it's a mess, better separated it into
-//  app-pie-button and app-pie-button-preview
+// TODO: Pie button should be removed and replace with a pie menu component that is
+//  specifically used by the editor
 
 @Component({
   selector: 'app-pie-buttons',

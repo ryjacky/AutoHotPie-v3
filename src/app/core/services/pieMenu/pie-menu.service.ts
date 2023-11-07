@@ -131,30 +131,6 @@ export class PieMenuService extends PieMenu {
     return this.pieItems.get(id)?.pieTaskContexts ?? [];
   }
 
-  movePieItemUp(i: number) {
-    if (i > 0) {
-      const temp = this.pieItemIds[i - 1];
-      this.pieItemIds[i - 1] = this.pieItemIds[i];
-      this.pieItemIds[i] = temp;
-    }
-
-    // Resetting the reference to force the UI to update
-    this.pieItemIds = [...this.pieItemIds];
-    this.dbService.pieMenu.update(this.id ?? -1, {pieItemIds: this.pieItemIds});
-  }
-
-  movePieItemDown(i: number) {
-    if (i < this.pieItemIds.length - 1) {
-      const temp = this.pieItemIds[i + 1];
-      this.pieItemIds[i + 1] = this.pieItemIds[i];
-      this.pieItemIds[i] = temp;
-    }
-
-    // Resetting the reference to force the UI to update
-    this.pieItemIds = [...this.pieItemIds];
-    this.dbService.pieMenu.update(this.id ?? -1, {pieItemIds: this.pieItemIds});
-  }
-
   public setPieItemActions(id: number, actions: PieSingleTaskContext[]) {
     if (this.pieItems.get(id) === undefined) {
       return;

@@ -16,8 +16,6 @@ import {PieMenuService} from '../core/services/pieMenu/pie-menu.service';
 export class PieMenuManagerComponent implements AfterViewChecked {
   pieMenuId = -1;
 
-  enabledProfileIds: number[] = [];
-
   toClose = false;
   hidePieMenu = true;
 
@@ -28,7 +26,10 @@ export class PieMenuManagerComponent implements AfterViewChecked {
   ) {
     // Subscribe to keydown events and search for a matching pie menu
     window.pieMenu.onKeyDown(async (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => {
-      this.pieMenuId = await this.getMatchingPieMenuId(exePath, ctrl, alt, shift, key) ?? -1;
+      this.pieMenuId =
+        await this.getMatchingPieMenuId(exePath, ctrl, alt, shift, key)
+        ?? await this.getMatchingPieMenuId('', ctrl, alt, shift, key)
+        ?? -1;
       try {
         if (this.pieMenuId !== -1) {
           await pieMenuService.forceLoad(this.pieMenuId);
@@ -74,7 +75,11 @@ export class PieMenuManagerComponent implements AfterViewChecked {
     window.log.debug('Checking pie menu conditions for ' + exePath + ' ' + ctrl + ' ' + alt + ' ' + shift + ' ' + key);
 
     // Get the profile id for the given exe path or use the default profile id
-    let profId = (await this.dbService.profile.where('exes').equals(exePath).first())?.id;
+    let profId = (await this.dbService.profile
+      .where('exes')
+      .equals(exePath)
+      .filter(prof => prof.enabled)
+      .first())?.id;
     profId ??= 1;
 
     window.log.debug('Checking pie menu conditions with profile id ' + profId);
