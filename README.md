@@ -1,7 +1,20 @@
 # Pielette
 
-originally AutoHotPiev3, big thanks to @dumbeau for the AutoHotPie project.
+A cross-platform radial menu. Originally the version 3 of [AutoHotPie](https://github.com/dumbeau/AutoHotPie) but later separated into its own repository. Big thanks to @dumbeau for the AutoHotPie project.
 
-this is a rewrite of AutoHotPie in angular
+## What's difference between Pielette and AutoHotPie?
+I've written this section, so you could choose between Pielette and AutoHotPie. Neither is superior to the other, but their focus is different.
 
-readme to be updated
+|                    | Pielette                            | AutoHotPie               |
+|--------------------|-------------------------------------|--------------------------|
+| Plugin Support     | Yes                                 | No                       |
+| Technology Stack   | Node.js + Electron                  | AutoHotKey V1 + Electron |
+| Platforms          | Windows/Mac(Planned)/Linux(Planned) | Windows                  |
+| Memory Consumption | ~35MB to ~160MB                     | ~1MB to ~150MB           |
+| WindowsInk Support | Not until 2024                      | No                       |
+
+- Pielette will include most features of AutoHotPie, but it will take some time until Pielette's public beta.
+
+## Development status
+Pielette does not have any working releases yet. The first public alpha is expected to be released before 2024.
+
