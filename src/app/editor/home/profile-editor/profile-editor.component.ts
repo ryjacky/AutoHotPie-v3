@@ -28,6 +28,8 @@ export class ProfileEditorComponent {
   }
 
   async addMissingExeClicked() {
+    // TODO: Should use the exe selector dialog instead of allowing user to add custom exe
+    //  because the exe is not going to be detected if it does not appear in the list of exes
     window.log.info('Waiting for user to select exe');
     const path: string = await window.electronAPI.openDialogForResult(
         this.profileService.exes[0], [{

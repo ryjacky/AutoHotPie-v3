@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
-import {AugmentedAddonHeader} from '../../../../../app/src/plugin/AugmentedAddonHeader';
+import {PieSingleTaskContext} from '../../../../../app/src/pieTask/PieSingleTaskContext';
+import { AddonMeta } from '../../../../../app/src/addon/AddonMeta';
 
 @Component({
   selector: 'app-action-card',
@@ -10,14 +10,17 @@ import {AugmentedAddonHeader} from '../../../../../app/src/plugin/AugmentedAddon
 export class ActionCardComponent implements OnInit {
   @Input() pieTaskContext: PieSingleTaskContext = new PieSingleTaskContext('ahp-send-key', {});
 
-  augmentedAddonHeaders: AugmentedAddonHeader[] = [];
-  selectedPluginPropertyIndex = -1;
+  allPieTaskAddonParams: AddonMeta[] = [];
+  selectedPieTaskAddon = -1;
 
   ngOnInit(): void {
-    window.electronAPI.getPieTaskAddonHeaders().then((addonHeaderJSONs: string[]) => {
-      this.augmentedAddonHeaders = addonHeaderJSONs.map((addonHeaderJSON: string) => JSON.parse(addonHeaderJSON) as AugmentedAddonHeader);
+    window.electronAPI.getPieTaskAddons().then((allPieTaskAddonParamsJSON: string) => {
 
-      window.log.info(`List of parameters: ${JSON.stringify(this.augmentedAddonHeaders[0].header.receiveArgs)}`);
+      // pieTaskAddons is of type PieItemTaskAddon[], but we can't import that type here in the frontend.
+      const pieTaskAddons = JSON.parse(allPieTaskAddonParamsJSON) as any[];
+      for (const addon of pieTaskAddons){
+        this.allPieTaskAddonParams.push(new AddonMeta(addon));
+      }
     });
   }
 

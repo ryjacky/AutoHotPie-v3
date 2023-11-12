@@ -3,7 +3,7 @@ import {NbDialogService, NbPopoverDirective} from '@nebular/theme';
 import {Profile} from '../../../../app/src/db/data/Profile';
 import {ProfileService} from '../../core/services/profile/profile.service';
 import {DBService} from '../../core/services/db/db.service';
-import {NewProfileDialogComponent} from './new-profile-dialog/new-profile-dialog.component';
+import {SelectExeDialogComponent} from './new-profile-dialog/select-exe-dialog.component';
 import {IBinaryInfo} from '../../../../app/src/binaryInfo/IBinaryInfo';
 import {ToastrService} from 'ngx-toastr';
 
@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit, OnChanges {
   }
 
   openNewProfileDialog() {
-    this.dialogService.open(NewProfileDialogComponent)
+    this.dialogService.open(SelectExeDialogComponent)
       .onClose
       .subscribe((result?: IBinaryInfo) => {
         if (result !== undefined) {

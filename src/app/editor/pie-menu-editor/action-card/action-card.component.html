@@ -8,9 +8,9 @@
       [(selected)]="pieTaskContext.addonId"
       size="small">
       <nb-option
-        *ngFor="let augmentedAddonHeader of augmentedAddonHeaders; let i = index"
-        (selectionChange)="selectedPluginPropertyIndex = i"
-        [value]="augmentedAddonHeader.id">{{augmentedAddonHeader.header.displayName}}</nb-option>
+        *ngFor="let addonParams of allPieTaskAddonParams; let i = index"
+        (selectionChange)="selectedPieTaskAddon = i"
+        [value]="addonParams.id">{{addonParams.name}}</nb-option>
 
     </nb-select>
   </div>
@@ -61,25 +61,25 @@
   </div>
 
   <div
-    *ngIf="selectedPluginPropertyIndex >= 0"
+    *ngIf="selectedPieTaskAddon >= 0"
     [style.width]="'100%'"
   >
     <div
-      *ngFor="let param of augmentedAddonHeaders[selectedPluginPropertyIndex].header.receiveArgs"
+      *ngFor="let paramName of allPieTaskAddonParams[selectedPieTaskAddon].paramNameList; let i = index"
       class="setting-row"
       style="margin-top: 1em"
     >
-      {{ param.argName }}
+      {{ paramName }}
       <textarea
-        *ngIf="param.fieldType === 'text'"
+        *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'text'"
         nbInput
         fullWidth
         placeholder="{{ 'PAGES.EDITOR.TEXT_PLACEHOLDER' | translate }}"
         style="resize: vertical; margin-left: 1em; max-height: 10em;"
-        [value]="pieTaskContext.args[(param.argName)]"
-        (change)="updateArgs(param.argName, $event)"></textarea>
+        [value]="pieTaskContext.args[(paramName)]"
+        (change)="updateArgs(paramName, $event)"></textarea>
 
-      <nb-form-field *ngIf="param.fieldType === 'number'">
+      <nb-form-field *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'number'">
         <nb-icon nbPrefix icon="repeat-outline" pack="eva"></nb-icon>
         <input
           type="number"
@@ -88,15 +88,17 @@
           nbInput
           fieldSize="small"
           style="padding-right: 0.5em"
-          [value]="pieTaskContext.args[(param.argName)]"
-          (change)="updateArgs(param.argName, $event)"
+          [value]="pieTaskContext.args[paramName]"
+          (change)="updateArgs(paramName, $event)"
         >
       </nb-form-field>
 
-<!--      <app-shortcut-input-->
-<!--        *ngIf="param.fieldType === 'hotkeys'"-->
-<!--        [hotkeyString]="getHotkey(param)"-->
-<!--        (hotkeyChange)="pieTaskContext.args[(param.argName)] = $event"></app-shortcut-input>-->
+<!--      add back hotkey-->
+<!--      TODO: fix app shortcut input -->
+      <app-shortcut-input
+        *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'Hotkey'"
+        (hotkeyChange)="pieTaskContext.args[paramName] = 'lskdjf'">
+      </app-shortcut-input>
     </div>
   </div>
 </div>

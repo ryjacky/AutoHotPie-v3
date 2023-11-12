@@ -32,7 +32,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // TODO: change name
   openDialogForResult: (defaultPath, filter) => ipcRenderer.invoke('openDialogForResult', [defaultPath, filter]),
-  getPieTaskAddonHeaders: () => ipcRenderer.invoke('getPieTaskAddonHeaders'),
+  getPieTaskAddons: () => ipcRenderer.invoke('getPieTaskAddons'),
   getFileIconBase64: (path) => ipcRenderer.invoke('getFileIconBase64', [path]),
   // TODO: add docstring
   setPieTasks: (pieTasksJSON) => ipcRenderer.invoke('setPieTasks', [pieTasksJSON]),

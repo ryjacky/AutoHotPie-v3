@@ -26,8 +26,8 @@
     >
       <button
         nbButton
-        *ngFor="let exe of exes"
-        [style.display]="existsExe(exe) ? 'flex' : 'none'"
+        *ngFor="let exe of openedExes"
+        [style.display]="searchExe(exe) ? 'flex' : 'none'"
         style="margin-bottom: 1em; width: 80%; flex-direction: row; align-items: center; justify-content: flex-start;"
         (click)="this.dialogRef.close(exe)"
       >

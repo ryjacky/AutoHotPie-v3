@@ -29,7 +29,7 @@ interface Window {
   electronAPI: {
     openPieMenuEditor: (pieMenuId: number) => void;
     setPieTasks: (pieTasksJSON: string) => void;
-    getPieTaskAddonHeaders: () => Promise<string[]>;
+    getPieTaskAddons: () => Promise<string>;
     openInBrowser: (url: string) => void;
     openDialogForResult: (defaultPath: string, filter: [{name: string; extensions: string[]}]) => Promise<string>;
     getFileIconBase64: (path: string) => Promise<string>;

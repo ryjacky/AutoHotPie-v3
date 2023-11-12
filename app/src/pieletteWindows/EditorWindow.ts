@@ -1,6 +1,7 @@
 import {BrowserWindow} from "electron";
 import * as path from "path";
 import * as fs from "fs";
+import {PieletteAddonManager} from "../addon/PieletteAddonManager";
 
 export class EditorWindow extends BrowserWindow {
   private readonly prefix = '../../';

@@ -1,9 +1,8 @@
-import {RuntimeArgs} from "pielette-core";
 
 export class PieSingleTaskContext {
   constructor(
     public addonId: string,
-    public args: RuntimeArgs,
+    public args: any,
     public delay: number = 0,
     public repeat: number = 1,
   ) {
