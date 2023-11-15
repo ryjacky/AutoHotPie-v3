@@ -25,7 +25,6 @@ export class HomeService {
     liveQuery(() => this.dbService.profile.toArray())
       .subscribe((profiles) => this._profiles = profiles);
     this.setSelectedProfile(1);
-
   }
 
   get selectedProfilePieMenuIds(): number[] {

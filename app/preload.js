@@ -9,6 +9,7 @@ console.log("preload.js is loaded")
 contextBridge.exposeInMainWorld('system', {
   // ---------------------- Invoke ----------------------
   getOpenWindows: () => ipcRenderer.invoke('system.getOpenWindows'),
+  removeOnKeyDown: (callback) => ipcRenderer.on('system.removeOnKeyDown', (event, exePath, ctrl, alt, shift, key) => {callback(exePath, ctrl, alt, shift, key)}),
 
   // ---------------------- On ----------------------
   onKeyDown: (callback) => ipcRenderer.on('system.onKeyDown', (event, exePath, ctrl, alt, shift, key) => {callback(exePath, ctrl, alt, shift, key)}),

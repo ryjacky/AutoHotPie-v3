@@ -1,4 +1,4 @@
-import {app, dialog, ipcMain, nativeImage} from "electron";
+import {app, dialog, ipcMain, ipcRenderer, nativeImage} from "electron";
 import * as child_process from "child_process";
 import {PieletteSettings} from "../settings/PieletteSettings";
 import * as activeWindow from "active-win";
@@ -36,6 +36,10 @@ export function initIPC() {
       }
     }
     return JSON.stringify(Array.from(binaryInfo.values()));
+  });
+
+  ipcMain.handle('system.removeOnKeyDown',  (event, args) => {
+    ipcRenderer.removeListener('system.onKeyDown', args);
   });
 
 

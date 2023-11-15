@@ -12,6 +12,7 @@ interface Window {
   system: {
     getOpenWindows: () => Promise<string>;
     onKeyDown: (callback: (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => void) => void;
+    removeOnKeyDown: (callback: (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => void) => void;
     onKeyUp: (callback: () => void) => void;
   };
   pieMenu: {

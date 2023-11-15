@@ -1,5 +1,6 @@
 import {ApplicationRef, Component, EventEmitter, Input, Output, TemplateRef} from '@angular/core';
 import {NbDialogService} from '@nebular/theme';
+import {ipcRenderer} from "electron";
 
 export class AdvancedHotkeyValue {
   constructor(
@@ -22,8 +23,6 @@ export class AdvancedHotkeyInputComponent {
   // But we can't import that class here in the frontend due to nodeIntegration: false.
   @Input() hotkey: AdvancedHotkeyValue = {ctrl: false, alt: false, shift: false, key: ''};
   @Output() hotkeyChange = new EventEmitter<{ ctrl: boolean; alt: boolean; shift: boolean; key: string }>();
-
-  dialogOpened = false;
 
   options = [
     {
@@ -228,31 +227,29 @@ export class AdvancedHotkeyInputComponent {
 
   constructor(private appRef: ApplicationRef,
               private dialogService: NbDialogService) {
-    // exePath is "" in EditorWindow
-    window.system.onKeyDown((exePath, ctrl = false, alt = false, shift = false, key) => {
-      if (!this.dialogOpened) {
-        return;
-      }
+  }
+
+  openAdvancedHotkeyInput(dialog: TemplateRef<any>) {
+    const listener = (exePath: string, ctrl = false, alt = false, shift = false, key: string) => {
+      // exePath is "" in EditorWindow
+
       if (ctrl !== this.hotkey.ctrl || alt !== this.hotkey.alt || shift !== this.hotkey.shift || key !== this.hotkey.key) {
         this.hotkey.ctrl = ctrl;
         this.hotkey.alt = alt;
         this.hotkey.shift = shift;
         this.hotkey.key = key;
 
-        appRef.tick();
+        this.appRef.tick();
       }
+    };
 
-    });
-  }
-
-  openAdvancedHotkeyInput(dialog: TemplateRef<any>) {
-    this.dialogOpened = true;
+    window.system.onKeyDown(listener);
     this.dialogService.open(dialog, {
       context: {
         title: 'This is a title passed to the dialog component',
       },
     }).onClose.subscribe(() => {
-      this.dialogOpened = false;
+      window.system.removeOnKeyDown(listener);
       this.hotkeyChange.emit(this.hotkey);
     });
   }
