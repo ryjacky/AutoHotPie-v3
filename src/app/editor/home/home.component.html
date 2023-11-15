@@ -25,6 +25,9 @@
   </div>
 
   <!-- The right panel that is used to edit the profile and its pie menus -->
-  <app-profile-editor #profileEditorComponent/>
+  <app-profile-editor
+    #profileEditorComponent
+    (deleteProfileClicked)="deleteCurrentProfile()"
+  />
 
 </section>

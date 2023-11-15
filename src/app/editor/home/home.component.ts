@@ -40,6 +40,13 @@ export class HomeComponent implements OnInit, OnChanges {
     });
   }
 
+  async loadProfiles() {
+    this.profiles = await this.dbService.profile.toArray();
+    if (this.profiles[0].id) {
+      await this.profileService.load(this.profiles[0].id, true);
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     window.log.debug('HomeComponent: ngOnChanges() called');
   }
@@ -71,5 +78,10 @@ export class HomeComponent implements OnInit, OnChanges {
           });
         }
       });
+  }
+
+  async deleteCurrentProfile() {
+    await this.dbService.profile.delete(this.profileService.id ?? -1);
+    this.loadProfiles();
   }
 }

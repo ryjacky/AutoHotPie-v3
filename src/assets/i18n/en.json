@@ -11,6 +11,10 @@
     "KEYS": ""
   },
   "PROFILE_PAGE": {
+    "DELETE_PROF": "Delete profile",
+    "DELETE_PROF_DESC": "Click to delete this profile",
+    "DELETE_PROF_BUTTON": "Double click to delete profile",
+
     "NEW_PROF_BUTTON_TOOLTIP": "Click to create a new application profile",
 
     "ADD_MISSING_EXE": "Add missing version...",

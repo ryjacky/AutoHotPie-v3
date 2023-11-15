@@ -1,4 +1,4 @@
-import {Component, TemplateRef} from '@angular/core';
+import {Component, EventEmitter, Output, TemplateRef} from '@angular/core';
 import {NbDialogService, NbPosition} from '@nebular/theme';
 import {ProfileService} from '../../../core/services/profile/profile.service';
 import {DBService} from '../../../core/services/db/db.service';
@@ -12,6 +12,8 @@ import {ToastrService} from 'ngx-toastr';
   styleUrls: ['./profile-editor.component.scss']
 })
 export class ProfileEditorComponent {
+  @Output() deleteProfileClicked = new EventEmitter<void>();
+
   profSettingsRevealed = false;
 
   color: any;
