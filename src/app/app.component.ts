@@ -35,7 +35,11 @@ export class AppComponent {
   }
 
   get editingPieMenuId(): number {
-    return Number(new URLSearchParams(this.router.url.substring(this.router.url.indexOf('?'))).get('pieMenuId') ?? '0');
+    if (this.isPieMenuEditor()){
+      const urlSplit = this.router.url.split('/');
+      return Number(urlSplit[urlSplit.length - 1]);
+    }
+    return 0;
   }
 
   async initAppdata() {

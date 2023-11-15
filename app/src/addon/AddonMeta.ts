@@ -1,4 +1,4 @@
-import { PieletteAddon } from "pielette-core";
+import {PieletteAddon} from "pielette-core";
 
 export class AddonMeta {
   readonly id: string = '';
@@ -10,27 +10,24 @@ export class AddonMeta {
   readonly paramTypeList: ReadonlyArray<string> = [];
 
   constructor(public readonly pieletteAddon: PieletteAddon) {
-    this.id = pieletteAddon.id;
+    this.id = pieletteAddon.id ?? '';
     this.name = pieletteAddon.name;
 
     const tempParamNameList: string[] = [];
     const tempParamTypeList: string[] = [];
 
-    for (const paramName of Object.keys(pieletteAddon)) {
-      if (paramName.startsWith('param_')) {
-        const paramObj = pieletteAddon[paramName];
+    for (const name in pieletteAddon.params) {
+      const param = pieletteAddon.params[name];
 
-        // Get the type name of the param object to the typescript type name
-        let typeName: string = typeof paramObj;
-        // If the type is a PieletteObject, use the typeName property
-        typeName = paramObj.typeName ?? typeName;
+      // Get the type name of the param object to the typescript type name
+      let typeName: string = typeof param;
+      // If the type is a PieletteObject, use the typeName property
+      typeName = param.typeName ?? typeName;
 
-        // Remove the 'param_' prefix because this name is also displayed in the UI
-        tempParamNameList.push(paramName);
-        tempParamTypeList.push(typeName);
+      tempParamNameList.push(name);
+      tempParamTypeList.push(typeName);
 
-        this.paramCount++;
-      }
+      this.paramCount++;
     }
 
     this.paramNameList = tempParamNameList;

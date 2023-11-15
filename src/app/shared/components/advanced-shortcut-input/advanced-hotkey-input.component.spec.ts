@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdvancedShortcutInputComponent } from './advanced-shortcut-input.component';
+import { AdvancedHotkeyInputComponent } from './advanced-hotkey-input.component';
 
 describe('AdvancedShortcutInputComponent', () => {
-  let component: AdvancedShortcutInputComponent;
-  let fixture: ComponentFixture<AdvancedShortcutInputComponent>;
+  let component: AdvancedHotkeyInputComponent;
+  let fixture: ComponentFixture<AdvancedHotkeyInputComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdvancedShortcutInputComponent ]
+      declarations: [ AdvancedHotkeyInputComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdvancedShortcutInputComponent);
+    fixture = TestBed.createComponent(AdvancedHotkeyInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

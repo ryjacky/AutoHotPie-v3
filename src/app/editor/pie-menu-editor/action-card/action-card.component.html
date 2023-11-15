@@ -69,14 +69,14 @@
       class="setting-row"
       style="margin-top: 1em"
     >
-      {{ paramName.replace('param_', '') }}
+      {{ paramName }}
       <textarea
         *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'text'"
         nbInput
         fullWidth
         placeholder="{{ 'PAGES.EDITOR.TEXT_PLACEHOLDER' | translate }}"
         style="resize: vertical; margin-left: 1em; max-height: 10em;"
-        [value]="pieTaskContext.args[(paramName)]"
+        [value]="pieTaskContext.params[(paramName)]"
         (change)="updateArgs(paramName, $event)"></textarea>
 
       <nb-form-field *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'number'">
@@ -88,17 +88,16 @@
           nbInput
           fieldSize="small"
           style="padding-right: 0.5em"
-          [value]="pieTaskContext.args[paramName]"
+          [value]="pieTaskContext.params[paramName]"
           (change)="updateArgs(paramName, $event)"
         >
       </nb-form-field>
-
-      <app-advanced-shortcut-input
+      <app-advanced-hotkey-input
         *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'Hotkey'"
-        [hotkey]="pieTaskContext.args[paramName] ?? {shift: false, ctrl: false, alt: false, key: ''}"
-        (hotkeyChange)="pieTaskContext.args[paramName] = $event"
+        [hotkey]="getHotkey(paramName)"
+        (hotkeyChange)="pieTaskContext.params[paramName] = $event"
       >
-      </app-advanced-shortcut-input>
+      </app-advanced-hotkey-input>
     </div>
   </div>
 </div>

@@ -22,7 +22,7 @@ import {RouterLink} from '@angular/router';
 import { EditorTitlebarComponent } from './components/editor-titlebar/editor-titlebar.component';
 import { NumberSliderFieldComponent } from './components/number-slider-field/number-slider-field.component';
 import { NbIconPickerComponent } from './components/nb-icon-picker/nb-icon-picker.component';
-import { AdvancedShortcutInputComponent } from './components/advanced-shortcut-input/advanced-shortcut-input.component';
+import { AdvancedHotkeyInputComponent } from './components/advanced-shortcut-input/advanced-hotkey-input.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +35,7 @@ import { AdvancedShortcutInputComponent } from './components/advanced-shortcut-i
     NumberSliderFieldComponent,
     NumberSliderFieldComponent,
     NbIconPickerComponent,
-    AdvancedShortcutInputComponent,
+    AdvancedHotkeyInputComponent,
   ],
   imports: [
     CommonModule,
@@ -61,7 +61,7 @@ import { AdvancedShortcutInputComponent } from './components/advanced-shortcut-i
         ShortcutInputComponent,
         PieButtonsComponent,
         TitlebarComponent,
-        EditorTitlebarComponent, NumberSliderFieldComponent, NumberSliderFieldComponent, AdvancedShortcutInputComponent]
+        EditorTitlebarComponent, NumberSliderFieldComponent, NumberSliderFieldComponent, AdvancedHotkeyInputComponent]
 })
 export class SharedModule {
 }

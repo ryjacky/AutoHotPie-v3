@@ -7,7 +7,8 @@
   },
   "ADVANCED_SHORTCUT_INPUT": {
     "HOTKEY_SELECTOR": "Hotkey selector",
-    "TYPE_ON_KEYBOARD_HINT": "Recording keyboard strokes..."
+    "TYPE_ON_KEYBOARD_HINT": "Recording keyboard strokes...",
+    "KEYS": ""
   },
   "PROFILE_PAGE": {
     "NEW_PROF_BUTTON_TOOLTIP": "Click to create a new application profile",

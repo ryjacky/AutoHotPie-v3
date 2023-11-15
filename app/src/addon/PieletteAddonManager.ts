@@ -10,7 +10,7 @@ function isPieTaskAddon(object: any): object is PieletteAddon {
 
 export class PieletteAddonManager {
   // TODO: Make this configurable at user end: {npmInstallMode: "noCache"}
-  private static readonly pluginManager = new PluginManager();
+  private static readonly pluginManager = new PluginManager({lockWait: 10000});
 
   private static readonly pieTaskAddons: Map<string, PieItemTaskAddon> = new Map<string, PieItemTaskAddon>();
   private static nextPieTasks: PieSingleTaskContext[] = [];
@@ -59,8 +59,8 @@ export class PieletteAddonManager {
           Log.main.debug(`i: ${i}, repeat: ${context.repeat}, delay: ${context.delay}`);
 
           // Set arguments
-          Object.assign(pieTask, context.args);
-
+          Object.assign(pieTask, context);
+          Log.main.debug(`Executing pie task ${pieTask.name} with arguments: ${JSON.stringify(pieTask)}`);
           pieTask.onExecuted();
           i++;
         }, context.delay);

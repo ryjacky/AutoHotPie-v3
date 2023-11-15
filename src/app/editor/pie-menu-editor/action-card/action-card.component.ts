@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PieSingleTaskContext} from '../../../../../app/src/pieTask/PieSingleTaskContext';
-import { AddonMeta } from '../../../../../app/src/addon/AddonMeta';
+import {AddonMeta} from '../../../../../app/src/addon/AddonMeta';
 
 @Component({
   selector: 'app-action-card',
@@ -22,11 +22,18 @@ export class ActionCardComponent implements OnInit {
         this.allPieTaskAddonParams.push(new AddonMeta(addon));
       }
     });
+
   }
 
   updateArgs(argName: string, event: any) {
     if (event?.target?.value === null) { return; }
-    this.pieTaskContext.args[argName] = event.target.value;
+    this.pieTaskContext.params[argName] = event.target.value;
   }
 
+  getHotkey(paramName: string) {
+    if (this.pieTaskContext.params === undefined) {
+      this.pieTaskContext.params = {};
+    }
+    return this.pieTaskContext.params[paramName] ?? {shift: false, ctrl: false, alt: false, key: ''};
+  }
 }
