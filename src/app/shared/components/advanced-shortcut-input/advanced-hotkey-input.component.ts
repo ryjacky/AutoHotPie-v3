@@ -239,8 +239,6 @@ export class AdvancedHotkeyInputComponent {
         this.hotkey.shift = shift;
         this.hotkey.key = key;
 
-        this.hotkeyChange.emit(this.hotkey);
-
         appRef.tick();
       }
 
@@ -255,6 +253,7 @@ export class AdvancedHotkeyInputComponent {
       },
     }).onClose.subscribe(() => {
       this.dialogOpened = false;
+      this.hotkeyChange.emit(this.hotkey);
     });
   }
 }
