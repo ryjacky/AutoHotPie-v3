@@ -182,11 +182,11 @@
     </nb-card-header>
     <nb-card-body
       style="width: 50vw; display: flex; flex-wrap: wrap; flex-direction: row; align-content: flex-start; justify-content: flex-start; align-items: flex-start;">
-      <div [style.display]="data.length === 0 ? 'unset' : 'none'">
+      <div *ngIf="data.length === 0">
         {{ "PROFILE_PAGE.NO_EXISTING_PIE_MENUS" | translate }}
       </div>
       <button
-        *ngFor="let pieMenu of data | async"
+        *ngFor="let pieMenu of data"
         nbButton
         size="small"
         ghost

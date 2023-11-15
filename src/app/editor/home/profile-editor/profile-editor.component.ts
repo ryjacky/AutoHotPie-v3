@@ -27,9 +27,10 @@ export class ProfileEditorComponent {
     public profileService: ProfileService) {
   }
 
-  openPieMenuSelector(pieMenuSelectorDialog: TemplateRef<any>) {
+  async openPieMenuSelector(pieMenuSelectorDialog: TemplateRef<any>) {
+    const availablePieMenuIds = await this.dbService.pieMenu.where('id').noneOf(this.profileService.pieMenuIds).toArray();
     this.dialogService.open(pieMenuSelectorDialog, {
-      context: this.dbService.pieMenu.where('id').noneOf(this.profileService.pieMenuIds).toArray(),
+      context: availablePieMenuIds,
     });
   }
 
