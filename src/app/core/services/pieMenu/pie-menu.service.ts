@@ -119,7 +119,7 @@ export class PieMenuService extends PieMenu {
     this.state = PieMenuServiceState.loaded;
   }
 
-  public getPieTaskContext(pieItemId: number): PieSingleTaskContext[] | undefined {
+  public getPieTaskContexts(pieItemId: number): PieSingleTaskContext[] | undefined {
     return this.pieItems.get(pieItemId)?.pieTaskContexts;
   }
 

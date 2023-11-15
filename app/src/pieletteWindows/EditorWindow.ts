@@ -2,6 +2,9 @@ import {BrowserWindow} from "electron";
 import * as path from "path";
 import * as fs from "fs";
 import {PieletteAddonManager} from "../addon/PieletteAddonManager";
+import {globalHotkeyService} from "../../main";
+import {IGlobalKeyDownMap, IGlobalKeyEvent} from "node-global-key-listener";
+import * as activeWindow from "active-win";
 
 export class EditorWindow extends BrowserWindow {
   private readonly prefix = '../../';
@@ -29,6 +32,23 @@ export class EditorWindow extends BrowserWindow {
         preload: path.join(__dirname, '../../preload.js'),
         contextIsolation: true,  // false if you want to run e2e test with Spectron
       },
+    });
+
+    globalHotkeyService.addListener((e: IGlobalKeyEvent, down: IGlobalKeyDownMap) => {
+      switch (e.state) {
+        case "DOWN":
+          this.webContents.send(
+            'system.onKeyDown',
+            "",
+            down["LEFT CTRL"] || down["RIGHT CTRL"],
+            down["LEFT ALT"] || down["RIGHT ALT"],
+            down["LEFT SHIFT"] || down["RIGHT SHIFT"],
+            e.rawKey.name);
+          break;
+        case "UP":
+          this.webContents.send('system.onKeyUp')
+          break;
+      }
     });
 
     this.loadEditorURL();

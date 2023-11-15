@@ -30,7 +30,7 @@ export class PieMenuManagerComponent implements AfterViewChecked {
     private pieMenuService: PieMenuService
   ) {
     // Subscribe to keydown events and search for a matching pie menu
-    window.pieMenu.onKeyDown(async (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => {
+    window.system.onKeyDown(async (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => {
       if (this.currentHotkey.key === key
         && this.currentHotkey.ctrl === ctrl
         && this.currentHotkey.alt === alt
@@ -62,7 +62,7 @@ export class PieMenuManagerComponent implements AfterViewChecked {
       }
     });
 
-    window.pieMenu.onKeyUp(() => {
+    window.system.onKeyUp(() => {
       // Always reset the current hotkey when the key is released
       this.currentHotkey = {shift: false, ctrl: false, alt: false, key: 'a'};
 

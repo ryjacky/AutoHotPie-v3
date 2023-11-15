@@ -1,17 +1,20 @@
 import { PieletteAddon } from "pielette-core";
 
 export class AddonMeta {
-  id: string = '';
-  name: string = '';
+  readonly id: string = '';
+  readonly name: string = '';
 
-  paramCount: number = 0;
+  readonly paramCount: number = 0;
 
-  paramNameList: string[] = [];
-  paramTypeList: string[] = [];
+  readonly paramNameList: ReadonlyArray<string> = [];
+  readonly paramTypeList: ReadonlyArray<string> = [];
 
   constructor(public readonly pieletteAddon: PieletteAddon) {
     this.id = pieletteAddon.id;
     this.name = pieletteAddon.name;
+
+    const tempParamNameList: string[] = [];
+    const tempParamTypeList: string[] = [];
 
     for (const paramName of Object.keys(pieletteAddon)) {
       if (paramName.startsWith('param_')) {
@@ -23,11 +26,15 @@ export class AddonMeta {
         typeName = paramObj.typeName ?? typeName;
 
         // Remove the 'param_' prefix because this name is also displayed in the UI
-        this.paramNameList.push(paramName.replace('param_', ''));
-        this.paramTypeList.push(typeName);
+        tempParamNameList.push(paramName);
+        tempParamTypeList.push(typeName);
+
         this.paramCount++;
       }
     }
+
+    this.paramNameList = tempParamNameList;
+    this.paramTypeList = tempParamTypeList;
   }
 
   getParamName(index: number): any {

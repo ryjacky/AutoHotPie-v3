@@ -41,15 +41,15 @@ export class PieMenuWindow extends BrowserWindow {
         case "DOWN":
           if (!this.hidden) { break; }
           this.webContents.send(
-            'pieMenu.onKeyDown',
+            'system.onKeyDown',
             activeWindow.sync()?.owner.path ?? "",
             down["LEFT CTRL"] || down["RIGHT CTRL"],
             down["LEFT ALT"] || down["RIGHT ALT"],
             down["LEFT SHIFT"] || down["RIGHT SHIFT"],
-            e.name);
+            e.rawKey.name);
           break;
         case "UP":
-          this.webContents.send('pieMenu.onKeyUp')
+          this.webContents.send('system.onKeyUp')
           break;
       }
     });

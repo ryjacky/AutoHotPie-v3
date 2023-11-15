@@ -11,10 +11,10 @@ interface Window {
   require: any;
   system: {
     getOpenWindows: () => Promise<string>;
-  };
-  pieMenu: {
     onKeyDown: (callback: (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => void) => void;
     onKeyUp: (callback: () => void) => void;
+  };
+  pieMenu: {
     ready: () => void;
     execute: (pieTask: string) => void;
   };

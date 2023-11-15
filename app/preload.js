@@ -2,6 +2,7 @@ const {contextBridge, ipcRenderer} = require('electron')
 
 console.log("preload.js is loaded")
 
+
 // !!! IMPORTANT !!!
 // Also declare the API you want to expose in typings.d.ts
 
@@ -10,7 +11,8 @@ contextBridge.exposeInMainWorld('system', {
   getOpenWindows: () => ipcRenderer.invoke('system.getOpenWindows'),
 
   // ---------------------- On ----------------------
-
+  onKeyDown: (callback) => ipcRenderer.on('system.onKeyDown', (event, exePath, ctrl, alt, shift, key) => {callback(exePath, ctrl, alt, shift, key)}),
+  onKeyUp: (callback) => ipcRenderer.on('system.onKeyUp', () => {callback()}),
 });
 
 contextBridge.exposeInMainWorld('pieMenu', {
@@ -19,8 +21,6 @@ contextBridge.exposeInMainWorld('pieMenu', {
   execute: (pieTask) => ipcRenderer.invoke('pieMenu.execute', pieTask),
 
   // ---------------------- On ----------------------
-  onKeyDown: (callback) => ipcRenderer.on('pieMenu.onKeyDown', (event, exePath, ctrl, alt, shift, key) => {callback(exePath, ctrl, alt, shift, key)}),
-  onKeyUp: (callback) => ipcRenderer.on('pieMenu.onKeyUp', () => {callback()}),
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {

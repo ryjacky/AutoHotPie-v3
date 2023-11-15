@@ -1,0 +1,55 @@
+<input
+  nbInput
+  placeholder="{{ hotkey.ctrl ? 'Ctrl+' : '' }}{{ hotkey.shift ? 'Shift+' : '' }}{{ hotkey.alt ? 'Alt+' : '' }}{{ hotkey.key }}"
+  (click)="openAdvancedHotkeyInput(dialog)"
+  style="background: transparent; padding: 0.4em 0.6em; width: 100%; font-weight: normal; color: var(--accordion-header-disabled-text-color);"/>
+
+<ng-template #dialog let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header>{{ 'ADVANCED_SHORTCUT_INPUT.HOTKEY_SELECTOR' | translate }}: {{ hotkey.ctrl ? 'Ctrl+' : '' }}{{ hotkey.shift ? 'Shift+' : '' }}{{ hotkey.alt ? 'Alt+' : '' }}{{ hotkey.key }}</nb-card-header>
+    <nb-card-body style="width: 50vw">
+      <div style="font-size: large;
+              padding: 1em;
+              text-align: center;
+              color: slategray;
+              font-weight: bold;
+              border: dashed 2px;
+              border-radius: 0.5em;">
+        <div class="fade-animation">
+          {{ 'ADVANCED_SHORTCUT_INPUT.TYPE_ON_KEYBOARD_HINT' | translate }}
+        </div>
+      </div>
+      <div *ngIf="!simpleView">
+        <div style="margin-top: 1em">Modifier keys:</div>
+        <div>
+          <nb-checkbox [(checked)]="hotkey.ctrl" style="margin-right: 3vw;" status="Ctrl">Ctrl</nb-checkbox>
+          <nb-checkbox [(checked)]="hotkey.alt" style="margin-right: 3vw;" status="Alt">Alt</nb-checkbox>
+          <nb-checkbox [(checked)]="hotkey.shift" style="margin-right: 3vw;" status="Shift">Shift</nb-checkbox>
+        </div>
+
+        <div style="margin-top: 1em">Keys:</div>
+        <nb-radio-group
+          style="
+          height: 30vh;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-content: space-between;
+          justify-items: start;
+          align-items: center;
+          justify-content: flex-start;"
+          [(ngModel)]="hotkey.key"
+        >
+          <nb-radio
+            *ngFor="let option of options"
+            [value]="option.value">
+            {{ option.label }}
+          </nb-radio>
+        </nb-radio-group>
+      </div>
+    </nb-card-body>
+    <nb-card-footer>
+      <button nbButton (click)="ref.close()">Close Dialog</button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>

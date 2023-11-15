@@ -69,7 +69,7 @@
       class="setting-row"
       style="margin-top: 1em"
     >
-      {{ paramName }}
+      {{ paramName.replace('param_', '') }}
       <textarea
         *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'text'"
         nbInput
@@ -93,12 +93,12 @@
         >
       </nb-form-field>
 
-<!--      add back hotkey-->
-<!--      TODO: fix app shortcut input -->
-      <app-shortcut-input
+      <app-advanced-shortcut-input
         *ngIf="allPieTaskAddonParams[selectedPieTaskAddon].getParamType(i) === 'Hotkey'"
-        (hotkeyChange)="pieTaskContext.args[paramName] = 'lskdjf'">
-      </app-shortcut-input>
+        [hotkey]="pieTaskContext.args[paramName] ?? {shift: false, ctrl: false, alt: false, key: ''}"
+        (hotkeyChange)="pieTaskContext.args[paramName] = $event"
+      >
+      </app-advanced-shortcut-input>
     </div>
   </div>
 </div>

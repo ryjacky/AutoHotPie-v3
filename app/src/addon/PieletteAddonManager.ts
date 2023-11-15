@@ -33,6 +33,7 @@ export class PieletteAddonManager {
       const context = this.nextPieTasks.shift();
       if (!context){ break; }
 
+      Log.main.debug(`Running pie tasks, task queue length: ${this.nextPieTasks.length}`);
       await this.runPieTasks(context);
     }
     this.inExecution = false;
@@ -40,7 +41,6 @@ export class PieletteAddonManager {
 
   static async runPieTasks(context: PieSingleTaskContext) {
     return await new Promise<boolean>(resolve => {
-      // So somehow if you put a breakpoint here, the get result is empty, but it actually contains the object.
       const pieTask = PieletteAddonManager.pieTaskAddons.get(context.addonId);
       if (pieTask) {
         let i = 0;
@@ -57,6 +57,9 @@ export class PieletteAddonManager {
           }
 
           Log.main.debug(`i: ${i}, repeat: ${context.repeat}, delay: ${context.delay}`);
+
+          // Set arguments
+          Object.assign(pieTask, context.args);
 
           pieTask.onExecuted();
           i++;
@@ -80,6 +83,7 @@ export class PieletteAddonManager {
         const main = new plugin.Main();
         if (isPieTaskAddon(main)){
           const pieTaskAddon = main as PieItemTaskAddon;
+          pieTaskAddon.id = pluginId;
           this.pieTaskAddons.set(pluginId, pieTaskAddon);
         }
 

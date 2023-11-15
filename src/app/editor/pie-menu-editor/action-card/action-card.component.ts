@@ -29,7 +29,4 @@ export class ActionCardComponent implements OnInit {
     this.pieTaskContext.args[argName] = event.target.value;
   }
 
-  getHotkey(param: any) {
-    return this.pieTaskContext.args[param.argName] as string;
-  }
 }
