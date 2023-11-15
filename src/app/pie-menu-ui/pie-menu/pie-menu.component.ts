@@ -1,6 +1,7 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
 import {PieItem} from '../../../../app/src/db/data/PieItem';
+import {PieSingleTaskContext} from '../../../../app/src/pieTask/PieSingleTaskContext';
 
 @Component({
   selector: 'app-pie-menu',
@@ -8,71 +9,54 @@ import {PieItem} from '../../../../app/src/db/data/PieItem';
   styleUrls: ['./pie-menu.component.scss'],
 })
 export class PieMenuComponent implements AfterViewInit {
+  @Output() pieTaskContextsChange = new EventEmitter<PieSingleTaskContext[]>();
+
   @ViewChild('pieCenter') pieCenter: any;
   @ViewChild('pieCenterSector') pieCenterSector: any;
   @ViewChild('pieMenuContainer') pieMenuContainer: any;
 
-  centerX = window.innerWidth / 2;
-  centerY = window.innerHeight  / 2;
-
   activeBtnIndex = 0;
-  centerRotation = 0;
+  pieSectorRotation = 0;
 
-  constructor(protected pieMenuService: PieMenuService) {
-    // Reset the pie menu center position when the window is resized
-    window.addEventListener('resize', () => {
-      this.centerX = window.innerWidth / 2;
-      this.centerY = window.innerHeight  / 2;
-
-      window.log.debug(`Pie menu window resized, updating center position`);
-    });
-  }
+  constructor(protected pieMenuService: PieMenuService) {}
 
   ngAfterViewInit() {
     // Draw the center sector, canvas is only available after view init
     this.draw();
   }
 
-  onButtonClicked() {
-    this.setPieTasks();
-  }
-
   setPieTasks() {
-    window.log.debug(`Request to run pie tasks`);
-    // window.electronAPI.setPieTasks(JSON.stringify(this.pieItemArray[this.activeBtnIndex]?.pieTaskContexts ?? []));
+    this.pieTaskContextsChange.emit(Array.from(this.pieMenuService.pieItems.values())[this.activeBtnIndex].pieTaskContexts);
   }
 
   onPointerMove(event: PointerEvent) {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight  / 2;
     // Check if the pointer is outside the escape radius, if so, close the pie menu
     if (
       this.pieMenuService.escapeRadius !== 0 &&
       Math.sqrt(
-        Math.pow(event.clientY - this.centerY, 2) + Math.pow(event.clientX - this.centerX, 2)
+        Math.pow(event.clientY - centerY, 2) + Math.pow(event.clientX - centerX, 2)
       ) > this.pieMenuService.escapeRadius
     ) {
       this.onPointerLeave();
     }
 
     // Note: You NEED basic trigonometry and knowledge of math notations for the following code to make sense
-    this.centerRotation = Math.atan2(event.clientY - this.centerY, event.clientX - this.centerX);
+    this.pieSectorRotation = Math.atan2(event.clientY - centerY, event.clientX - centerX);
 
     this.activeBtnIndex =
       ((Math.floor((
-            // Set 0 degree to the top and offset by half of a sector
-            ((Math.PI / 2 + this.centerRotation) + Math.PI / this.pieMenuService.pieItemIds.length)
+            // Set 0 degree to the top and offset by a half of the pie sector
+            ((Math.PI / 2 + this.pieSectorRotation) + Math.PI / this.pieMenuService.pieItemIds.length)
             // Normalize to [-a, b], abs(a) + b = 1
             / (2 * Math.PI))
           // Scale to [-c, d], abs(c) + d = pieItems.length
           * this.pieMenuService.pieItemIds.length)
 
-        // ---------------------------------------------------------------------------
-        // Technically speaking, assume 0 degree is at 3 o'clock,
-        // -a and -c represents a rotation of PI radians (180 degrees) clockwise
-        // b and d represents a rotation of (1.5PI - PI/pieItems.length) radians clockwise
-        // ---------------------------------------------------------------------------
-
       ) + this.pieMenuService.pieItemIds.length) % this.pieMenuService.pieItemIds.length;     // Map to [0, pieItems.length)
 
+    this.setPieTasks();
     this.draw();
   }
 
@@ -126,7 +110,7 @@ export class PieMenuComponent implements AfterViewInit {
     return pieItem?.iconBase64 !== undefined && pieItem?.iconBase64 !== '';
   }
 
-  getComputedSelfRotation(index: number) {
+  getPieItemRotationBias(index: number) {
     if (index === 0) {
       return 90 + 'deg';
     } else if (index === this.pieMenuService.pieItemIds.length / 2) {

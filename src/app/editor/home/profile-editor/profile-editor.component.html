@@ -62,6 +62,35 @@
         [checked]="profileService.enabled"
         (checkedChange)="profileService.toggle()">
       </nb-toggle>
+
+    </div>
+    <div
+      *ngIf="profileService.id !== 1;"
+
+      style="
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+        justify-content: space-between;
+        align-items: center;
+      "
+    >
+      <div>
+        <p style="font-size: large;margin: 0.5em 0;">
+          {{ "PROFILE_PAGE.DELETE_PROF" | translate}}
+        </p>
+        <p>
+          {{ "PROFILE_PAGE.DELETE_PROF_DESC" | translate}}
+        </p>
+      </div>
+      <button
+        nbButton
+        status="danger"
+        (dblclick)="deleteProfileClicked.emit()"
+      >
+        {{ "PROFILE_PAGE.DELETE_PROF_BUTTON" | translate}}
+      </button>
+
     </div>
 
     <!--  The profile setting section that shows all binaries added to the current profile  -->
@@ -157,7 +186,7 @@
         {{ "PROFILE_PAGE.NO_EXISTING_PIE_MENUS" | translate }}
       </div>
       <button
-        *ngFor="let pieMenu of data | async"
+        *ngFor="let pieMenu of data"
         nbButton
         size="small"
         ghost

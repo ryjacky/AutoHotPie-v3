@@ -4,24 +4,24 @@ import {IBinaryInfo} from '../../../../../app/src/binaryInfo/IBinaryInfo';
 
 @Component({
   selector: 'app-new-profile-dialog',
-  templateUrl: './new-profile-dialog.component.html',
-  styleUrls: ['./new-profile-dialog.component.scss']
+  templateUrl: './select-exe-dialog.component.html',
+  styleUrls: ['./select-exe-dialog.component.scss']
 })
-export class NewProfileDialogComponent {
-  exes: IBinaryInfo[] = [];
+export class SelectExeDialogComponent {
+  openedExes: IBinaryInfo[] = [];
   searchWord = '';
 
   constructor(
-    protected dialogRef: NbDialogRef<NewProfileDialogComponent>,
+    protected dialogRef: NbDialogRef<SelectExeDialogComponent>,
   ) {
     window.system.getOpenWindows().then((resultJSON) => {
       window.log.debug('resultJSON: ' + resultJSON);
 
-      this.exes = JSON.parse(resultJSON);
+      this.openedExes = JSON.parse(resultJSON);
     });
   }
 
-  existsExe(exe: IBinaryInfo) {
+  searchExe(exe: IBinaryInfo) {
     return (
       exe.path.toUpperCase().includes(this.searchWord.toUpperCase())
       || exe.name.toUpperCase().includes(this.searchWord.toUpperCase()));

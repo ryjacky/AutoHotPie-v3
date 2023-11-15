@@ -1,22 +1,30 @@
 import {PluginManager} from "live-plugin-manager";
 import {PieletteSettings} from "../settings/PieletteSettings";
-import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
-import {IAddonHeader, Log, PieTaskAddon} from "pielette-core";
-import {AugmentedAddonHeader} from "./AugmentedAddonHeader";
+import {PieSingleTaskContext} from "../pieTask/PieSingleTaskContext";
+import {Log, PieItemTaskAddon, PieletteAddon} from "pielette-core";
 import {clearInterval} from "timers";
+
+function isPieTaskAddon(object: any): object is PieletteAddon {
+  return 'onExecuted' in object && 'name' in object;
+}
 
 export class PieletteAddonManager {
   // TODO: Make this configurable at user end: {npmInstallMode: "noCache"}
-  private static readonly pluginManager = new PluginManager();
+  private static readonly pluginManager = new PluginManager({
+    lockWait: 10000,
+    npmInstallMode: "useCache"
+  });
 
-  private static readonly pieTasks: Map<string, PieTaskAddon> = new Map<string, PieTaskAddon>();
-  private static readonly header: Map<string, IAddonHeader> = new Map<string, IAddonHeader>();
-
+  private static readonly pieTaskAddons: Map<string, PieItemTaskAddon> = new Map<string, PieItemTaskAddon>();
   private static nextPieTasks: PieSingleTaskContext[] = [];
 
   private static inExecution: boolean = false;
 
   static get isExecuting(): boolean { return this.inExecution; }
+
+  static get pieTaskAddonList(): PieletteAddon[] {
+    return Array.from(this.pieTaskAddons.values());
+  }
 
   static setPieTasks(contexts: PieSingleTaskContext[]){
     this.nextPieTasks = contexts;
@@ -28,6 +36,7 @@ export class PieletteAddonManager {
       const context = this.nextPieTasks.shift();
       if (!context){ break; }
 
+      Log.main.debug(`Running pie tasks, task queue length: ${this.nextPieTasks.length}`);
       await this.runPieTasks(context);
     }
     this.inExecution = false;
@@ -35,8 +44,7 @@ export class PieletteAddonManager {
 
   static async runPieTasks(context: PieSingleTaskContext) {
     return await new Promise<boolean>(resolve => {
-      // So somehow if you put a breakpoint here, the get result is empty, but it actually contains the object.
-      const pieTask = PieletteAddonManager.pieTasks.get(context.addonId);
+      const pieTask = PieletteAddonManager.pieTaskAddons.get(context.addonId);
       if (pieTask) {
         let i = 0;
 
@@ -53,21 +61,17 @@ export class PieletteAddonManager {
 
           Log.main.debug(`i: ${i}, repeat: ${context.repeat}, delay: ${context.delay}`);
 
-          pieTask.onExecuted(context.args);
+          // Set arguments
+          Object.assign(pieTask, context);
+          Log.main.debug(`Executing pie task ${pieTask.name} with arguments: ${JSON.stringify(pieTask)}`);
+          pieTask.onExecuted();
           i++;
         }, context.delay);
       }
     });
   }
 
-  static get headerObject(): AugmentedAddonHeader[] {
-    return Array.from(this.header.entries()).map(
-      ([key, value]) => {
-        return {id: key, header: value}
-      });
-  }
-
-  static async loadPlugins(): Promise<void> {
+  static async loadAddons(): Promise<void> {
     const pluginIds = PieletteSettings.get('plugins');
     Log.main.info("Loading plugins: " + pluginIds.join(', '));
 
@@ -79,17 +83,15 @@ export class PieletteAddonManager {
         await this.pluginManager.installFromNpm(pluginId)
         const plugin = this.pluginManager.require(pluginId);
 
-        const header = (new plugin.Header()) as IAddonHeader;
-        this.header.set(pluginId, header);
-
         const main = new plugin.Main();
-        if (main instanceof PieTaskAddon){
-          const pieTaskAddon = main as PieTaskAddon;
-          this.pieTasks.set(pluginId, pieTaskAddon);
+        if (isPieTaskAddon(main)){
+          const pieTaskAddon = main as PieItemTaskAddon;
+          pieTaskAddon.id = pluginId;
+          this.pieTaskAddons.set(pluginId, pieTaskAddon);
         }
 
       } catch (e) {
-        Log.main.error("Error loading plugin: " + pluginId)
+        Log.main.error("Error loading addon: " + pluginId)
         console.log(e)
         failedIds.push(pluginId);
       }

@@ -11,10 +11,10 @@ interface Window {
   require: any;
   system: {
     getOpenWindows: () => Promise<string>;
-  };
-  pieMenu: {
     onKeyDown: (callback: (exePath: string, ctrl: boolean, alt: boolean, shift: boolean, key: string) => void) => void;
     onKeyUp: (callback: () => void) => void;
+  };
+  pieMenu: {
     ready: () => void;
     execute: (pieTask: string) => void;
   };
@@ -29,7 +29,7 @@ interface Window {
   electronAPI: {
     openPieMenuEditor: (pieMenuId: number) => void;
     setPieTasks: (pieTasksJSON: string) => void;
-    getPieTaskAddonHeaders: () => Promise<string[]>;
+    getPieTaskAddons: () => Promise<string>;
     openInBrowser: (url: string) => void;
     openDialogForResult: (defaultPath: string, filter: [{name: string; extensions: string[]}]) => Promise<string>;
     getFileIconBase64: (path: string) => Promise<string>;

@@ -8,12 +8,13 @@ import {WebviewDirective} from './directives/';
 import {FormsModule} from '@angular/forms';
 import {ShortcutInputComponent} from './components/shortcut-input/shortcut-input.component';
 import {
+  NbAccordionModule, NbButtonGroupModule,
   NbButtonModule,
-  NbCardModule,
+  NbCardModule, NbCheckboxModule,
   NbFormFieldModule,
   NbIconModule,
   NbInputModule,
-  NbPopoverModule, NbTooltipModule
+  NbPopoverModule, NbRadioModule, NbTooltipModule
 } from '@nebular/theme';
 import {PieButtonsComponent} from './components/pie-buttons/pie-buttons.component';
 import {TitlebarComponent} from './components/titlebar/titlebar.component';
@@ -21,6 +22,7 @@ import {RouterLink} from '@angular/router';
 import { EditorTitlebarComponent } from './components/editor-titlebar/editor-titlebar.component';
 import { NumberSliderFieldComponent } from './components/number-slider-field/number-slider-field.component';
 import { NbIconPickerComponent } from './components/nb-icon-picker/nb-icon-picker.component';
+import { AdvancedHotkeyInputComponent } from './components/advanced-shortcut-input/advanced-hotkey-input.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { NbIconPickerComponent } from './components/nb-icon-picker/nb-icon-picke
     NumberSliderFieldComponent,
     NumberSliderFieldComponent,
     NbIconPickerComponent,
+    AdvancedHotkeyInputComponent,
   ],
   imports: [
     CommonModule,
@@ -46,15 +49,19 @@ import { NbIconPickerComponent } from './components/nb-icon-picker/nb-icon-picke
     NgOptimizedImage,
     NbFormFieldModule,
     NbCardModule,
-    NbTooltipModule
+    NbTooltipModule,
+    NbAccordionModule,
+    NbButtonGroupModule,
+    NbCheckboxModule,
+    NbRadioModule
   ],
-  exports: [TranslateModule,
-    WebviewDirective,
-    FormsModule,
-    ShortcutInputComponent,
-    PieButtonsComponent,
-    TitlebarComponent,
-    EditorTitlebarComponent, NumberSliderFieldComponent, NumberSliderFieldComponent]
+    exports: [TranslateModule,
+        WebviewDirective,
+        FormsModule,
+        ShortcutInputComponent,
+        PieButtonsComponent,
+        TitlebarComponent,
+        EditorTitlebarComponent, NumberSliderFieldComponent, NumberSliderFieldComponent, AdvancedHotkeyInputComponent]
 })
 export class SharedModule {
 }

@@ -9,17 +9,10 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 export class SettingsComponent implements OnInit {
   @ViewChild('settingList') settingList: any;
 
-  runOnAppQuit = false;
   runOnStartup = false;
   pieMenuCancelKey = new KeyboardEvent('keydown');
 
   ngOnInit() {
-    window.electronAPI.getSetting('runOnAppQuit').then((value) => {
-      this.runOnAppQuit = value;
-
-      window.log.info('Retrieved runOnAppQuit from settings: ' + this.runOnAppQuit);
-    });
-
     window.electronAPI.getSetting('runOnStartup').then((value) => {
       this.runOnStartup = value;
 

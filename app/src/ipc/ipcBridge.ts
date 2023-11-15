@@ -3,8 +3,8 @@ import * as child_process from "child_process";
 import {PieletteSettings} from "../settings/PieletteSettings";
 import * as activeWindow from "active-win";
 import {Log} from "pielette-core";
-import {PieletteAddonManager} from "../plugin/PieletteAddonManager";
-import {PieSingleTaskContext} from "../actions/PieSingleTaskContext";
+import {PieletteAddonManager} from "../addon/PieletteAddonManager";
+import {PieSingleTaskContext} from "../pieTask/PieSingleTaskContext";
 import {pieMenuWindow} from "../../main";
 import {PieEditorWindow} from "../pieletteWindows/PieEditorWindow";
 import {PieletteEnv} from "pielette-core/lib/PieletteEnv";
@@ -60,7 +60,9 @@ export function initIPC() {
 
 
   ipcMain.handle('pieMenu.execute', (event, args) => {
-    Log.main.debug("Executing pie menu " + args[0] + "");
+    Log.main.debug("Executing pie menu " + args + "");
+    PieletteAddonManager.setPieTasks(JSON.parse(args) as PieSingleTaskContext[]);
+    PieletteAddonManager.runAllPieTasks();
     pieMenuWindow?.hide();
   });
 
@@ -114,14 +116,8 @@ export function initIPC() {
       properties: ['openFile']
     })
   });
-  ipcMain.handle('getPieTaskAddonHeaders', () => {
-
-    const pieTaskAddonHeaderJSONArr: string[] = [];
-    for (const pieTaskAddonHeader of PieletteAddonManager.headerObject) {
-      pieTaskAddonHeaderJSONArr.push(JSON.stringify(pieTaskAddonHeader));
-    }
-
-    return pieTaskAddonHeaderJSONArr;
+  ipcMain.handle('getPieTaskAddons', () => {
+    return JSON.stringify(PieletteAddonManager.pieTaskAddonList);
   });
 }
 

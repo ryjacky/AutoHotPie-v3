@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {PieSingleTaskContext} from '../../../../app/src/actions/PieSingleTaskContext';
+import {PieSingleTaskContext} from '../../../../app/src/pieTask/PieSingleTaskContext';
 import {ToastrService} from 'ngx-toastr';
 import {PieMenuService} from '../../core/services/pieMenu/pie-menu.service';
 import {NbDialogService} from '@nebular/theme';
@@ -26,8 +26,6 @@ export class PieMenuEditorComponent implements OnInit {
     public pieMenuService: PieMenuService) {
     this.pieMenuId = Number(route.snapshot.paramMap.get('pieMenuId'));
 
-    window.log.debug('Pie Menu Editor is opening pie menu of id: ' + this.pieMenuId);
-
   }
 
   ngOnInit() {
@@ -43,10 +41,12 @@ export class PieMenuEditorComponent implements OnInit {
   }
 
   moveUp(i: number) {
+    // TODO: Should be removed and use drag and drop
     this.pieMenuService.movePieTaskUp(this.activePieItemId ?? -1, i);
   }
 
   moveDown(i: number) {
+    // TODO: Should be removed and use drag and drop
     this.pieMenuService.movePieTaskDown(this.activePieItemId ?? -1, i);
   }
 
@@ -64,6 +64,7 @@ export class PieMenuEditorComponent implements OnInit {
   }
 
   addPieItem() {
+    // TODO: Should not need to call ngonchanges manually
     this.pieMenuService.addEmptyPieItem().then(() => {
       this.pieButtons?.ngOnChanges();
     });

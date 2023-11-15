@@ -18,7 +18,7 @@ import {PieMenuListComponent} from './pie-menu-list/pie-menu-list.component';
 import {NgxColorsModule} from 'ngx-colors';
 import { ProfileEditorComponent } from './profile-editor/profile-editor.component';
 import { PieMenuListRowComponent } from './pie-menu-list/pie-menu-list-row/pie-menu-list-row.component';
-import { NewProfileDialogComponent } from './new-profile-dialog/new-profile-dialog.component';
+import { SelectExeDialogComponent } from './new-profile-dialog/select-exe-dialog.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +27,7 @@ import { NewProfileDialogComponent } from './new-profile-dialog/new-profile-dial
     PieMenuListComponent,
     ProfileEditorComponent,
     PieMenuListRowComponent,
-    NewProfileDialogComponent],
+    SelectExeDialogComponent],
   imports: [
     CommonModule,
     SharedModule,

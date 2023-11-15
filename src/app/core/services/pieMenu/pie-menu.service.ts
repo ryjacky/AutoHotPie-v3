@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {IPieItem, PieItem} from '../../../../../app/src/db/data/PieItem';
 import {IPieMenu, PieMenu} from '../../../../../app/src/db/data/PieMenu';
-import {PieSingleTaskContext} from '../../../../../app/src/actions/PieSingleTaskContext';
+import {PieSingleTaskContext} from '../../../../../app/src/pieTask/PieSingleTaskContext';
 import {DBService} from '../db/db.service';
 
 enum PieMenuServiceState { loading, loaded, unloaded }
@@ -17,7 +17,7 @@ class PieMenuUnloadedError extends Error {}
 @Injectable()
 export class PieMenuService extends PieMenu {
   // <PieItemId, PieItem>
-  public readonly pieItems = new Map<number, IPieItem | undefined>();
+  public readonly pieItems = new Map<number, IPieItem>();
   private state = PieMenuServiceState.unloaded;
 
   constructor(
@@ -106,12 +106,12 @@ export class PieMenuService extends PieMenu {
     const pieItems = await this.dbService.pieItem.bulkGet(pieMenu.pieItemIds);
     for (let i = 0; i < pieItems.length; i++) {
       window.log.debug('Loading pie item ' + pieMenu.pieItemIds[i]);
-      if (pieItems[i] === undefined) {
-        window.log.warn('Trying to load work area but pie Item of id ' + pieMenu.pieItemIds[i] + ' not found');
-        continue;
+      const currentPieItem = pieItems[i];
+      if (currentPieItem === undefined) {
+        throw new PieItemNotFoundError();
       }
 
-      this.pieItems.set(pieMenu.pieItemIds[i], pieItems[i]);
+      this.pieItems.set(pieMenu.pieItemIds[i], currentPieItem);
     }
 
     window.log.debug(`${this.pieItems.size} pie items loaded`);
@@ -119,7 +119,7 @@ export class PieMenuService extends PieMenu {
     this.state = PieMenuServiceState.loaded;
   }
 
-  public getPieTaskContext(pieItemId: number): PieSingleTaskContext[] | undefined {
+  public getPieTaskContexts(pieItemId: number): PieSingleTaskContext[] | undefined {
     return this.pieItems.get(pieItemId)?.pieTaskContexts;
   }
 
@@ -131,36 +131,12 @@ export class PieMenuService extends PieMenu {
     return this.pieItems.get(id)?.pieTaskContexts ?? [];
   }
 
-  movePieItemUp(i: number) {
-    if (i > 0) {
-      const temp = this.pieItemIds[i - 1];
-      this.pieItemIds[i - 1] = this.pieItemIds[i];
-      this.pieItemIds[i] = temp;
-    }
-
-    // Resetting the reference to force the UI to update
-    this.pieItemIds = [...this.pieItemIds];
-    this.dbService.pieMenu.update(this.id ?? -1, {pieItemIds: this.pieItemIds});
-  }
-
-  movePieItemDown(i: number) {
-    if (i < this.pieItemIds.length - 1) {
-      const temp = this.pieItemIds[i + 1];
-      this.pieItemIds[i + 1] = this.pieItemIds[i];
-      this.pieItemIds[i] = temp;
-    }
-
-    // Resetting the reference to force the UI to update
-    this.pieItemIds = [...this.pieItemIds];
-    this.dbService.pieMenu.update(this.id ?? -1, {pieItemIds: this.pieItemIds});
-  }
-
   public setPieItemActions(id: number, actions: PieSingleTaskContext[]) {
     if (this.pieItems.get(id) === undefined) {
       return;
     }
 
-    // this.pieItems.get(id)?.actions must not be undefined
+    // this.pieItems.get(id)?.pieTask must not be undefined
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     this.pieItems.get(id)!.pieTaskContexts = actions;
   }

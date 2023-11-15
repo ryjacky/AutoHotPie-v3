@@ -37,11 +37,12 @@
 
     </td>
     <td>
-      <app-shortcut-input
+      <app-advanced-hotkey-input
         #shortcutInput
+        [simpleView]="true"
         [hotkey]="currentHotkey"
         (hotkeyChange)="shortcutInputChanged($event)">
-      </app-shortcut-input>
+      </app-advanced-hotkey-input>
     </td>
 
     <!--  Edit/Remove buttons  -->

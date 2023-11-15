@@ -15,7 +15,7 @@
     "live-plugin-manager": "0.18.1",
     "active-win": "8.1.0",
     "electron-store": "8.1.0",
-    "pielette-core": "0.0.51",
+    "pielette-core": "0.1.10",
     "@nut-tree/nut-js": "3.1.2",
     "node-global-key-listener": "0.1.1"
   }

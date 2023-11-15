@@ -21,10 +21,6 @@ const PieletteSettingSchema: Schema<IPieletteSettingSchema> = {
       type: 'string'
     },
     default: [
-      'pielette-addon-open-folder',
-      'pielette-addon-run-file',
-      'pielette-addon-mouse-click',
-      'pielette-addon-send-text',
       'pielette-addon-sendkeys',
     ]
   }

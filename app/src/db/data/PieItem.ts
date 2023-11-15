@@ -1,4 +1,4 @@
-import {PieSingleTaskContext} from "../../actions/PieSingleTaskContext";
+import {PieSingleTaskContext} from "../../pieTask/PieSingleTaskContext";
 
 export interface IPieItem {
   iconBase64: string;

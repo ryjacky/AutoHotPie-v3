@@ -15,7 +15,7 @@
     #pieCenterSector
     [style.position]="'absolute'"
     [style.transform-origin]="'center'"
-    [style.transform]="'translate(-50%, -50%) translate(50vw, 50vh) rotate(' + centerRotation + 'rad)'"
+    [style.transform]="'translate(-50%, -50%) translate(50vw, 50vh) rotate(' + pieSectorRotation + 'rad)'"
     [width]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
     [height]="pieMenuService.centerRadius * 2 + pieMenuService.centerThickness"
   ></canvas>
@@ -39,7 +39,7 @@
       [style.transform]="i > pieMenuService.pieItemIds.length/2 ? 'scaleX(-1)' : 'scaleX(1)'"
     >
       <button
-        [style.rotate]="getComputedSelfRotation(i)"
+        [style.rotate]="getPieItemRotationBias(i)"
         [style.background]="activeBtnIndex === i ? pieMenuService.mainColor : pieMenuService.secondaryColor"
         [style.border-radius.px]="pieMenuService.pieItemRoundness"
         [style.max-width.px]="pieMenuService.pieItemWidth"
@@ -48,7 +48,7 @@
         [style.color]="'white'"
         [style.transform]="i > pieMenuService.pieItemIds.length/2 ? 'scaleX(-1)' : 'scaleX(1)'"
         style="display: flex; align-items: center; justify-content: center;"
-        (click)="onButtonClicked()"
+        (click)="setPieTasks()"
       >
         <nb-icon
           *ngIf="pieMenuService.isIconAtPieItemNative(pieItemId ?? 0)"

@@ -4,6 +4,7 @@ import {PieItem} from '../../../../../app/src/db/data/PieItem';
 import {DBService} from '../db/db.service';
 import {Injectable} from '@angular/core';
 import {IProfilePieMenuData, ProfilePieMenuData} from '../../../../../app/src/db/data/ProfilePieMenuData';
+import {AdvancedHotkeyValue} from '../../../shared/components/advanced-shortcut-input/advanced-hotkey-input.component';
 
 /**
  * Profile service for a single profile
@@ -28,7 +29,7 @@ export class ProfileService extends Profile {
   }
 
   get pieMenuIds(): number[] {
-    return Array.from(this.pieMenus.keys());
+    return Array.from(this.pieMenus.keys()).sort((a, b) => a - b);
   }
 
   public async load(profileId: number, reload = false) {
@@ -175,7 +176,7 @@ pieMenu.id ?? -1,
         window.log.warn('Hotkey already in use');
         return;
       } else {
-        this.dbService.profilePieMenuData.delete(profilePieMenuData.id ?? -1);
+        this.dbService.profilePieMenuData.update(profilePieMenuData.id ?? -1, {ctrl: false, shift: false, alt: false, key: ''});
       }
     }
 
@@ -247,11 +248,11 @@ pieMenu.id ?? -1,
       = await this.dbService.profilePieMenuData
       .where('[profileId+pieMenuId]').equals([this.id ?? -1, pieMenuId])
       .first();
-    return new KeyboardEvent('keydown', {
-      shiftKey: profilePieMenuData?.shift ?? false,
-      ctrlKey: profilePieMenuData?.ctrl ?? false,
-      altKey: profilePieMenuData?.alt ?? false,
-      key: profilePieMenuData?.key ?? ''
-    });
+    return new AdvancedHotkeyValue(
+      profilePieMenuData?.ctrl ?? false,
+      profilePieMenuData?.alt ?? false,
+      profilePieMenuData?.shift ?? false,
+      profilePieMenuData?.key ?? ''
+    );
   }
 }
