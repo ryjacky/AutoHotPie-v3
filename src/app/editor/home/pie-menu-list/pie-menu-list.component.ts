@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ProfileService} from '../../../core/services/profile/profile.service';
+import {HomeService} from "../home.service";
 
 @Component({
   selector: 'app-pie-menu-list',
@@ -8,7 +9,7 @@ import {ProfileService} from '../../../core/services/profile/profile.service';
 })
 export class PieMenuListComponent {
   constructor(
-    public profileService: ProfileService
+    public home: HomeService
   ) {
 
   }

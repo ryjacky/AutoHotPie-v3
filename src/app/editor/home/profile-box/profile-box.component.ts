@@ -1,6 +1,7 @@
 import {Component, Input, ViewChild} from '@angular/core';
 import {Profile} from '../../../../../app/src/db/data/Profile';
 import {ProfileService} from '../../../core/services/profile/profile.service';
+import {HomeService} from "../home.service";
 
 @Component({
   selector: 'app-profile-box',
@@ -10,20 +11,16 @@ import {ProfileService} from '../../../core/services/profile/profile.service';
 
 export class ProfileBoxComponent {
   @Input() profile: Profile = new Profile('');
+  @Input() selected = false;
 
   @ViewChild('profNameInput') profNameInput: any;
   @ViewChild('editButton') editButton: any;
 
   inputDisabled = true;
 
-  profileService: ProfileService;
-
-  constructor(profileService: ProfileService) {
-    this.profileService = profileService;
-  }
-
-  selectProfile() {
-    this.profileService.load(this.profile.id ?? 0, true);
+  constructor(
+    protected home: HomeService,
+  ) {
   }
 
   startEditing() {
@@ -33,7 +30,7 @@ export class ProfileBoxComponent {
   completeEditing() {
     this.inputDisabled = true;
 
-    this.profileService.setName(this.profNameInput.nativeElement.value);
+    this.home.setProfileName(this.profile.id ?? -1, this.profNameInput.nativeElement.value);
   }
 
 }

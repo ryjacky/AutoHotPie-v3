@@ -17,9 +17,10 @@
     </div>
     <div class="profile-box-list">
       <app-profile-box
-        #profileListItemComponent
-        *ngFor="let prof of profiles;"
+        *ngFor="let prof of home.profiles;"
         [profile]="prof"
+        [selected]="prof.id === home.selectedProfile.id ?? -1"
+        (click)="home.setSelectedProfile(prof.id ?? -1)"
       />
     </div>
   </div>

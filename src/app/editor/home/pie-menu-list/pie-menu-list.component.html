@@ -9,12 +9,12 @@
 </table>
 
 <app-pie-menu-list-row
-  *ngFor="let pieMenuId of profileService.pieMenuIds"
+  *ngFor="let pieMenuId of home.selectedProfilePieMenuIds"
   [pieMenuId]="pieMenuId"
 ></app-pie-menu-list-row>
 
 <div style="text-align: center;"
-     [ngStyle]="{'display': profileService.pieMenuIds.length === 0 ? 'unset' : 'none'}">
+     [ngStyle]="{'display': home.selectedProfilePieMenuIds.length === 0 ? 'unset' : 'none'}">
   <div style="height: 2em;"></div>
   {{'PAGES.HOME.TABLE_EMPTY' | translate}}
   <div style="height: 2em;"></div>

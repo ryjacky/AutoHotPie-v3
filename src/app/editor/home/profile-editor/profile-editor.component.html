@@ -2,7 +2,7 @@
 
   <div class="two-side">
     <div>
-      <h4>{{ profileService.name }}</h4>
+      <h4>{{ home.selectedProfile.name }}</h4>
     </div>
     <div>
       <!-- add pie menu button at the upper right hand side -->
@@ -59,13 +59,13 @@
         </p>
       </div>
       <nb-toggle
-        [checked]="profileService.enabled"
-        (checkedChange)="profileService.toggle()">
+        [checked]="home.selectedProfile.enabled"
+        (checkedChange)="home.setCurrentProfileEnabled($event)">
       </nb-toggle>
 
     </div>
     <div
-      *ngIf="profileService.id !== 1;"
+      *ngIf="home.selectedProfile.id !== 1;"
 
       style="
         display: flex;
@@ -96,7 +96,7 @@
     <!--  The profile setting section that shows all binaries added to the current profile  -->
     <!--  Hide for the default profile since it's globally available  -->
     <nb-card
-      *ngIf="profileService.id !== 1;"
+      *ngIf="home.selectedProfile.id !== 1;"
       style="background-color: transparent; border: 2px solid var(--actions-disabled-text-color);"
     >
       <nb-card-header style="padding: 10px 20px;">
@@ -105,7 +105,7 @@
 
       <nb-list>
         <nb-list-item
-          *ngFor="let exe of profileService.exes; let i = index"
+          *ngFor="let exe of home.selectedProfile.exes; let i = index"
           [style.background]="i % 2 !== 0 ? 'var(--border-basic-color-2)' : 'var(--accordion-header-border-color)'"
           style="padding: 5px 20px; display: flex; flex-direction: row; place-content: center; align-items: center; width: 60vw; justify-content: space-between;"
         >
@@ -117,7 +117,7 @@
             nbButton
             status="danger"
             size="tiny"
-            (click)="removeExecutableVersion(exe)">
+            (click)="home.removeExeFromCurrentProfile(exe)">
             <nb-icon icon="minus-outline"></nb-icon>
           </button>
         </nb-list-item>
@@ -146,55 +146,19 @@
       nbButton
       size="small"
       ghost style="border: solid; margin-bottom: 5px"
-      (click)="profileService.createAndAddPieMenu()"
+      (click)="home.createPieMenuInCurrentProfile()"
     >
       <nb-icon icon="plus-outline"/>
       {{ 'PROFILE_PAGE.NEW_PIE_MENU' | translate }}
     </button>
-    <button
-      nbButton
-      size="small"
-      ghost style="border: solid; "
-      nbTooltip="{{ 'PROFILE_PAGE.ADD_FROM_EXISTING_TOOLTIP' | translate }}"
-      (click)="openPieMenuSelector(pieMenuSelectorDialog)">
-      <nb-icon icon="download-outline"/>
-      {{ 'PROFILE_PAGE.ADD_FROM_EXISTING' | translate }}
-    </button>
+<!--    <button-->
+<!--      nbButton-->
+<!--      size="small"-->
+<!--      ghost style="border: solid; "-->
+<!--      nbTooltip="{{ 'PROFILE_PAGE.ADD_FROM_EXISTING_TOOLTIP' | translate }}"-->
+<!--      (click)="openPieMenuSelector(pieMenuSelectorDialog)">-->
+<!--      <nb-icon icon="download-outline"/>-->
+<!--      {{ 'PROFILE_PAGE.ADD_FROM_EXISTING' | translate }}-->
+<!--    </button>-->
   </div>
-</ng-template>
-
-<ng-template #pieMenuSelectorDialog let-data let-ref="dialogRef">
-  <nb-card>
-    <nb-card-header style="
-      padding: 0.7em 1.5em;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;">
-      {{ "PROFILE_PAGE.AVAILABLE_PIE_MENUS" | translate }}
-      <button
-        nbButton
-        ghost
-        size="small"
-        (click)="ref.close()"
-      >
-        {{ "PROFILE_PAGE.CANCEL" | translate }}
-      </button>
-    </nb-card-header>
-    <nb-card-body
-      style="width: 50vw; display: flex; flex-wrap: wrap; flex-direction: row; align-content: flex-start; justify-content: flex-start; align-items: flex-start;">
-      <div *ngIf="data.length === 0">
-        {{ "PROFILE_PAGE.NO_EXISTING_PIE_MENUS" | translate }}
-      </div>
-      <button
-        *ngFor="let pieMenu of data"
-        nbButton
-        size="small"
-        ghost
-        style="border: solid; margin-right: 10px; margin-bottom: 10px"
-        (click)="profileService.addPieMenu(pieMenu); ref.close()"
-      >
-        {{pieMenu.name}}
-      </button>
-    </nb-card-body>
-  </nb-card>
 </ng-template>
