@@ -10,7 +10,10 @@ function isPieTaskAddon(object: any): object is PieletteAddon {
 
 export class PieletteAddonManager {
   // TODO: Make this configurable at user end: {npmInstallMode: "noCache"}
-  private static readonly pluginManager = new PluginManager({lockWait: 10000});
+  private static readonly pluginManager = new PluginManager({
+    lockWait: 10000,
+    npmInstallMode: "useCache"
+  });
 
   private static readonly pieTaskAddons: Map<string, PieItemTaskAddon> = new Map<string, PieItemTaskAddon>();
   private static nextPieTasks: PieSingleTaskContext[] = [];
