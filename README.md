@@ -1,3 +1,8 @@
+## Currently the project is paused because I'm discovering the possibilities doing this in flutter since I find myself not liking electron after all :P
+
+
+
+
 # Pielette
 
 A cross-platform radial menu. Originally the version 3 of [AutoHotPie](https://github.com/dumbeau/AutoHotPie) but later separated into its own repository. Big thanks to @dumbeau for the AutoHotPie project.
