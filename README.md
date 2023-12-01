@@ -1,4 +1,5 @@
 ## Currently the project is paused because I'm discovering the possibilities doing this in flutter since I find myself not liking electron after all :P
+Specifically, the database thing and the IPC thing is making the src code hard to organize in a way I want.
 
 
 
